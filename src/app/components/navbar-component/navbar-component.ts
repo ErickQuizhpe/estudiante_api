@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import { CompanyService } from '../../services/company-service';
 import { Company } from '../../models/Company';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -18,6 +19,7 @@ import { Company } from '../../models/Company';
     AvatarModule,
     InputTextModule,
     RippleModule,
+    RouterModule,
   ],
   templateUrl: './navbar-component.html',
   styleUrls: [],
