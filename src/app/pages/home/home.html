@@ -1,1 +1,105 @@
-<p>home works!</p>
+<div class="min-h-screen bg-gray-50">
+  <!-- Carrusel de imágenes -->
+  <section class="relative h-96 md:h-[70vh] overflow-hidden" *ngIf="featuredRecipes.length > 0">
+    <div class="relative w-full h-full">
+      <div class="absolute inset-0 transition-opacity duration-800 ease-in-out" 
+           *ngFor="let recipe of featuredRecipes; let i = index"
+           [class.opacity-100]="i === currentSlide"
+           [class.opacity-0]="i !== currentSlide">
+        <div class="w-full h-full bg-cover bg-center bg-no-repeat"
+             [style.background-image]="'url(' + getMainImage(recipe) + ')'">
+          <div class="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70 flex items-center justify-center">
+            <div class="text-center text-white max-w-2xl px-8">
+              <h2 class="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">{{ recipe.title }}</h2>
+              <p class="text-lg md:text-xl mb-6 drop-shadow-md">{{ recipe.description }}</p>
+              <div class="flex items-center justify-center gap-4 mb-8">
+                <div class="flex gap-1">
+                  <i class="pi pi-star-fill text-yellow-400 text-xl" 
+                     *ngFor="let star of [1,2,3,4,5]" 
+                     [class.text-yellow-400]="star <= getAverageRating(recipe.ratings)"
+                     [class.text-gray-300]="star > getAverageRating(recipe.ratings)">
+                  </i>
+                </div>
+                <span class="text-lg font-semibold">{{ getAverageRating(recipe.ratings) }}/5</span>
+              </div>
+              <button class="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-semibold text-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                Ver Receta
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Controles del carrusel -->
+      <button class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/90 hover:bg-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-300 hover:scale-110 z-10"
+              (click)="prevSlide()">
+        <i class="pi pi-chevron-left"></i>
+      </button>
+      <button class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/90 hover:bg-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-300 hover:scale-110 z-10"
+              (click)="nextSlide()">
+        <i class="pi pi-chevron-right"></i>
+      </button>
+      
+      <!-- Indicadores -->
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
+        <button class="w-3 h-3 rounded-full border-2 border-white transition-all duration-300"
+                *ngFor="let recipe of featuredRecipes; let i = index"
+                [class.bg-white]="i === currentSlide"
+                [class.bg-transparent]="i !== currentSlide"
+                (click)="goToSlide(i)">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Recetas Destacadas -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Recetas Destacadas</h2>
+        <p class="text-xl text-gray-600">Descubre nuestras mejores recetas caseras</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden"
+             *ngFor="let recipe of featuredRecipes">
+          <div class="relative h-64 overflow-hidden">
+            <img [src]="getMainImage(recipe)" [alt]="recipe.title" 
+                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+            <div class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <button class="bg-white text-gray-900 px-6 py-3 rounded-full font-semibold hover:bg-orange-500 hover:text-white transition-all duration-300">
+                Ver Receta
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">{{ recipe.title }}</h3>
+            <p class="text-gray-600 mb-4 line-clamp-2">{{ recipe.description }}</p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <div class="flex gap-1">
+                  <i class="pi pi-star-fill text-yellow-400" 
+                     *ngFor="let star of [1,2,3,4,5]" 
+                     [class.text-yellow-400]="star <= getAverageRating(recipe.ratings)"
+                     [class.text-gray-300]="star > getAverageRating(recipe.ratings)">
+                  </i>
+                </div>
+                <span class="text-sm font-semibold text-gray-700">{{ getAverageRating(recipe.ratings) }}/5</span>
+              </div>
+              <div class="flex gap-3 text-sm">
+                <span class="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">
+                  <i class="pi pi-chart-line"></i>
+                  {{ recipe.difficulty }}
+                </span>
+                <span class="flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-semibold">
+                  <i class="pi pi-clock"></i>
+                  {{ recipe.preparationTime }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
