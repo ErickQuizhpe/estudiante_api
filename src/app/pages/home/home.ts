@@ -2,10 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RecipeService } from '../../services/recipe-service';
 import { Recipe } from '../../models/Recipe';
+import { CardModule } from 'primeng/card';
+import { CarouselModule } from 'primeng/carousel';
+import { RatingModule } from 'primeng/rating';
+import { DividerModule } from 'primeng/divider';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, CardModule, CarouselModule, RatingModule, DividerModule, ButtonModule, FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
