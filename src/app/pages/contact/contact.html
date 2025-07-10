@@ -1,1 +1,69 @@
-<p>contact works!</p>
+<div class="contact-container p-4 md:p-8 rounded shadow-md max-w-5xl mx-auto">
+  <h1 class="text-4xl font-bold text-center mb-2">Contáctanos</h1>
+  <div class="text-xl text-center mb-4">Estamos aquí para ayudarte</div>
+  <div class="text-center mb-2 text-gray-600">
+    ¿Tienes alguna pregunta, sugerencia o quieres colaborar con nosotros? ¡Nos encantaría escucharte!
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Formulario -->
+    <p-card>
+      <form (ngSubmit)="sendMessage()" autocomplete="off" class="space-y-4">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-user text-xl"></i>
+          <input pInputText [(ngModel)]="name" name="name" placeholder="Ingrese su nombre" required class="w-full" />
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-envelope text-xl"></i>
+          <input pInputText [(ngModel)]="email" name="email" type="email" placeholder="Ingrese su correo electrónico" required class="w-full" />
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-tag text-xl"></i>
+          <input pInputText [(ngModel)]="subject" name="subject" placeholder="Ingrese el asunto" required class="w-full" />
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-phone text-xl"></i>
+          <input pInputText [(ngModel)]="phone" name="phone" placeholder="Ingrese su teléfono" class="w-full" />
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="pi pi-comment text-xl mt-2"></i>
+          <textarea pInputText [(ngModel)]="message" name="message" placeholder="Ingrese su mensaje" required rows="3" class="w-full"></textarea>
+        </div>
+        <button pButton type="submit" label="Enviar Mensaje" class="p-button-success w-full" [disabled]="sending">
+          <i class="pi pi-send mr-2"></i>
+          Enviar Mensaje
+        </button>
+        <div *ngIf="sent" class="text-green-600 mt-2">¡Mensaje enviado correctamente!</div>
+        <div *ngIf="sendError" class="text-red-600 mt-2">{{ sendError }}</div>
+      </form>
+    </p-card>
+
+    <!-- Información de contacto y redes -->
+    <p-card>
+      <div class="flex flex-col gap-6 justify-center">
+        <div>
+          <div class="font-bold text-lg mb-2">Información de Contacto</div>
+          <div class="flex items-center gap-2 mb-1">
+            <i class="pi pi-map-marker text-green-600"></i>
+            <span>{{ company?.address }}, {{ company?.city }}</span>
+          </div>
+          <div class="flex items-center gap-2 mb-1">
+            <i class="pi pi-phone text-green-600"></i>
+            <span>{{ company?.phone }}</span>
+          </div>
+          <div class="flex items-center gap-2 mb-1">
+            <i class="pi pi-envelope text-green-600"></i>
+            <span>{{ company?.email }}</span>
+          </div>
+        </div>
+        <p-divider align="left"><b>Síguenos en</b></p-divider>
+        <div class="flex gap-4 text-2xl">
+          <a *ngFor="let social of activeSocialMedia"
+             [href]="social.url" target="_blank" rel="noopener" [title]="social.platform">
+            <img [src]="social.iconUrl" [alt]="social.platform" class="w-7 h-7 inline" />
+          </a>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
