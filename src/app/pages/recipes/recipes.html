@@ -1,1 +1,55 @@
-<p>recipes works!</p>
+<div class="recipes-container">
+  <h1 class="text-3xl font-bold mb-6">Nuestras Recetas</h1>
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div>
+      <label class="block mb-1">Categoría</label>
+      <select [(ngModel)]="selectedCategory" (change)="applyFilters()" class="p-inputtext p-component">
+        <option [ngValue]="'Todas'">Todas</option>
+        <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">Dificultad</label>
+      <select [(ngModel)]="selectedDifficulty" (change)="applyFilters()" class="p-inputtext p-component">
+        <option *ngFor="let diff of difficulties" [value]="diff">{{ diff }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">Resultados por página</label>
+      <select [(ngModel)]="resultsPerPage" (change)="applyFilters()" class="p-inputtext p-component">
+        <option *ngFor="let n of [3,6,9,12]" [value]="n">{{ n }}</option>
+      </select>
+    </div>
+    <div class="flex-1 flex items-end justify-end">
+      <input [(ngModel)]="search" (input)="applyFilters()" type="text" placeholder="Buscar recetas..." class="p-inputtext p-component w-full" style="max-width: 400px;" />
+      <button class="p-button p-button-success ml-2" (click)="applyFilters()"><i class="pi pi-search"></i></button>
+    </div>
+  </div>
+  <div class="p-grid">
+    <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let recipe of paginatedRecipes">
+      <p-card [header]="recipe.title" [subheader]="recipe.description">
+        <img [src]="getMainImage(recipe)" [alt]="recipe.title" style="width:100%;height:200px;object-fit:cover;" />
+        <div class="flex align-items-center justify-content-between mt-2 text-sm text-600 gap-4">
+          <div class="flex align-items-center">
+            <i class="pi pi-chart-line mr-1"></i> {{ recipe.difficulty }}
+          </div>
+          <div class="flex align-items-center">
+            <i class="pi pi-clock mr-1"></i> {{ recipe.preparationTime }}
+          </div>
+        </div>
+        <div style="margin-top: 1rem; text-align: center;">
+          <p-button label="Ver Receta" (onClick)="verReceta(recipe)"></p-button>
+        </div>
+      </p-card>
+    </div>
+  </div>
+  <div class="flex justify-content-center items-center mt-6" *ngIf="totalPages > 1">
+    <button class="p-button p-button-rounded p-button-secondary mr-2" [disabled]="currentPage === 1" (click)="goToPage(currentPage-1)">
+      <i class="pi pi-angle-left"></i>
+    </button>
+    <span class="font-bold">Página {{ currentPage }} de {{ totalPages }}</span>
+    <button class="p-button p-button-rounded p-button-success ml-2" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage+1)">
+      <i class="pi pi-angle-right"></i>
+    </button>
+  </div>
+</div>
