@@ -7,10 +7,12 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DividerModule } from 'primeng/divider';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-recipes',
-  imports: [CommonModule, FormsModule, CardModule, ButtonModule],
+  imports: [CommonModule, FormsModule, CardModule, ButtonModule, DividerModule, TagModule],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })
@@ -25,6 +27,8 @@ export class Recipes {
   totalPages: number = 1;
   categories: Category[] = [];
   difficulties: string[] = ['Todas', 'Facil', 'Media', 'Dificil'];
+  selectedRecipe: Recipe | null = null;
+  loadingRecipe: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -73,8 +77,23 @@ export class Recipes {
   }
 
   verReceta(recipe: Recipe) {
-    // Aquí irá la navegación al detalle de la receta
-    // Por ejemplo: this.router.navigate(['/recetas', recipe.id]);
-    alert('Ver detalle de: ' + recipe.title);
+    this.loadingRecipe = true;
+    this.recipeService.getRecipe(recipe.id).subscribe({
+      next: (detalle) => {
+        this.selectedRecipe = {
+          ...detalle,
+          instructions: detalle.instructions.sort((a, b) => a.step - b.step)
+        };
+        this.loadingRecipe = false;
+      },
+      error: () => {
+        alert('Error al cargar la receta');
+        this.loadingRecipe = false;
+      }
+    });
+  }
+
+  cerrarDetalle() {
+    this.selectedRecipe = null;
   }
 }
