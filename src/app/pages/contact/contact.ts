@@ -5,13 +5,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
+import { MessageModule } from 'primeng/message';
 import { CompanyService } from '../../services/company-service';
 import { Company, SocialMedia } from '../../models/Company';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, CardModule, DividerModule],
+  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, CardModule, DividerModule, MessageModule],
   templateUrl: './contact.html',
   styleUrls: ['./contact.css']
 })

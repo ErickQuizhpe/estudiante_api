@@ -29,12 +29,12 @@
           <i class="pi pi-comment text-xl mt-2"></i>
           <textarea pInputText [(ngModel)]="message" name="message" placeholder="Ingrese su mensaje" required rows="3" class="w-full"></textarea>
         </div>
-        <button pButton type="submit" label="Enviar Mensaje" class="p-button-success w-full" [disabled]="sending">
+        <button pButton type="submit" class="p-button-success w-full" [disabled]="sending">
           <i class="pi pi-send mr-2"></i>
           Enviar Mensaje
         </button>
-        <div *ngIf="sent" class="text-green-600 mt-2">¡Mensaje enviado correctamente!</div>
-        <div *ngIf="sendError" class="text-red-600 mt-2">{{ sendError }}</div>
+        <p-message *ngIf="sent" severity="success" text="¡Mensaje enviado correctamente!" class="mt-2"></p-message>
+        <p-message *ngIf="sendError" severity="error" [text]="sendError" class="mt-2"></p-message>
       </form>
     </p-card>
 
