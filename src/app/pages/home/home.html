@@ -1,1 +1,99 @@
-<p>home works!</p>
+<div>
+  <!-- Carrusel de recetas destacadas -->
+  <p-carousel [value]="featuredRecipes" [numVisible]="1" [numScroll]="1" [circular]="true" [autoplayInterval]="5000" *ngIf="featuredRecipes.length > 0">
+    <ng-template pTemplate="item" let-recipe>
+      <p-card [header]="''" [subheader]="''" [ngStyle]="{position: 'relative'}">
+        <img [src]="getMainImage(recipe)" [alt]="recipe.title" style="width:100%;height:350px;object-fit:cover;display:block;" />
+        <div style="
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.75) 80%, rgba(0,0,0,0.1) 100%);
+            color: #fff;
+            padding: 2rem 2rem 1.5rem 2rem;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          ">
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: bold;">{{ recipe.title }}</h2>
+            <p style="margin: 0 0 1rem 0; font-size: 1.1rem;">{{ recipe.description }}</p>
+            <p-button label="Ver Receta" styleClass="p-button-success p-button-rounded" [ngStyle]="{ 'margin-top': '0.5rem' }"></p-button>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; margin-top: 1rem;">
+            <p-rating [ngModel]="getAverageRating(recipe.ratings)" [readonly]="true" [stars]="5"></p-rating>
+            <span>{{ getAverageRating(recipe.ratings) }}/5</span>
+          </div>
+        </p-card>
+    </ng-template>
+  </p-carousel>
+
+  <p-divider></p-divider>
+
+  <!-- Grid de recetas destacadas -->
+  <div class="p-grid" *ngIf="featuredRecipes.length > 0">
+    
+    <div
+      class="p-col-12 p-md-6 p-lg-4"
+      *ngFor="let recipe of featuredRecipes"
+    >
+      <p-card [ngClass]="{ 'shadow-3': true, 'border-round-xl': true }">
+  
+        <!-- Header con imagen y calificación -->
+        <ng-template #header>
+          <div style="position: relative;">
+            <img
+              [src]="getMainImage(recipe)"
+              [alt]="recipe.title"
+              class="w-full border-round-top"
+              style="height: 200px; object-fit: cover;"
+            />
+            <span
+              class="bg-yellow-500 text-black font-bold p-1 border-round"
+              style="position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center;"
+            >
+              <i class="pi pi-star-fill mr-1"></i> {{ getAverageRating(recipe.ratings) }}
+            </span>
+          </div>
+        </ng-template>
+  
+        <!-- Título -->
+        <ng-template #title>
+          <div class="text-xl font-bold">{{ recipe.title }}</div>
+        </ng-template>
+  
+        <!-- Subtítulo -->
+        <ng-template #subtitle>
+          <div class="text-secondary text-sm">{{ recipe.description }}</div>
+        </ng-template>
+  
+        <!-- Contenido -->
+        <div class="flex align-items-center justify-content-between mt-2 text-sm text-600 gap-10">
+          <div class="flex align-items-center">
+            <i class="pi pi-clock mr-1"></i> {{ recipe.preparationTime }}
+          </div>
+          
+          <div class="flex align-items-center">
+            <i class="pi pi-chart-line mr-1"></i> {{ recipe.difficulty }}
+          </div>
+        </div>
+  
+        <!-- Botón -->
+        <ng-template #footer>
+          <div class="flex justify-content-center mt-3">
+            <button
+              pButton
+              label="Ver Receta"
+              class="p-button-success p-button-rounded w-full"
+            ></button>
+          </div>
+        </ng-template>
+        
+      </p-card>
+    </div>
+  </div>
+  
+</div>
