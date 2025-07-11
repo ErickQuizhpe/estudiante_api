@@ -33,9 +33,6 @@
         <th pSortableColumn="title">
           Título <p-sortIcon field="title"></p-sortIcon>
         </th>
-        <th pSortableColumn="description">
-          Descripción <p-sortIcon field="description"></p-sortIcon>
-        </th>
         <th pSortableColumn="difficulty">
           Dificultad <p-sortIcon field="difficulty"></p-sortIcon>
         </th>
@@ -112,7 +109,6 @@
     <ng-template pTemplate="body" let-recipe>
       <tr>
         <td>{{ recipe.title }}</td>
-        <td>{{ recipe.description }}</td>
         <td>{{ recipe.difficulty }}</td>
         <td>{{ recipe.preparationTime }}</td>
         <td>{{ recipe.category?.name || "Sin categoría" }}</td>
