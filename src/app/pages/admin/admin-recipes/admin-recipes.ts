@@ -85,6 +85,11 @@ export class AdminRecipes implements OnInit {
   onRecipeSubmit(recipe: Recipe) {
     this.loading = true;
 
+    console.log('Received recipe from form:', recipe); // Debug log
+    console.log('Images received:', recipe.images); // Debug log
+    console.log('Ingredients received:', recipe.ingredients); // Debug log
+    console.log('Instructions received:', recipe.instructions); // Debug log
+
     // Transformar los datos al formato esperado por la API
     const recipePayload = {
       title: recipe.title,
@@ -94,21 +99,26 @@ export class AdminRecipes implements OnInit {
       categoryId: recipe.category?.id || 0,
       images:
         recipe.images?.map((img) => ({
+          id: null,
           url: img.url,
           active: img.active,
         })) || [],
       ingredients:
         recipe.ingredients?.map((ing) => ({
+          id: null,
           name: ing.name,
           quantity: ing.quantity,
           unit: ing.unit,
         })) || [],
       instructions:
         recipe.instructions?.map((inst) => ({
+          id: null,
           step: inst.step,
           description: inst.description,
         })) || [],
     };
+
+    console.log('Final payload to API:', recipePayload); // Debug log
 
     if (this.isEdit && this.currentRecipe?.id) {
       this.recipeService

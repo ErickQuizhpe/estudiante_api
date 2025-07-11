@@ -23,11 +23,10 @@
       >
       <textarea
         id="description"
-        pInputText
         [(ngModel)]="formData.description"
         name="description"
         required
-        class="w-full"
+        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         rows="3"
         placeholder="Describe la receta..."
       ></textarea>
@@ -110,7 +109,11 @@
     <ng-template pTemplate="content">
       <div class="space-y-4">
         <div
-          *ngFor="let ingredient of formData.ingredients; let i = index"
+          *ngFor="
+            let ingredient of formData.ingredients;
+            let i = index;
+            trackBy: trackByIngredientIndex
+          "
           class="flex gap-2 items-end"
         >
           <div class="flex-1">
@@ -121,6 +124,7 @@
               pInputText
               [ngModel]="ingredient.name"
               (ngModelChange)="updateIngredient(i, 'name', $event)"
+              [name]="'ingredient_name_' + i"
               placeholder="Nombre del ingrediente"
               class="w-full"
             />
@@ -132,6 +136,7 @@
             <p-inputNumber
               [ngModel]="ingredient.quantity"
               (ngModelChange)="updateIngredient(i, 'quantity', $event)"
+              [name]="'ingredient_quantity_' + i"
               placeholder="0"
               [minFractionDigits]="0"
               [maxFractionDigits]="2"
@@ -146,6 +151,7 @@
               pInputText
               [ngModel]="ingredient.unit"
               (ngModelChange)="updateIngredient(i, 'unit', $event)"
+              [name]="'ingredient_unit_' + i"
               placeholder="gr, ml, etc"
               class="w-full"
             />
@@ -181,7 +187,11 @@
     <ng-template pTemplate="content">
       <div class="space-y-4">
         <div
-          *ngFor="let instruction of formData.instructions; let i = index"
+          *ngFor="
+            let instruction of formData.instructions;
+            let i = index;
+            trackBy: trackByInstructionIndex
+          "
           class="flex gap-2 items-start"
         >
           <div class="w-12 pt-2">
@@ -189,12 +199,12 @@
           </div>
           <div class="flex-1">
             <textarea
-              pInputText
               [ngModel]="instruction.description"
               (ngModelChange)="updateInstruction(i, $event)"
+              [name]="'instruction_description_' + i"
               placeholder="Describe el paso..."
               rows="2"
-              class="w-full"
+              class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             ></textarea>
           </div>
           <p-button
@@ -228,7 +238,11 @@
     <ng-template pTemplate="content">
       <div class="space-y-4">
         <div
-          *ngFor="let image of formData.images; let i = index"
+          *ngFor="
+            let image of formData.images;
+            let i = index;
+            trackBy: trackByImageIndex
+          "
           class="flex gap-2 items-center"
         >
           <div class="flex-1">
@@ -236,6 +250,7 @@
               pInputText
               [ngModel]="image.url"
               (ngModelChange)="updateImage(i, $event)"
+              [name]="'image_url_' + i"
               placeholder="URL de la imagen"
               class="w-full"
             />
@@ -254,7 +269,7 @@
   </p-card>
 
   <!-- Submit Button -->
-  <div class="flex justify-end">
+  <div class="flex justify-end gap-2">
     <p-button
       type="submit"
       [label]="isEditing ? 'Actualizar Receta' : 'Crear Receta'"
