@@ -1,24 +1,31 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { MenuModule } from 'primeng/menu';
 import { CompanyService } from '../../services/company-service';
 import { Company } from '../../models/Company';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
+import { User } from '../../models/User';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    CommonModule,
     ButtonModule,
     MenubarModule,
     AvatarModule,
     InputTextModule,
     RippleModule,
+    MenuModule,
     RouterModule,
   ],
   templateUrl: './navbar-component.html',
@@ -50,15 +57,56 @@ export class NavbarComponent {
   ];
 
   readonly company = signal<Company | null>(null);
+  readonly currentUser = signal<User | null>(null);
+  readonly isAuthenticated = computed(() => !!this.currentUser());
 
-  constructor(private readonly companyService: CompanyService) {
+  constructor(
+    private readonly companyService: CompanyService,
+    private readonly authService: AuthService
+  ) {
     this.companyService.getCompany().subscribe((company) => {
       this.company.set(company);
+    });
+
+    // Suscribirse a cambios en el usuario actual
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser.set(user);
     });
   }
 
   toggleDarkMode(): void {
     const element = document.querySelector('html');
     element?.classList.toggle('dark-mode');
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  get userMenuItems() {
+    return [
+      {
+        label: 'Mi Perfil',
+        icon: 'pi pi-user',
+        command: () => {
+          // Navegar al perfil del usuario
+        },
+      },
+      {
+        label: 'Configuración',
+        icon: 'pi pi-cog',
+        command: () => {
+          // Navegar a configuración
+        },
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Cerrar Sesión',
+        icon: 'pi pi-sign-out',
+        command: () => this.logout(),
+      },
+    ];
   }
 }
