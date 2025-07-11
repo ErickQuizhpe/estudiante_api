@@ -1,1 +1,118 @@
-<p>recipes works!</p>
+<div class="recipes-container">
+  <h1 class="text-3xl font-bold mb-6">Nuestras Recetas</h1>
+
+  <ng-container *ngIf="selectedRecipe; else listadoRecetas">
+    <div class="flex justify-content-center mb-4">
+      <button pButton pRipple type="button" class="p-button-outlined p-button-lg p-button-secondary" (click)="cerrarDetalle()">
+        <i class="pi pi-arrow-left mr-2"></i> Volver al listado
+      </button>
+    </div>
+    <div class="p-card p-4 mb-6" style="border-radius: 12px;">
+      <div class="p-card-header flex align-items-center justify-content-between mb-3">
+        <span class="text-2xl font-bold">{{ selectedRecipe.title }}</span>
+      </div>
+      <div class="mb-4">
+        <img [src]="getMainImage(selectedRecipe)" alt="Imagen de la receta" style="width: 100%; max-width: 900px; border-radius: 8px; margin: 0 auto; display: block;">
+      </div>
+      <div class="p-card-body">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <p-card >
+              <ng-template pTemplate="header">
+                <span class="font-bold text-lg flex align-items-center"><i class="pi pi-check-circle text-green-500 mr-2"></i> Ingredientes</span>
+              </ng-template>
+              <ul [ngClass]="{ 'p-0': true, 'm-0': true }">
+                <li *ngFor="let ing of selectedRecipe.ingredients" [ngClass]="{ 'flex': true, 'align-items-center': true, 'py-2': true, 'border-bottom-1': true, 'border-gray-200': true }">
+                  <i class="pi pi-check text-green-500 mr-2"></i>
+                  <span>{{ ing.quantity }} {{ ing.unit }} {{ ing.name }}</span>
+                </li>
+              </ul>
+            </p-card>
+          </div>
+          <div>
+            <p-card >
+              <ng-template pTemplate="header">
+                <span class="font-bold text-lg flex align-items-center"><i class="pi pi-list-ol text-primary mr-2"></i> Instrucciones</span>
+              </ng-template>
+              <ol [ngClass]="{ 'p-0': true, 'm-0': true, 'pl-4': true }">
+                <li *ngFor="let inst of selectedRecipe.instructions" [ngClass]="{ 'py-2': true }">
+                  {{ inst.description }}
+                </li>
+              </ol>
+            </p-card>
+          </div>
+        </div>
+        <p-divider class="my-4"></p-divider>
+        <div class="grid md:grid-cols-4 gap-4 text-sm">
+          <div class="flex flex-column align-items-start">
+            <span class="font-semibold mb-1"><i class="pi pi-clock mr-1"></i> Tiempo de preparación</span>
+            <p-tag severity="info">{{ selectedRecipe.preparationTime }}</p-tag>
+          </div>
+          <div class="flex flex-column align-items-start">
+            <span class="font-semibold mb-1"><i class="pi pi-tag mr-1"></i> Categoría</span>
+            <p-tag severity="warning">{{ selectedRecipe.category.name }}</p-tag>
+          </div>
+          <div class="flex flex-column align-items-start">
+            <span class="font-semibold mb-1"><i class="pi pi-star mr-1"></i> Dificultad</span>
+            <p-tag severity="danger">{{ selectedRecipe.difficulty }}</p-tag>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #listadoRecetas>
+    <div class="flex flex-wrap gap-4 mb-6">
+      <div>
+        <label class="block mb-1">Categoría</label>
+        <select [(ngModel)]="selectedCategory" (change)="applyFilters()" class="p-inputtext p-component">
+          <option [ngValue]="'Todas'">Todas</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1">Dificultad</label>
+        <select [(ngModel)]="selectedDifficulty" (change)="applyFilters()" class="p-inputtext p-component">
+          <option *ngFor="let diff of difficulties" [value]="diff">{{ diff }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1">Resultados por página</label>
+        <select [(ngModel)]="resultsPerPage" (change)="applyFilters()" class="p-inputtext p-component">
+          <option *ngFor="let n of [3,6,9,12]" [value]="n">{{ n }}</option>
+        </select>
+      </div>
+      <div class="flex-1 flex items-end justify-end">
+        <input [(ngModel)]="search" (input)="applyFilters()" type="text" placeholder="Buscar recetas..." class="p-inputtext p-component w-full" style="max-width: 400px;" />
+        <button class="p-button p-button-success ml-2" (click)="applyFilters()"><i class="pi pi-search"></i></button>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let recipe of paginatedRecipes">
+        <p-card [header]="recipe.title" [subheader]="recipe.description">
+          <img [src]="getMainImage(recipe)" [alt]="recipe.title" style="width:100%;height:200px;object-fit:cover;" />
+          <div class="flex align-items-center justify-content-between mt-2 text-sm text-600 gap-4">
+            <div class="flex align-items-center">
+              <i class="pi pi-chart-line mr-1"></i> {{ recipe.difficulty }}
+            </div>
+            <div class="flex align-items-center">
+              <i class="pi pi-clock mr-1"></i> {{ recipe.preparationTime }}
+            </div>
+          </div>
+          <div style="margin-top: 1rem; text-align: center;">
+            <p-button label="Ver Receta" (onClick)="verReceta(recipe)"></p-button>
+          </div>
+        </p-card>
+      </div>
+    </div>
+    <div class="flex justify-content-center items-center mt-6" *ngIf="totalPages > 1">
+      <button class="p-button p-button-rounded p-button-secondary mr-2" [disabled]="currentPage === 1" (click)="goToPage(currentPage-1)">
+        <i class="pi pi-angle-left"></i>
+      </button>
+      <span class="font-bold">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button class="p-button p-button-rounded p-button-success ml-2" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage+1)">
+        <i class="pi pi-angle-right"></i>
+      </button>
+    </div>
+  </ng-template>
+</div>
