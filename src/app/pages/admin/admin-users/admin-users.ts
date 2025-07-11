@@ -1,32 +1,109 @@
-import { Component } from '@angular/core';
-import { UserService } from '../../../services/user-service';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { User } from '../../../models/User';
-import { catchError, of, tap } from 'rxjs';
+import { UserService } from '../../../services/user-service';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    FormsModule,
+  ],
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.css',
+  providers: [UserService],
 })
-export class AdminUsers {
+export class AdminUsers implements OnInit {
   users: User[] = [];
+  selectedUser: User | null = null;
+  userDialog = false;
+  isEdit = false;
+  user: User = {
+    id: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    roles: ['USER'],
+  };
+  loading = false;
 
   constructor(private userService: UserService) {}
 
-  ngOnInit(): void {
-    this.userService
-      .getUsers()
-      .pipe(
-        tap((users) => {
-          this.users = users;
-          console.log('users: ', this.users);
-        }),
-        catchError((error) => {
-          console.error('Error al obtener los usuarios: ', error);
-          return of([]);
-        })
-      )
-      .subscribe();
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.loading = true;
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  openNew() {
+    this.user = {
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      roles: ['USER'],
+    };
+    this.isEdit = false;
+    this.userDialog = true;
+  }
+
+  editUser(user: User) {
+    this.user = { ...user };
+    this.isEdit = true;
+    this.userDialog = true;
+  }
+
+  saveUser() {
+    if (this.isEdit && this.user.id) {
+      this.userService.updateUser(this.user.id, this.user).subscribe(() => {
+        this.loadUsers();
+        this.userDialog = false;
+      });
+    } else {
+      this.userService.createUser(this.user).subscribe(() => {
+        this.loadUsers();
+        this.userDialog = false;
+      });
+    }
+  }
+
+  deleteUser(user: User) {
+    if (confirm('¿Seguro que deseas eliminar este usuario?')) {
+      this.userService.deleteUser(user.id).subscribe(() => {
+        this.loadUsers();
+      });
+    }
+  }
+
+  hideDialog() {
+    this.userDialog = false;
+  }
+
+  getRoleLabel(roles: string[]): string {
+    if (roles.includes('ADMIN')) {
+      return 'Administrador';
+    }
+    return 'Usuario';
   }
 }
