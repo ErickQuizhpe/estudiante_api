@@ -1,0 +1,83 @@
+<div class="login-container">
+  <div class="login-background">
+    <div class="login-card">
+      <p-toast></p-toast>
+
+      <div class="login-header">
+        <h1>Iniciar Sesión</h1>
+        <p>Bienvenido a Recetas Caseras</p>
+      </div>
+
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        (keypress)="onKeyPress($event)"
+      >
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-envelope"></i>
+            <input
+              id="email"
+              type="email"
+              pInputText
+              formControlName="email"
+              placeholder="tu@email.com"
+              [class.ng-invalid]="submitted && f['email'].errors"
+              [class.ng-dirty]="submitted && f['email'].errors"
+            />
+          </span>
+          <div *ngIf="submitted && f['email'].errors" class="error-message">
+            <div *ngIf="f['email'].errors['required']">
+              El correo electrónico es requerido
+            </div>
+            <div *ngIf="f['email'].errors['email']">
+              Por favor ingresa un correo electrónico válido
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="Tu contraseña"
+            [toggleMask]="true"
+            [feedback]="false"
+            [class.ng-invalid]="submitted && f['password'].errors"
+            [class.ng-dirty]="submitted && f['password'].errors"
+          ></p-password>
+          <div *ngIf="submitted && f['password'].errors" class="error-message">
+            <div *ngIf="f['password'].errors['required']">
+              La contraseña es requerida
+            </div>
+            <div *ngIf="f['password'].errors['minlength']">
+              La contraseña debe tener al menos 4 caracteres
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <p-button
+            type="submit"
+            label="Iniciar Sesión"
+            icon="pi pi-sign-in"
+            [loading]="loading"
+            [disabled]="loading"
+            styleClass="w-full"
+          ></p-button>
+        </div>
+      </form>
+
+      <p-divider></p-divider>
+
+      <div class="login-footer">
+        <p>
+          ¿No tienes una cuenta? <a routerLink="/register">Regístrate aquí</a>
+        </p>
+        <p><a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a></p>
+      </div>
+    </div>
+  </div>
+</div>

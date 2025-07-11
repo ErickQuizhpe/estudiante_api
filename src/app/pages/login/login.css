@@ -1,0 +1,200 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-background {
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-header h1 {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group .p-inputtext,
+.form-group .p-password {
+  width: 100%;
+}
+
+.form-group .p-inputtext:focus,
+.form-group .p-password:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+.form-actions {
+  margin-top: 32px;
+}
+
+.form-actions .p-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.form-actions .p-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.form-actions .p-button:disabled {
+  opacity: 0.7;
+  transform: none;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.login-footer p {
+  margin: 8px 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.login-footer a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 10px;
+  }
+
+  .login-card {
+    padding: 24px;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .login-header p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for card entrance */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: slideInUp 0.6s ease-out;
+}
+
+/* Custom styles for PrimeNG components */
+:host ::ng-deep .p-password {
+  width: 100%;
+}
+
+:host ::ng-deep .p-password input {
+  width: 100%;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .p-inputtext {
+  border-radius: 8px;
+  border: 2px solid #e1e8ed;
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .p-inputtext:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+:host ::ng-deep .p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .p-toast {
+  z-index: 1000;
+}
+
+/* Loading state styles */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}

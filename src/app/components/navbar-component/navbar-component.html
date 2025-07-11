@@ -1,17 +1,33 @@
 <p-menubar [model]="items">
   <ng-template #start>
-    <img *ngIf="company()" [src]="company()?.logoUrl" alt="Logo" class="h-10" />
-    <span *ngIf="company()">{{ company()?.name }}</span>
+    @if (company()) {
+    <img [src]="company()?.logoUrl" alt="Logo" class="h-10" />
+    <span>{{ company()?.name }}</span>
+    }
   </ng-template>
 
   <ng-template #end>
     <div class="flex items-center gap-2">
       <p-button icon="pi pi-moon" (onClick)="toggleDarkMode()" />
       <input type="text" pInputText placeholder="Search" class="w-36" />
+
+      @if (isAuthenticated()) {
+      <p-menu #menu [popup]="true" [model]="userMenuItems"></p-menu>
       <p-avatar
-        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        [label]="currentUser()?.firstName?.charAt(0) || 'U'"
         shape="circle"
+        size="normal"
+        (click)="menu.toggle($event)"
+        class="cursor-pointer"
       />
+      } @else {
+      <p-button
+        label="Iniciar Sesión"
+        icon="pi pi-sign-in"
+        routerLink="/login"
+        styleClass="p-button-outlined"
+      />
+      }
     </div>
   </ng-template>
 </p-menubar>
