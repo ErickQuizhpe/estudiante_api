@@ -8,6 +8,10 @@ import { AdminGuard } from './guards/admin.guard';
 import { AdminHome } from './pages/admin/admin-home/admin-home';
 import { MainLayout } from './layouts/main-layout/main-layout';
 import { AdminLayout } from './layouts/admin-layout/admin-layout';
+import { AdminRecipes } from './pages/admin/admin-recipes/admin-recipes';
+import { AdminCategories } from './pages/admin/admin-categories/admin-categories';
+import { AdminUsers } from './pages/admin/admin-users/admin-users';
+import { AdminCompany } from './pages/admin/admin-company/admin-company';
 
 export const routes: Routes = [
   {
@@ -24,7 +28,13 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayout,
-    children: [{ path: '', component: AdminHome }],
+    children: [
+      { path: '', component: AdminHome },
+      { path: 'recetas', component: AdminRecipes },
+      { path: 'categorias', component: AdminCategories },
+      { path: 'usuarios', component: AdminUsers },
+      { path: 'empresa', component: AdminCompany },
+    ],
     canActivate: [AdminGuard],
   },
   { path: '**', redirectTo: '' },

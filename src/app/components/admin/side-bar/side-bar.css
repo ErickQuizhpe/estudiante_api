@@ -1,0 +1,38 @@
+/* Minimal custom styles for sidebar functionality */
+.admin-sidebar {
+  transition: all 0.3s ease;
+}
+
+.admin-sidebar.collapsed {
+  width: 4rem;
+}
+
+/* Custom scrollbar for sidebar content */
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+}
+
+/* Animation for menu items */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-animation {
+  animation: slideInLeft 0.3s ease-out;
+}
