@@ -4,6 +4,7 @@ export interface User {
   lastName: string;
   email: string;
   roles: string[];
+  password?: string;
 }
 
 export interface LoginRequest {

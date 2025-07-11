@@ -116,9 +116,9 @@
   [draggable]="false"
   styleClass="p-fluid"
 >
-  <form (ngSubmit)="saveUser()" class="p-4">
-    <div class="grid">
-      <div class="col-12 md:col-6 mb-4">
+  <form (ngSubmit)="saveUser()">
+    <div class="flex flex-column gap-4 p-4">
+      <div class="w-full">
         <span class="p-float-label">
           <input
             id="firstName"
@@ -127,14 +127,13 @@
             [(ngModel)]="user.firstName"
             name="firstName"
             class="w-full"
-            [style]="{ padding: '1rem' }"
             required
           />
           <label for="firstName">Nombre</label>
         </span>
       </div>
 
-      <div class="col-12 md:col-6 mb-4">
+      <div class="w-full">
         <span class="p-float-label">
           <input
             id="lastName"
@@ -143,14 +142,13 @@
             [(ngModel)]="user.lastName"
             name="lastName"
             class="w-full"
-            [style]="{ padding: '1rem' }"
             required
           />
           <label for="lastName">Apellido</label>
         </span>
       </div>
 
-      <div class="col-12 mb-4">
+      <div class="w-full">
         <span class="p-float-label">
           <input
             id="email"
@@ -159,21 +157,36 @@
             [(ngModel)]="user.email"
             name="email"
             class="w-full"
-            [style]="{ padding: '1rem' }"
             required
           />
           <label for="email">Email</label>
         </span>
       </div>
 
-      <div class="col-12 mb-4">
+      <div class="w-full">
+        <span class="p-float-label">
+          <input
+            id="password"
+            type="password"
+            pInputText
+            [(ngModel)]="user.password"
+            name="password"
+            class="w-full"
+            [required]="!isEdit"
+          />
+          <label for="password">{{
+            isEdit ? "Nueva Contraseña (opcional)" : "Contraseña"
+          }}</label>
+        </span>
+      </div>
+
+      <div class="w-full">
         <span class="p-float-label">
           <select
             id="role"
             [(ngModel)]="user.roles[0]"
             name="role"
             class="w-full p-inputtext"
-            [style]="{ padding: '1rem' }"
             required
           >
             <option value="USER">Usuario</option>
@@ -184,7 +197,7 @@
       </div>
     </div>
 
-    <div class="flex justify-content-end gap-2">
+    <div class="flex justify-content-end gap-2 p-4 pt-0">
       <button
         pButton
         type="button"
@@ -199,7 +212,12 @@
         label="Guardar"
         icon="pi pi-check"
         [loading]="loading"
-        [disabled]="!user.firstName || !user.lastName || !user.email"
+        [disabled]="
+          !user.firstName ||
+          !user.lastName ||
+          !user.email ||
+          (!isEdit && !user.password)
+        "
       ></button>
     </div>
   </form>

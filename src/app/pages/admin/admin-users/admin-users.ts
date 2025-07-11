@@ -34,6 +34,7 @@ export class AdminUsers implements OnInit {
     lastName: '',
     email: '',
     roles: ['USER'],
+    password: '',
   };
   loading = false;
 
@@ -63,6 +64,7 @@ export class AdminUsers implements OnInit {
       lastName: '',
       email: '',
       roles: ['USER'],
+      password: '',
     };
     this.isEdit = false;
     this.userDialog = true;
@@ -70,13 +72,19 @@ export class AdminUsers implements OnInit {
 
   editUser(user: User) {
     this.user = { ...user };
+    this.user.password = ''; // Limpiar password por seguridad
     this.isEdit = true;
     this.userDialog = true;
   }
 
   saveUser() {
     if (this.isEdit && this.user.id) {
-      this.userService.updateUser(this.user.id, this.user).subscribe(() => {
+      // Para edición, si el password está vacío, no lo enviamos
+      const userToUpdate = { ...this.user };
+      if (!userToUpdate.password) {
+        delete userToUpdate.password;
+      }
+      this.userService.updateUser(this.user.id, userToUpdate).subscribe(() => {
         this.loadUsers();
         this.userDialog = false;
       });
