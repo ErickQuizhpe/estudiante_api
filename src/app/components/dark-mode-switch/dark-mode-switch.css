@@ -1,0 +1,46 @@
+.dark-mode-switch-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+.toggle-label i {
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+.toggle-label i.active {
+  opacity: 1;
+  color: var(--text-color, #374151);
+}
+
+.toggle-label i.pi-sun.active {
+  color: #f59e0b;
+}
+
+.toggle-label i.pi-moon.active {
+  color: #3b82f6;
+}
+
+/* Estilos para modo oscuro */
+:global(.dark-mode) .toggle-label i {
+  color: var(--text-color-secondary, #9ca3af);
+}
+
+:global(.dark-mode) .toggle-label i.active {
+  color: var(--text-color, #f9fafb);
+}
+
+:global(.dark-mode) .toggle-label i.pi-moon.active {
+  color: #60a5fa;
+}

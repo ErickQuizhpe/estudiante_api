@@ -1,0 +1,12 @@
+<div class="dark-mode-switch-container">
+  <label class="toggle-label">
+    <i class="pi pi-sun" [class.active]="!isDarkMode()"></i>
+    <p-toggleswitch
+      [(ngModel)]="isDarkModeValue"
+      (onChange)="onThemeChange($event)"
+      styleClass="dark-mode-toggle"
+    >
+    </p-toggleswitch>
+    <i class="pi pi-moon" [class.active]="isDarkMode()"></i>
+  </label>
+</div>
