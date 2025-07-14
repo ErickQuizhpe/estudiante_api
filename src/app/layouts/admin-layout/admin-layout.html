@@ -1,2 +1,20 @@
-<h1>Admin Layout</h1>
-<router-outlet />
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <app-side-bar
+    (collapsedChange)="onSidebarCollapsedChange($event)"
+    class="sidebar-container"
+  />
+
+  <!-- Main Content Area -->
+  <div
+    class="main-content"
+    [ngClass]="{ 'sidebar-collapsed': sidebarCollapsed }"
+  >
+    <!-- Top Navigation Bar -->
+
+    <!-- Page Content -->
+    <div class="page-content">
+      <router-outlet />
+    </div>
+  </div>
+</div>

@@ -12,9 +12,17 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CardModule, CarouselModule, RatingModule, DividerModule, ButtonModule, FormsModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    CarouselModule,
+    RatingModule,
+    DividerModule,
+    ButtonModule,
+    FormsModule,
+  ],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
 export class Home implements OnInit, OnDestroy {
   recipes: Recipe[] = [];
@@ -44,7 +52,7 @@ export class Home implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error cargando recetas:', error);
-      }
+      },
     });
   }
 
@@ -62,9 +70,10 @@ export class Home implements OnInit, OnDestroy {
 
   prevSlide() {
     if (this.featuredRecipes.length > 0) {
-      this.currentSlide = this.currentSlide === 0 
-        ? this.featuredRecipes.length - 1 
-        : this.currentSlide - 1;
+      this.currentSlide =
+        this.currentSlide === 0
+          ? this.featuredRecipes.length - 1
+          : this.currentSlide - 1;
     }
   }
 
@@ -79,7 +88,6 @@ export class Home implements OnInit, OnDestroy {
   }
 
   getMainImage(recipe: Recipe): string {
-    const mainImage = recipe.images.find(img => img.active);
-    return mainImage ? mainImage.url : 'https://via.placeholder.com/400x300/f0f0f0/cccccc?text=Sin+Imagen';
+    return recipe.imageUrl;
   }
 }

@@ -4,19 +4,13 @@ export interface Recipe {
   id: number;
   title: string;
   description: string;
-  images: RecipeImage[];
+  imageUrl: string;
   ingredients: Ingredient[];
-
   instructions: Instruction[];
-  ratings: RecipeRating[];
+  rating: number;
   difficulty: string;
   preparationTime: string;
   category: Category;
-}
-
-export interface RecipeImage {
-  id: number;
-  url: string;
   active: boolean;
 }
 
@@ -31,9 +25,4 @@ export interface Instruction {
   id: number;
   step: number;
   description: string;
-}
-
-export interface RecipeRating {
-  id: number;
-  score: number;
 }

@@ -1,13 +1,16 @@
 export interface User {
   id: string;
+  username: string;
   firstName: string;
   lastName: string;
   email: string;
   roles: string[];
+  active: boolean;
+  password?: string;
 }
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -23,6 +26,5 @@ export interface JwtPayload {
 
 export interface AuthResponse {
   user: User;
-  message: string;
-  jwt: string;
+  token: string;
 }

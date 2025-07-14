@@ -13,10 +13,22 @@ export class RecipeService {
   constructor(private http: HttpClient) {}
 
   getRecipes(): Observable<Recipe[]> {
-    return this.http.get<Recipe[]>(`${this.apiUrl}/recipe`);
+    return this.http.get<Recipe[]>(`${this.apiUrl}/recipes`);
   }
 
   getRecipe(id: number): Observable<Recipe> {
-    return this.http.get<Recipe>(`${this.apiUrl}/recipe/${id}`);
+    return this.http.get<Recipe>(`${this.apiUrl}/recipes/${id}`);
+  }
+
+  createRecipe(recipe: Recipe): Observable<Recipe> {
+    return this.http.post<Recipe>(`${this.apiUrl}/recipes`, recipe);
+  }
+
+  updateRecipe(id: number, recipe: Recipe): Observable<Recipe> {
+    return this.http.put<Recipe>(`${this.apiUrl}/recipes/${id}`, recipe);
+  }
+
+  deleteRecipe(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/recipes/${id}`);
   }
 }

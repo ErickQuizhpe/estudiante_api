@@ -12,7 +12,14 @@ import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-recipes',
-  imports: [CommonModule, FormsModule, CardModule, ButtonModule, DividerModule, TagModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CardModule,
+    ButtonModule,
+    DividerModule,
+    TagModule,
+  ],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })
@@ -46,22 +53,33 @@ export class Recipes {
   }
 
   getMainImage(recipe: Recipe): string {
-    return recipe.images?.[0]?.url || 'https://via.placeholder.com/400x200?text=Sin+Imagen';
+    return (
+      recipe.imageUrl || 'https://via.placeholder.com/400x200?text=Sin+Imagen'
+    );
   }
 
   applyFilters() {
     let filtered = this.recipes;
     if (this.selectedCategory !== 'Todas') {
-      filtered = filtered.filter(r => r.category?.id === this.selectedCategory);
+      filtered = filtered.filter(
+        (r) => r.category?.id === this.selectedCategory
+      );
     }
     if (this.selectedDifficulty !== 'Todas') {
-      filtered = filtered.filter(r => (r.difficulty || '').normalize('NFD').replace(/[ -]/g, '') === this.selectedDifficulty);
+      filtered = filtered.filter(
+        (r) =>
+          (r.difficulty || '').normalize('NFD').replace(/[ -]/g, '') ===
+          this.selectedDifficulty
+      );
     }
     if (this.search.trim()) {
-      filtered = filtered.filter(r => r.title.toLowerCase().includes(this.search.toLowerCase()));
+      filtered = filtered.filter((r) =>
+        r.title.toLowerCase().includes(this.search.toLowerCase())
+      );
     }
     this.filteredRecipes = filtered;
-    this.totalPages = Math.ceil(this.filteredRecipes.length / this.resultsPerPage) || 1;
+    this.totalPages =
+      Math.ceil(this.filteredRecipes.length / this.resultsPerPage) || 1;
     this.currentPage = 1;
   }
 
@@ -82,14 +100,14 @@ export class Recipes {
       next: (detalle) => {
         this.selectedRecipe = {
           ...detalle,
-          instructions: detalle.instructions.sort((a, b) => a.step - b.step)
+          instructions: detalle.instructions.sort((a, b) => a.step - b.step),
         };
         this.loadingRecipe = false;
       },
       error: () => {
         alert('Error al cargar la receta');
         this.loadingRecipe = false;
-      }
+      },
     });
   }
 
