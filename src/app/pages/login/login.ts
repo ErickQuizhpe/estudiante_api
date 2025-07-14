@@ -48,19 +48,19 @@ export class Login implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+
     if (this.authService.isAuthenticated()) {
       this.authService.isAdmin()
         ? this.router.navigate(['/admin'])
         : this.router.navigate(['/']);
       return;
     }
-
-    this.initForm();
   }
 
   private initForm(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(4)]],
     });
   }
@@ -90,7 +90,7 @@ export class Login implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: response.message || 'Inicio de sesión exitoso',
+          detail: 'Inicio de sesión exitoso',
         });
 
         setTimeout(() => {

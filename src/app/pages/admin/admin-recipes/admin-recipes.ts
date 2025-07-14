@@ -86,7 +86,7 @@ export class AdminRecipes implements OnInit {
     this.loading = true;
 
     console.log('Received recipe from form:', recipe); // Debug log
-    console.log('Images received:', recipe.images); // Debug log
+    console.log('Image received:', recipe.imageUrl); // Debug log
     console.log('Ingredients received:', recipe.ingredients); // Debug log
     console.log('Instructions received:', recipe.instructions); // Debug log
 
@@ -97,12 +97,7 @@ export class AdminRecipes implements OnInit {
       difficulty: recipe.difficulty,
       preparationTime: recipe.preparationTime,
       categoryId: recipe.category?.id || 0,
-      images:
-        recipe.images?.map((img) => ({
-          id: null,
-          url: img.url,
-          active: img.active,
-        })) || [],
+      imageUrl: recipe.imageUrl,
       ingredients:
         recipe.ingredients?.map((ing) => ({
           id: null,

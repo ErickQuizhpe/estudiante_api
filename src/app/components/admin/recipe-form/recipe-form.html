@@ -224,33 +224,17 @@
   <p-card>
     <ng-template pTemplate="header">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-semibold">Imágenes</h3>
-        <p-button
-          type="button"
-          severity="secondary"
-          size="small"
-          (onClick)="addImage()"
-          icon="pi pi-plus"
-          label="Agregar"
-        ></p-button>
+        <h3 class="text-lg font-semibold">Imagen</h3>
       </div>
     </ng-template>
     <ng-template pTemplate="content">
       <div class="space-y-4">
-        <div
-          *ngFor="
-            let image of formData.images;
-            let i = index;
-            trackBy: trackByImageIndex
-          "
-          class="flex gap-2 items-center"
-        >
+        <div class="flex gap-2 items-center">
           <div class="flex-1">
             <input
               pInputText
-              [ngModel]="image.url"
-              (ngModelChange)="updateImage(i, $event)"
-              [name]="'image_url_' + i"
+              [(ngModel)]="formData.imageUrl"
+              name="image_url"
               placeholder="URL de la imagen"
               class="w-full"
             />
@@ -259,10 +243,22 @@
             type="button"
             severity="secondary"
             size="small"
-            (onClick)="removeImage(i)"
+            (onClick)="clearImage()"
             icon="pi pi-trash"
-            [disabled]="formData.images.length === 1"
+            [disabled]="!formData.imageUrl || formData.imageUrl.trim() === ''"
           ></p-button>
+        </div>
+        <!-- Preview de la imagen si hay URL -->
+        <div
+          *ngIf="formData.imageUrl && formData.imageUrl.trim() !== ''"
+          class="mt-4"
+        >
+          <img
+            [src]="formData.imageUrl"
+            alt="Preview de la imagen"
+            class="max-w-xs h-32 object-cover rounded-md border"
+            (error)="onImageError()"
+          />
         </div>
       </div>
     </ng-template>

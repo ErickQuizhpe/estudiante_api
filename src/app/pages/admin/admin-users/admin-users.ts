@@ -30,10 +30,12 @@ export class AdminUsers implements OnInit {
   isEdit = false;
   user: User = {
     id: '',
+    username: '',
     firstName: '',
     lastName: '',
     email: '',
     roles: ['USER'],
+    active: true,
     password: '',
   };
   loading = false;
@@ -60,10 +62,12 @@ export class AdminUsers implements OnInit {
   openNew() {
     this.user = {
       id: '',
+      username: '',
       firstName: '',
       lastName: '',
       email: '',
       roles: ['USER'],
+      active: true,
       password: '',
     };
     this.isEdit = false;

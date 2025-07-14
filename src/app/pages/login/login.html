@@ -14,25 +14,22 @@
         (keypress)="onKeyPress($event)"
       >
         <div class="form-group">
-          <label for="email">Correo Electrónico</label>
+          <label for="username">Nombre de Usuario</label>
           <span class="p-input-icon-left">
-            <i class="pi pi-envelope"></i>
+            <i class="pi pi-user"></i>
             <input
-              id="email"
-              type="email"
+              id="username"
+              type="text"
               pInputText
-              formControlName="email"
-              placeholder="tu@email.com"
-              [class.ng-invalid]="submitted && f['email'].errors"
-              [class.ng-dirty]="submitted && f['email'].errors"
+              formControlName="username"
+              placeholder="Nombre de usuario"
+              [class.ng-invalid]="submitted && f['username'].errors"
+              [class.ng-dirty]="submitted && f['username'].errors"
             />
           </span>
-          <div *ngIf="submitted && f['email'].errors" class="error-message">
-            <div *ngIf="f['email'].errors['required']">
-              El correo electrónico es requerido
-            </div>
-            <div *ngIf="f['email'].errors['email']">
-              Por favor ingresa un correo electrónico válido
+          <div *ngIf="submitted && f['username'].errors" class="error-message">
+            <div *ngIf="f['username'].errors['required']">
+              El nombre de usuario es requerido
             </div>
           </div>
         </div>

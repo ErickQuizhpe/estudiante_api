@@ -13,12 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CardModule } from 'primeng/card';
-import {
-  Recipe,
-  Ingredient,
-  Instruction,
-  RecipeImage,
-} from '../../../models/Recipe';
+import { Recipe, Ingredient, Instruction } from '../../../models/Recipe';
 import { Category } from '../../../models/Category';
 import { CategoryService } from '../../../services/category-service';
 
@@ -50,7 +45,7 @@ export class RecipeForm implements OnInit, OnChanges {
     category: any;
     ingredients: Ingredient[];
     instructions: Instruction[];
-    images: RecipeImage[];
+    imageUrl: string;
   } = {
     title: '',
     description: '',
@@ -59,7 +54,7 @@ export class RecipeForm implements OnInit, OnChanges {
     category: null,
     ingredients: [{ id: 0, name: '', quantity: 0, unit: '' }],
     instructions: [{ id: 0, step: 1, description: '' }],
-    images: [{ id: 0, url: '', active: true }],
+    imageUrl: '',
   };
 
   categories: Category[] = [];
@@ -99,7 +94,7 @@ export class RecipeForm implements OnInit, OnChanges {
       instructions: this.initialData?.instructions || [
         { id: 0, step: 1, description: '' },
       ],
-      images: this.initialData?.images || [{ id: 0, url: '', active: true }],
+      imageUrl: this.initialData?.imageUrl || '',
     };
   }
 
@@ -122,7 +117,7 @@ export class RecipeForm implements OnInit, OnChanges {
     console.log('Full formData object:', this.formData);
     console.log('Ingredients raw:', this.formData.ingredients);
     console.log('Instructions raw:', this.formData.instructions);
-    console.log('Images raw:', this.formData.images);
+    console.log('Image raw:', this.formData.imageUrl);
 
     // Filtrar ingredientes, instrucciones e imágenes vacías antes de enviar
     const filteredIngredients = this.formData.ingredients.filter(
@@ -134,20 +129,15 @@ export class RecipeForm implements OnInit, OnChanges {
       (inst) => inst.description.trim() !== ''
     );
 
-    const filteredImages = this.formData.images.filter(
-      (img) => img.url.trim() !== ''
-    );
-
     console.log('=== DEBUG: After Filtering ===');
     console.log('Filtered ingredients:', filteredIngredients);
     console.log('Filtered instructions:', filteredInstructions);
-    console.log('Filtered images:', filteredImages);
 
     const recipeData = {
       ...this.formData,
       ingredients: filteredIngredients,
       instructions: filteredInstructions,
-      images: filteredImages,
+      imageUrl: this.formData.imageUrl,
     };
 
     console.log('Sending recipe data:', recipeData); // Debug log
@@ -169,8 +159,13 @@ export class RecipeForm implements OnInit, OnChanges {
     return index;
   }
 
-  trackByImageIndex(index: number, item: any): number {
-    return index;
+  // Métodos para manejo de imagen única
+  clearImage() {
+    this.formData.imageUrl = '';
+  }
+
+  onImageError() {
+    console.warn('Error loading image preview');
   }
 
   addIngredient() {
@@ -225,31 +220,6 @@ export class RecipeForm implements OnInit, OnChanges {
       };
       // Forzar detección de cambios
       this.formData.instructions = [...this.formData.instructions];
-    }
-  }
-
-  addImage() {
-    this.formData.images.push({ id: 0, url: '', active: true });
-    // Forzar detección de cambios
-    this.formData.images = [...this.formData.images];
-  }
-
-  removeImage(index: number) {
-    if (this.formData.images.length > 1) {
-      this.formData.images.splice(index, 1);
-      // Forzar detección de cambios
-      this.formData.images = [...this.formData.images];
-    }
-  }
-
-  updateImage(index: number, url: string) {
-    if (index >= 0 && index < this.formData.images.length) {
-      this.formData.images[index] = {
-        ...this.formData.images[index],
-        url: url,
-      };
-      // Forzar detección de cambios
-      this.formData.images = [...this.formData.images];
     }
   }
 }
