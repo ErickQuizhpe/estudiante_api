@@ -15,6 +15,7 @@ import { Company } from '../../models/Company';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { User } from '../../models/User';
+import { DarkModeSwitch } from '../dark-mode-switch/dark-mode-switch';
 
 @Component({
   selector: 'app-navbar',
@@ -27,6 +28,7 @@ import { User } from '../../models/User';
     RippleModule,
     MenuModule,
     RouterModule,
+    DarkModeSwitch,
   ],
   templateUrl: './navbar-component.html',
   styleUrls: [],
@@ -72,11 +74,6 @@ export class NavbarComponent {
     this.authService.currentUser$.subscribe((user) => {
       this.currentUser.set(user);
     });
-  }
-
-  toggleDarkMode(): void {
-    const element = document.querySelector('html');
-    element?.classList.toggle('dark-mode');
   }
 
   logout(): void {
