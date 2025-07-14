@@ -8,8 +8,7 @@
 
   <ng-template #end>
     <div class="flex items-center gap-2">
-      <p-button icon="pi pi-moon" (onClick)="toggleDarkMode()" />
-      <input type="text" pInputText placeholder="Search" class="w-36" />
+      <app-dark-mode-switch></app-dark-mode-switch>
 
       @if (isAuthenticated()) {
       <p-menu #menu [popup]="true" [model]="userMenuItems"></p-menu>
