@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  margin-top: auto;
+}
+
+footer {
+  margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Enlaces sociales */
+.social-link {
+  text-decoration: none !important;
+  transition: transform 0.2s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .p-d-flex.p-jc-center.p-gap-3.p-flex-wrap {
+    gap: 0.5rem !important;
+  }
+}
