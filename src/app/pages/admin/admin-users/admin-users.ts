@@ -50,7 +50,8 @@ export class AdminUsers implements OnInit {
     this.loading = true;
     this.userService.getUsers().subscribe({
       next: (data) => {
-        this.users = data;
+        // Mapear 'enabled' a 'active' para cada usuario
+        this.users = data.map(u => ({ ...u, active: (u as any).enabled ?? u.active }));
         this.loading = false;
       },
       error: () => {
@@ -127,6 +128,21 @@ export class AdminUsers implements OnInit {
         this.loadUsers();
       });
     }
+  }
+
+  toggleActive(user: User) {
+    const userToUpdate: any = {
+      username: user.username,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      enabled: !user.active,
+      roles: user.roles,
+      password: '' // No cambiamos la contraseña
+    };
+    this.userService.updateUser(user.id, userToUpdate).subscribe(() => {
+      this.loadUsers();
+    });
   }
 
   hideDialog() {

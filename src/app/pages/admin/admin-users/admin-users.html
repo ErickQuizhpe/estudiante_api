@@ -28,15 +28,7 @@
         <th pSortableColumn="username">
           Usuario <p-sortIcon field="username"></p-sortIcon>
         </th>
-        <th pSortableColumn="firstName">
-          Nombre <p-sortIcon field="firstName"></p-sortIcon>
-        </th>
-        <th pSortableColumn="lastName">
-          Apellido <p-sortIcon field="lastName"></p-sortIcon>
-        </th>
-        <th pSortableColumn="email">
-          Email <p-sortIcon field="email"></p-sortIcon>
-        </th>
+        <th>Estado</th>
         <th>Rol</th>
         <th>Acciones</th>
       </tr>
@@ -65,6 +57,15 @@
             placeholder="Buscar por apellido"
           />
         </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            (input)="table.filter($any($event.target).value, 'email', 'contains')"
+            placeholder="Buscar por email"
+          />
+        </th>
+        <th></th>
         <th></th>
         <th></th>
       </tr>
@@ -72,8 +73,18 @@
     <ng-template pTemplate="body" let-user>
       <tr>
         <td>{{ user.username }}</td>
-        <td>{{ user.firstName }}</td>
-        <td>{{ user.lastName }}</td>
+        <td>
+          <span [ngClass]="user.active ? 'p-badge p-badge-success' : 'p-badge p-badge-secondary'">
+            {{ user.active ? 'Activo' : 'Inactivo' }}
+          </span>
+          <button
+            pButton
+            [label]="user.active ? 'Desactivar' : 'Activar'"
+            [class]="user.active ? 'p-button-sm p-button-danger ml-2' : 'p-button-sm p-button-success ml-2'"
+            (click)="toggleActive(user)"
+            type="button"
+          ></button>
+        </td>
         <td>
           <span
             class="p-badge"
