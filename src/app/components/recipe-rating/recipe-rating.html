@@ -1,0 +1,33 @@
+<p-toast></p-toast>
+<div class="p-card p-3 border-round-lg bg-gray-50 border-1 border-gray-200">
+  <div class="flex align-items-center mb-2">
+    <i class="pi pi-star-fill mr-2 text-yellow-500"></i>
+    <span class="font-semibold text-lg text-900">Califica esta recetas</span>
+  </div>
+  <p-rating
+    [(ngModel)]="currentRating"
+    [readonly]="isReadOnly"
+    [stars]="5"
+    (onRate)="onStarClick($event)"
+    (onHover)="onStarHover($event)"
+    (onLeave)="onStarLeave()"
+    [title]="getRatingText()"
+    class="mb-2"
+  ></p-rating>
+  <div class="flex align-items-center gap-2 mb-2" *ngIf="showRatingText">
+    <span class="text-900 font-medium">{{ getRatingText() }}</span>
+    <span class="text-600 text-sm" *ngIf="currentRating > 0">
+      ({{ currentRating }}/5)
+    </span>
+  </div>
+  <div *ngIf="!isReadOnly && currentRating === 0">
+    <small class="text-600" *ngIf="isUserAuthenticated">
+      <i class="pi pi-info-circle mr-1"></i>
+      Haz clic en las estrellas para calificar
+    </small>
+    <small class="p-error font-medium" *ngIf="!isUserAuthenticated">
+      <i class="pi pi-lock mr-1"></i>
+      Inicia sesión para calificar esta receta
+    </small>
+  </div>
+</div>
