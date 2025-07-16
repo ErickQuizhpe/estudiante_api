@@ -15,4 +15,8 @@ export class CompanyService {
   getCompany(): Observable<Company> {
     return this.http.get<Company>(`${this.apiUrl}/company`);
   }
+
+  updateCompany(id: number, company: Company) {
+    return this.http.put(`${this.apiUrl}/company/${id}`, company);
+  }
 }

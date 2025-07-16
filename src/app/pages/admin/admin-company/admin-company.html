@@ -1,1 +1,51 @@
-<p>admin-company works!</p>
+<div class="p-card p-4 p-fluid" style="max-width: 600px; margin: 2rem auto;">
+  <h2 class="mb-4">Administrar Empresa</h2>
+  <form [formGroup]="companyForm" (ngSubmit)="saveCompany()">
+    <div class="form-vertical">
+      <div class="w-full mb-3">
+        <label for="name" class="block mb-1 font-semibold">Nombre</label>
+        <input id="name" type="text" class="p-inputtext w-full" formControlName="name" [readonly]="!editMode" />
+      </div>
+      <div class="w-full mb-3">
+        <label for="description" class="block mb-1 font-semibold">Descripción</label>
+        <textarea id="description" class="p-inputtext w-full" formControlName="description" [readonly]="!editMode" rows="2"></textarea>
+      </div>
+      <div class="w-full mb-3">
+        <label for="logoUrl" class="block mb-1 font-semibold">Logo (URL)</label>
+        <input id="logoUrl" type="text" class="p-inputtext w-full" formControlName="logoUrl" [readonly]="!editMode" />
+        <div *ngIf="companyForm.get('logoUrl')?.value" class="mt-2 flex justify-content-center">
+          <img [src]="companyForm.get('logoUrl')?.value" alt="Logo de la empresa" style="max-width: 180px; max-height: 100px; border-radius: 8px; box-shadow: 0 2px 8px #0001;" />
+        </div>
+      </div>
+      <div class="w-full mb-3">
+        <label for="phone" class="block mb-1 font-semibold">Teléfono</label>
+        <input id="phone" type="text" class="p-inputtext w-full" formControlName="phone" [readonly]="!editMode" />
+      </div>
+      <div class="w-full mb-3">
+        <label for="email" class="block mb-1 font-semibold">Email</label>
+        <input id="email" type="email" class="p-inputtext w-full" formControlName="email" [readonly]="!editMode" />
+      </div>
+      <div class="w-full mb-3">
+        <label for="address" class="block mb-1 font-semibold">Dirección</label>
+        <input id="address" type="text" class="p-inputtext w-full" formControlName="address" [readonly]="!editMode" />
+      </div>
+      <div class="w-full mb-3">
+        <label for="city" class="block mb-1 font-semibold">Ciudad</label>
+        <input id="city" type="text" class="p-inputtext w-full" formControlName="city" [readonly]="!editMode" />
+      </div>
+      <div class="w-full mb-3">
+        <label for="mission" class="block mb-1 font-semibold">Misión</label>
+        <textarea id="mission" class="p-inputtext w-full" formControlName="mission" [readonly]="!editMode" rows="2"></textarea>
+      </div>
+      <div class="w-full mb-3">
+        <label for="vision" class="block mb-1 font-semibold">Visión</label>
+        <textarea id="vision" class="p-inputtext w-full" formControlName="vision" [readonly]="!editMode" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-4 justify-content-end">
+      <button type="button" *ngIf="!editMode" (click)="enableEdit()" class="p-button p-button-primary">Editar</button>
+      <button type="submit" *ngIf="editMode" [disabled]="companyForm.invalid" class="p-button p-button-success">Guardar</button>
+      <button type="button" *ngIf="editMode" (click)="cancelEdit()" class="p-button p-button-secondary">Cancelar</button>
+    </div>
+  </form>
+</div>

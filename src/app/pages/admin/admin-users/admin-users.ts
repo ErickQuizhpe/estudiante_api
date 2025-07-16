@@ -82,18 +82,39 @@ export class AdminUsers implements OnInit {
   }
 
   saveUser() {
+    // Refuerza que los campos no sean null ni undefined
+    const safeFirstName = this.user.firstName ?? '';
+    const safeLastName = this.user.lastName ?? '';
+    const safeUsername = this.user.username ?? '';
+    const safeEmail = this.user.email ?? '';
+    const safePassword = this.user.password ?? '';
+    const safeRoles = Array.isArray(this.user.roles) ? this.user.roles : ['USER'];
+    const safeEnabled = this.user.active === undefined ? true : this.user.active;
     if (this.isEdit && this.user.id) {
-      // Para edición, si el password está vacío, no lo enviamos
-      const userToUpdate = { ...this.user };
-      if (!userToUpdate.password) {
-        delete userToUpdate.password;
-      }
+      const userToUpdate: any = {
+        username: safeUsername,
+        email: safeEmail,
+        password: safePassword,
+        firstName: safeFirstName,
+        lastName: safeLastName,
+        enabled: safeEnabled,
+        roles: safeRoles
+      };
       this.userService.updateUser(this.user.id, userToUpdate).subscribe(() => {
         this.loadUsers();
         this.userDialog = false;
       });
     } else {
-      this.userService.createUser(this.user).subscribe(() => {
+      const userToCreate: any = {
+        username: safeUsername,
+        email: safeEmail,
+        password: safePassword,
+        firstName: safeFirstName,
+        lastName: safeLastName,
+        enabled: safeEnabled,
+        roles: safeRoles
+      };
+      this.userService.createUser(userToCreate).subscribe(() => {
         this.loadUsers();
         this.userDialog = false;
       });

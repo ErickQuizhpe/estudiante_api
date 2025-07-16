@@ -25,6 +25,9 @@
   >
     <ng-template pTemplate="header">
       <tr>
+        <th pSortableColumn="username">
+          Usuario <p-sortIcon field="username"></p-sortIcon>
+        </th>
         <th pSortableColumn="firstName">
           Nombre <p-sortIcon field="firstName"></p-sortIcon>
         </th>
@@ -42,9 +45,15 @@
           <input
             pInputText
             type="text"
-            (input)="
-              table.filter($any($event.target).value, 'firstName', 'contains')
-            "
+            (input)="table.filter($any($event.target).value, 'username', 'contains')"
+            placeholder="Buscar por usuario"
+          />
+        </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            (input)="table.filter($any($event.target).value, 'firstName', 'contains')"
             placeholder="Buscar por nombre"
           />
         </th>
@@ -52,20 +61,8 @@
           <input
             pInputText
             type="text"
-            (input)="
-              table.filter($any($event.target).value, 'lastName', 'contains')
-            "
+            (input)="table.filter($any($event.target).value, 'lastName', 'contains')"
             placeholder="Buscar por apellido"
-          />
-        </th>
-        <th>
-          <input
-            pInputText
-            type="text"
-            (input)="
-              table.filter($any($event.target).value, 'email', 'contains')
-            "
-            placeholder="Buscar por email"
           />
         </th>
         <th></th>
@@ -74,15 +71,13 @@
     </ng-template>
     <ng-template pTemplate="body" let-user>
       <tr>
+        <td>{{ user.username }}</td>
         <td>{{ user.firstName }}</td>
         <td>{{ user.lastName }}</td>
-        <td>{{ user.email }}</td>
         <td>
           <span
             class="p-badge"
-            [ngClass]="
-              user.roles.includes('ADMIN') ? 'p-badge-danger' : 'p-badge-info'
-            "
+            [ngClass]="user.roles.includes('ADMIN') ? 'p-badge-danger' : 'p-badge-info'"
           >
             {{ getRoleLabel(user.roles) }}
           </span>
@@ -117,86 +112,82 @@
   styleClass="p-fluid"
 >
   <form (ngSubmit)="saveUser()">
-    <div class="flex flex-column gap-4 p-4">
-      <div class="w-full">
-        <span class="p-float-label">
-          <input
-            id="firstName"
-            type="text"
-            pInputText
-            [(ngModel)]="user.firstName"
-            name="firstName"
-            class="w-full"
-            required
-          />
-          <label for="firstName">Nombre</label>
-        </span>
+    <h3 class="mb-3">Usuario:</h3>
+    <div class="form-vertical">
+      <div class="w-full mb-3">
+        <label for="username" class="block mb-1 font-semibold">Usuario</label>
+        <input
+          id="username"
+          type="text"
+          pInputText
+          [(ngModel)]="user.username"
+          name="username"
+          class="w-full"
+          required
+        />
       </div>
-
-      <div class="w-full">
-        <span class="p-float-label">
-          <input
-            id="lastName"
-            type="text"
-            pInputText
-            [(ngModel)]="user.lastName"
-            name="lastName"
-            class="w-full"
-            required
-          />
-          <label for="lastName">Apellido</label>
-        </span>
+      <div class="w-full mb-3">
+        <label for="firstName" class="block mb-1 font-semibold">Nombre</label>
+        <input
+          id="firstName"
+          type="text"
+          pInputText
+          [(ngModel)]="user.firstName"
+          name="firstName"
+          class="w-full"
+          required
+        />
       </div>
-
-      <div class="w-full">
-        <span class="p-float-label">
-          <input
-            id="email"
-            type="email"
-            pInputText
-            [(ngModel)]="user.email"
-            name="email"
-            class="w-full"
-            required
-          />
-          <label for="email">Email</label>
-        </span>
+      <div class="w-full mb-3">
+        <label for="lastName" class="block mb-1 font-semibold">Apellido</label>
+        <input
+          id="lastName"
+          type="text"
+          pInputText
+          [(ngModel)]="user.lastName"
+          name="lastName"
+          class="w-full"
+          required
+        />
       </div>
-
-      <div class="w-full">
-        <span class="p-float-label">
-          <input
-            id="password"
-            type="password"
-            pInputText
-            [(ngModel)]="user.password"
-            name="password"
-            class="w-full"
-            [required]="!isEdit"
-          />
-          <label for="password">{{
-            isEdit ? "Nueva Contraseña (opcional)" : "Contraseña"
-          }}</label>
-        </span>
+      <div class="w-full mb-3">
+        <label for="email" class="block mb-1 font-semibold">Email</label>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          [(ngModel)]="user.email"
+          name="email"
+          class="w-full"
+          required
+        />
       </div>
-
-      <div class="w-full">
-        <span class="p-float-label">
-          <select
-            id="role"
-            [(ngModel)]="user.roles[0]"
-            name="role"
-            class="w-full p-inputtext"
-            required
-          >
-            <option value="USER">Usuario</option>
-            <option value="ADMIN">Administrador</option>
-          </select>
-          <label for="role">Rol</label>
-        </span>
+      <div class="w-full mb-3">
+        <label for="password" class="block mb-1 font-semibold">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          pInputText
+          [(ngModel)]="user.password"
+          name="password"
+          class="w-full"
+          required
+        />
+      </div>
+      <div class="w-full mb-3">
+        <label for="role" class="block mb-1 font-semibold">Rol</label>
+        <select
+          id="role"
+          [(ngModel)]="user.roles[0]"
+          name="role"
+          class="w-full p-inputtext"
+          required
+        >
+          <option value="USER">Usuario</option>
+          <option value="ADMIN">Administrador</option>
+        </select>
       </div>
     </div>
-
     <div class="flex justify-content-end gap-2 p-4 pt-0">
       <button
         pButton
@@ -213,10 +204,11 @@
         icon="pi pi-check"
         [loading]="loading"
         [disabled]="
+          !user.username ||
           !user.firstName ||
           !user.lastName ||
           !user.email ||
-          (!isEdit && !user.password)
+          !user.password
         "
       ></button>
     </div>
