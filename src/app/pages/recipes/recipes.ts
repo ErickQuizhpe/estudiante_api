@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
+import { RecipeRatingComponent } from '../../components/recipe-rating/recipe-rating';
 
 @Component({
   selector: 'app-recipes',
@@ -19,6 +20,7 @@ import { TagModule } from 'primeng/tag';
     ButtonModule,
     DividerModule,
     TagModule,
+    RecipeRatingComponent,
   ],
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
@@ -113,5 +115,12 @@ export class Recipes {
 
   cerrarDetalle() {
     this.selectedRecipe = null;
+  }
+
+  onRatingChange(rating: number) {
+    if (this.selectedRecipe) {
+      this.selectedRecipe.rating = rating;
+      console.log(`Receta ${this.selectedRecipe.title} calificada con ${rating} estrellas`);
+    }
   }
 }

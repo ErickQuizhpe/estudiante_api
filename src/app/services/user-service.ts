@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../models/User';
 import { Observable } from 'rxjs';
 
@@ -12,22 +12,64 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/user`);
+    return this.http.get<User[]>(`${this.apiUrl}/users`);
   }
 
   getUser(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/user/${id}`);
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`);
   }
 
   createUser(user: User): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/user`, user);
+    return this.http.post<User>(`${this.apiUrl}/users`, user);
   }
 
   updateUser(id: string, user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/user/${id}`, user);
+    return this.http.put<User>(`${this.apiUrl}/users/${id}`, user);
   }
 
   deleteUser(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/user/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
+  }
+
+  rateRecipe(recipeId: string, rating: number): Observable<string> {
+    // Convertir recipeId a número si es necesario
+    const id = parseInt(recipeId);
+    
+    // Asegurar que rating sea un entero (backend espera Integer score)
+    const score = Math.round(rating);
+    
+    // Headers necesarios según el curl de ejemplo
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
+    
+    // El body debe ser un string JSON con el número, como en el curl: -d '2'
+    const body = score.toString();
+    
+    console.log('Enviando calificación al backend:', {
+      url: `${this.apiUrl}/recipes/${id}/rate`,
+      body: body,
+      originalRecipeId: recipeId,
+      parsedId: id,
+      originalRating: rating,
+      roundedScore: score,
+      bodyType: typeof body,
+      headers: headers.keys()
+    });
+    
+    // Especificar responseType: 'text' porque el backend devuelve texto plano
+    return this.http.post(`${this.apiUrl}/recipes/${id}/rate`, body, { 
+      headers,
+      responseType: 'text'
+    });
+  }
+
+  addFavoriteRecipe(userId: string, recipeId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users/${userId}/favorite-recipes`, { recipeId });
+  }
+
+  getFavoriteRecipes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/favorite-recipes`);
   }
 }

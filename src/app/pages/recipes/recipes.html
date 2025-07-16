@@ -57,6 +57,19 @@
             <p-tag severity="danger">{{ selectedRecipe.difficulty }}</p-tag>
           </div>
         </div>
+        
+        <p-divider class="my-4"></p-divider>
+        
+        <!-- Componente de Calificación con estilos PrimeNG -->
+        <div >
+          <app-recipe-rating 
+            [recipeId]="selectedRecipe.id.toString()"
+            [currentRating]="selectedRecipe.rating || 0"
+            [isReadOnly]="false"
+            [showRatingText]="true"
+            (ratingChange)="onRatingChange($event)">
+          </app-recipe-rating>
+        </div>
       </div>
     </div>
   </ng-container>
