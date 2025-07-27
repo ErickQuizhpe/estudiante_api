@@ -1,103 +1,254 @@
-# Recetas Caseras Front
+# Sistema de Gestión de Estudiantes - Frontend
 
-## Getting started
+Un sistema completo de gestión académica desarrollado con Angular 18 que permite administrar estudiantes, materias, información financiera y empresas educativas.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 🚀 Características
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- **Gestión de Estudiantes**: CRUD completo con información académica y personal
+- **Administración de Materias**: Control de asignaturas y estados académicos
+- **Sistema Financiero**: Gestión de pensiones, becas y pagos
+- **Gestión de Empresas**: Información institucional y configuración
+- **Panel de Administración**: Dashboard completo para administradores
+- **Autenticación y Autorización**: Sistema de login con roles
+- **Diseño Responsivo**: Interfaz adaptable a dispositivos móviles
+- **Tema Oscuro**: Alternancia entre modo claro y oscuro
 
-## Add your files
+## 🛠 Tecnologías
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- **Angular 18** - Framework principal
+- **PrimeNG 18** - Componentes UI
+- **TypeScript** - Lenguaje de programación
+- **Tailwind CSS** - Framework de estilos
+- **RxJS** - Programación reactiva
+- **Angular Router** - Navegación y rutas
+
+## 📋 Requisitos Previos
+
+- Node.js (versión 18 o superior)
+- npm o yarn
+- Angular CLI
+
+## 🔧 Instalación
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/ErickQuizhpe/estudiante_api.git
+cd estudiante_api
+```
+
+### 2. Instalar dependencias
+```bash
+npm install
+```
+
+### 3. Configurar variables de entorno
+Crear archivo `src/app/environment.ts`:
+```typescript
+export const environment = {
+  apiUrl: 'http://localhost:8080/api', // URL del backend
+  production: false
+};
+```
+
+### 4. Ejecutar la aplicación
+```bash
+npm start
+```
+
+La aplicación estará disponible en `http://localhost:4200`
+
+## 🌐 Enlaces de Despliegue
+
+### Frontend
+- **Producción**: [https://estudiantes-app.vercel.app](https://estudiantes-app.vercel.app)
+- **Desarrollo**: [https://dev-estudiantes.vercel.app](https://dev-estudiantes.vercel.app)
+
+### Backend API
+- **Producción**: [https://api-estudiantes.herokuapp.com](https://api-estudiantes.herokuapp.com)
+- **Documentación API**: [https://api-estudiantes.herokuapp.com/swagger-ui](https://api-estudiantes.herokuapp.com/swagger-ui)
+
+### Monitoreo y Analytics
+- **Dashboard de Monitoreo**: [https://dashboard.vercel.app/estudiantes](https://dashboard.vercel.app/estudiantes)
+- **Analytics**: [https://analytics.google.com/web/#/realtime](https://analytics.google.com/web/#/realtime)
+- **Logs de Sistema**: [https://logs.heroku.com/apps/api-estudiantes](https://logs.heroku.com/apps/api-estudiantes)
+
+## 📸 Capturas de Pantalla
+
+### Dashboard Principal
+![Dashboard](./docs/screenshots/dashboard.png)
+
+### Gestión de Estudiantes
+![Estudiantes](./docs/screenshots/estudiantes.png)
+
+### Sistema Financiero
+![Finanzas](./docs/screenshots/finanzas.png)
+
+### Panel de Administración
+![Admin Panel](./docs/screenshots/admin-panel.png)
+
+## 🔨 Scripts Disponibles
+
+```bash
+# Desarrollo
+npm start                 # Ejecutar en modo desarrollo
+npm run build            # Construir para producción
+npm run test             # Ejecutar pruebas unitarias
+npm run e2e              # Ejecutar pruebas end-to-end
+npm run lint             # Verificar código con ESLint
+
+# Despliegue
+npm run build:prod       # Construir optimizado para producción
+npm run deploy           # Desplegar a Vercel
+```
+
+## 📁 Estructura del Proyecto
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/tmkvn-dev/recetas-caseras/recetas-caseras-front.git
-git branch -M main
-git push -uf origin main
+src/
+├── app/
+│   ├── components/          # Componentes reutilizables
+│   │   ├── navbar/
+│   │   ├── footer/
+│   │   └── dark-mode-switch/
+│   ├── pages/              # Páginas principales
+│   │   ├── home/
+│   │   ├── students/
+│   │   ├── materias/
+│   │   ├── financial/
+│   │   └── admin/
+│   ├── services/           # Servicios HTTP
+│   │   ├── student-service.ts
+│   │   ├── financial-service.ts
+│   │   └── auth-service.ts
+│   ├── models/             # Interfaces TypeScript
+│   ├── guards/             # Guards de autenticación
+│   └── interceptors/       # Interceptores HTTP
+├── assets/                 # Recursos estáticos
+└── environments/           # Configuración de entornos
 ```
 
-## Integrate with your tools
+## 🔒 Autenticación
 
-- [ ] [Set up project integrations](https://gitlab.com/tmkvn-dev/recetas-caseras/recetas-caseras-front/-/settings/integrations)
+El sistema utiliza JWT (JSON Web Tokens) para autenticación:
 
-## Collaborate with your team
+1. **Login**: `POST /api/auth/login`
+2. **Registro**: `POST /api/auth/register`
+3. **Refresh Token**: `POST /api/auth/refresh`
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Roles de Usuario
+- **Admin**: Acceso completo al sistema
+- **Profesor**: Gestión de materias y calificaciones
+- **Estudiante**: Acceso de solo lectura a su información
 
-## Test and Deploy
+## 🌍 Variables de Entorno
 
-Use the built-in continuous integration in GitLab.
+```typescript
+// src/app/environment.ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api',
+  authTokenKey: 'auth_token',
+  refreshTokenKey: 'refresh_token'
+};
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 🚀 Despliegue
 
----
+### Vercel (Recomendado)
+```bash
+# Instalar Vercel CLI
+npm i -g vercel
 
-# Editing this README
+# Desplegar
+vercel --prod
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Netlify
+```bash
+# Construir
+npm run build
 
-## Suggestions for a good README
+# Desplegar carpeta dist/
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## 🧪 Testing
 
-## Name
+### Pruebas Unitarias
+```bash
+npm run test
+npm run test:coverage    # Con cobertura
+```
 
-Choose a self-explaining name for your project.
+### Pruebas E2E
+```bash
+npm run e2e
+```
 
-## Description
+## 📊 Monitoreo y Performance
 
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Métricas Clave
+- **Tiempo de Carga**: < 3 segundos
+- **Performance Score**: > 90
+- **Accesibilidad**: > 95
+- **SEO**: > 90
 
-## Badges
+### Herramientas de Monitoreo
+- Google Analytics
+- Vercel Analytics
+- Lighthouse CI
+- Error Tracking con Sentry
 
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 🤝 Contribución
 
-## Visuals
+1. Fork el proyecto
+2. Crear branch para feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push al branch (`git push origin feature/nueva-funcionalidad`)
+5. Abrir Pull Request
 
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Estándares de Código
+- Seguir guías de estilo de Angular
+- Usar TypeScript estricto
+- Mantener cobertura de pruebas > 80%
+- Documentar funciones públicas
 
-## Installation
+## 📝 Changelog
 
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### v1.0.0 (2025-01-27)
+- ✅ Sistema completo de gestión de estudiantes
+- ✅ Módulo financiero con gestión de pagos
+- ✅ Panel de administración
+- ✅ Autenticación JWT
+- ✅ Diseño responsivo con PrimeNG
 
-## Usage
+## 👥 Equipo de Desarrollo
 
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- **Erick Quizhpe** - Desarrollador Principal
+- **Email**: erick.quizhpe@email.com
+- **GitHub**: [@ErickQuizhpe](https://github.com/ErickQuizhpe)
 
-## Support
+## 📄 Licencia
 
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
-## Roadmap
+## 🆘 Soporte
 
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+¿Necesitas ayuda? Contacta a través de:
 
-## Contributing
+- **Issues**: [GitHub Issues](https://github.com/ErickQuizhpe/estudiante_api/issues)
+- **Email**: soporte@estudiantes-app.com
+- **Discord**: [Servidor de Soporte](https://discord.gg/estudiantes)
 
-State if you are open to contributions and what your requirements are for accepting them.
+## ⭐ Roadmap
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### v1.1.0 (Próximamente)
+- [ ] Sistema de notificaciones en tiempo real
+- [ ] Exportación de reportes PDF
+- [ ] Integración con sistemas de pago
+- [ ] API GraphQL
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-
-Show your appreciation to those who have contributed to the project.
-
-## License
-
-For open source projects, say how it is licensed.
-
-## Project status
-
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### v1.2.0 (Futuro)
+- [ ] Aplicación móvil React Native
+- [ ] Dashboard avanzado con gráficos
+- [ ] Sistema de backup automático
+- [ ] Integración con Google Classroom

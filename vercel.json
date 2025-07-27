@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "estudiantes-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/estidiantes_front"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "env": {
+    "API_URL": "https://api-estudiantes.herokuapp.com/api"
+  }
+}

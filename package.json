@@ -1,12 +1,25 @@
 {
-  "name": "recetas-caseras-front",
-  "version": "0.0.0",
+  "name": "estudiantes-frontend",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión de Estudiantes - Frontend",
+  "author": "Erick Quizhpe <erick.quizhpe@email.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ErickQuizhpe/estudiante_api.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:coverage": "ng test --code-coverage --watch=false --browsers=ChromeHeadless",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "deploy": "ng build --configuration production && npx vercel --prod"
   },
   "prettier": {
     "overrides": [
