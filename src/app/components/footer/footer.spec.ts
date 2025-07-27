@@ -17,7 +17,7 @@ describe('FooterComponent', () => {
     description: 'Empresa dedicada a recetas caseras',
     logoUrl: 'https://example.com/logo.png',
     phone: '1234567890',
-    email: 'recetas-caseras@gmail.com',
+    email: 'estudiantes@gmail.com',
     address: 'Calle 123, Ciudad, Ecuador',
     city: 'Cuenca',
     mission: 'Nuestra misión es ofrecer recetas caseras de alta calidad',
