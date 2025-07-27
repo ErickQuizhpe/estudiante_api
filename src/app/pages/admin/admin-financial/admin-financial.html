@@ -1,0 +1,146 @@
+<div class="admin-financial-container">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold">Administración Financiera</h1>
+    <button pButton label="Nueva Información Financiera" icon="pi pi-plus" (click)="openModal()" class="p-button-success"></button>
+  </div>
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div>
+      <label class="block mb-1">Filtro</label>
+      <select [(ngModel)]="selectedFilter" (change)="applyFilters()" class="p-inputtext p-component">
+        <option *ngFor="let option of filterOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+    </div>
+    <div class="flex-1 flex items-end justify-end">
+      <input [(ngModel)]="search" (input)="applyFilters()" type="text" placeholder="Buscar por ID de estudiante..." class="p-inputtext p-component w-full" style="max-width: 400px;" />
+      <button class="p-button p-button-success ml-2" (click)="applyFilters()"><i class="pi pi-search"></i></button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <p-table [value]="filteredFinancialInfos" [paginator]="true" [rows]="10" [showCurrentPageReport]="true" 
+           currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Estudiante</th>
+        <th>Pensión Mensual</th>
+        <th>Monto a Pagar</th>
+        <th>Monto Pendiente</th>
+        <th>Estado</th>
+        <th>Fecha Vencimiento</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-financial>
+      <tr>
+        <td>
+          <div>
+            <div class="font-semibold">{{ financial.estudianteNombre || getStudentName(financial.estudianteId) }}</div>
+            <div class="text-sm text-color-secondary">{{ financial.estudianteMatricula }}</div>
+          </div>
+        </td>
+        <td>{{ formatCurrency(financial.pensionMensual) }}</td>
+        <td>{{ formatCurrency(financial.montoAPagar) }}</td>
+        <td>{{ formatCurrency(financial.montoPendiente) }}</td>
+        <td>
+          <p-tag [severity]="getStatusSeverity(financial)" [value]="getStatusLabel(financial)"></p-tag>
+        </td>
+        <td>{{ formatDate(financial.fechaVencimiento) }}</td>
+        <td>
+          <div class="flex gap-2">
+            <button pButton icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="openModal(financial)" pTooltip="Editar"></button>
+            <button pButton icon="pi pi-credit-card" class="p-button-sm p-button-success" (click)="openPaymentModal(financial)" pTooltip="Registrar Pago" *ngIf="financial.montoPendiente > 0"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Modal for Create/Edit -->
+  <p-dialog 
+    [(visible)]="showModal" 
+    [header]="isEditing ? 'Editar Información Financiera' : 'Nueva Información Financiera'"
+    [modal]="true"
+    [style]="{width: '50vw'}"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block mb-2">Estudiante</label>
+        <select [(ngModel)]="formData.estudianteId" class="p-inputtext p-component w-full">
+          <option value="0">Seleccionar estudiante</option>
+          <option *ngFor="let student of students" [value]="student.id">{{ student.nombreCompleto }} ({{ student.matricula }})</option>
+        </select>
+      </div>
+      
+      <div>
+        <label class="block mb-2">Pensión Mensual</label>
+        <p-inputNumber [(ngModel)]="formData.pensionMensual" mode="currency" currency="USD" class="w-full"></p-inputNumber>
+      </div>
+      
+      <div>
+        <label class="block mb-2">Descuento</label>
+        <p-inputNumber [(ngModel)]="formData.descuento" mode="currency" currency="USD" class="w-full"></p-inputNumber>
+      </div>
+      
+      <div>
+        <label class="block mb-2">Monto Pendiente</label>
+        <p-inputNumber [(ngModel)]="formData.montoPendiente" mode="currency" currency="USD" class="w-full"></p-inputNumber>
+      </div>
+      
+      <div>
+        <label class="block mb-2">Fecha de Vencimiento</label>
+        <input type="date" [(ngModel)]="formData.fechaVencimiento" class="p-inputtext p-component w-full" />
+      </div>
+      
+      <div class="flex align-items-center">
+        <input type="checkbox" [(ngModel)]="formData.becado" id="becado" class="mr-2" />
+        <label for="becado">Es Becario</label>
+      </div>
+      
+      <div *ngIf="formData.becado">
+        <label class="block mb-2">Porcentaje de Beca (%)</label>
+        <p-inputNumber [(ngModel)]="formData.porcentajeBeca" [min]="0" [max]="100" class="w-full"></p-inputNumber>
+      </div>
+      
+      <div class="col-span-2">
+        <label class="block mb-2">Observaciones</label>
+        <textarea [(ngModel)]="formData.observaciones" class="p-inputtext p-component w-full" rows="3" placeholder="Observaciones adicionales"></textarea>
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <button pButton label="Cancelar" icon="pi pi-times" (click)="closeModal()" class="p-button-text"></button>
+      <button pButton [label]="isEditing ? 'Actualizar' : 'Crear'" icon="pi pi-check" (click)="saveFinancial()" class="p-button-success"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Payment Modal -->
+  <p-dialog 
+    [(visible)]="showPaymentModal" 
+    header="Registrar Pago"
+    [modal]="true"
+    [style]="{width: '30vw'}"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div *ngIf="editingFinancial">
+      <div class="mb-4">
+        <p><strong>Estudiante:</strong> {{ getStudentName(editingFinancial.estudianteId) }}</p>
+        <p><strong>Monto Pendiente:</strong> {{ formatCurrency(editingFinancial.montoPendiente) }}</p>
+      </div>
+      
+      <div>
+        <label class="block mb-2">Monto del Pago</label>
+        <p-inputNumber [(ngModel)]="paymentData.montoPago" mode="currency" currency="USD" 
+                       [min]="0" [max]="editingFinancial.montoPendiente" class="w-full"></p-inputNumber>
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <button pButton label="Cancelar" icon="pi pi-times" (click)="closePaymentModal()" class="p-button-text"></button>
+      <button pButton label="Registrar Pago" icon="pi pi-check" (click)="registerPayment()" class="p-button-success"></button>
+    </ng-template>
+  </p-dialog>
+</div>

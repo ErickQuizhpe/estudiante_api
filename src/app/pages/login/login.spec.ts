@@ -77,13 +77,14 @@ describe('Login', () => {
     const mockResponse = {
       user: {
         id: '1',
+        username: 'testuser',
         firstName: 'Test',
         lastName: 'User',
         email: 'test@test.com',
         roles: ['USER'],
+        active: true,
       },
-      message: 'Login successful',
-      jwt: 'mock-jwt-token',
+      token: 'mock-jwt-token',
     };
 
     authService.login.and.returnValue(of(mockResponse));
@@ -98,7 +99,7 @@ describe('Login', () => {
     component.onSubmit();
 
     expect(authService.login).toHaveBeenCalledWith({
-      email: 'test@test.com',
+      username: 'test@test.com',
       password: 'password123',
     });
   });

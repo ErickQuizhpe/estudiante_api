@@ -1,141 +1,87 @@
 <div>
-  <!-- Carrusel de recetas destacadas -->
-  <p-carousel
-    [value]="featuredRecipes"
-    [numVisible]="1"
-    [numScroll]="1"
-    [circular]="true"
-    [autoplayInterval]="5000"
-    *ngIf="featuredRecipes.length > 0"
-  >
-    <ng-template pTemplate="item" let-recipe>
-      <p-card
-        [header]="''"
-        [subheader]="''"
-        [ngStyle]="{ position: 'relative' }"
-      >
-        <img
-          [src]="getMainImage(recipe)"
-          [alt]="recipe.title"
-          style="width: 100%; height: 350px; object-fit: cover; display: block"
-        />
-        <div
-          style="
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background: linear-gradient(
-              0deg,
-              rgba(0, 0, 0, 0.75) 80%,
-              rgba(0, 0, 0, 0.1) 100%
-            );
-            color: #fff;
-            padding: 2rem 2rem 1.5rem 2rem;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-          "
-        >
-          <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: bold">
-            {{ recipe.title }}
-          </h2>
-          <p style="margin: 0 0 1rem 0; font-size: 1.1rem">
-            {{ recipe.description }}
-          </p>
-          <p-button
-            label="Ver Receta"
-            styleClass="p-button-success p-button-rounded"
-            [ngStyle]="{ 'margin-top': '0.5rem' }"
-          ></p-button>
-        </div>
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 1rem;
-          "
-        >
-          <p-rating
-            [ngModel]="recipe.rating"
-            [readonly]="true"
-            [stars]="5"
-          ></p-rating>
-          <span>{{ recipe.rating }}/5</span>
-        </div>
-      </p-card>
-    </ng-template>
-  </p-carousel>
+  <!-- Banner principal -->
+  <div class="p-card mb-6">
+    <div class="p-card-body text-center">
+      <h1 class="text-4xl font-bold mb-4">Sistema de Gestión de Estudiantes</h1>
+      <p class="text-xl text-gray-600 mb-6">
+        Plataforma integral para la gestión de estudiantes y asignaciones académicas
+      </p>
+      <div class="flex justify-content-center gap-4">
+        <button
+          pButton
+          label="Ver Estudiantes"
+          icon="pi pi-users"
+          routerLink="/estudiantes"
+          class="p-button-primary p-button-lg"
+        ></button>
+        <button
+          pButton
+          label="Administración"
+          icon="pi pi-cog"
+          routerLink="/admin"
+          class="p-button-outlined p-button-lg"
+        ></button>
+      </div>
+    </div>
+  </div>
 
   <p-divider></p-divider>
 
-  <!-- Grid de recetas destacadas -->
-  <div class="p-grid" *ngIf="featuredRecipes.length > 0">
-    <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let recipe of featuredRecipes">
-      <p-card [ngClass]="{ 'shadow-3': true, 'border-round-xl': true }">
-        <!-- Header con imagen y calificación -->
-        <ng-template #header>
-          <div style="position: relative">
-            <img
-              [src]="getMainImage(recipe)"
-              [alt]="recipe.title"
-              class="w-full border-round-top"
-              style="height: 200px; object-fit: cover"
-            />
-            <span
-              class="bg-yellow-500 text-black font-bold p-1 border-round"
-              style="
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-                display: flex;
-                align-items: center;
-              "
-            >
-              <i class="pi pi-star-fill mr-1"></i>
-              {{ recipe.rating }}
-            </span>
-          </div>
-        </ng-template>
+  <!-- Características principales -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="p-card">
+      <div class="p-card-body text-center">
+        <i class="pi pi-users text-4xl text-blue-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Gestión de Estudiantes</h3>
+        <p class="text-gray-600">
+          Administra información completa de estudiantes, cursos y asignaciones
+        </p>
+      </div>
+    </div>
+    
+    <div class="p-card">
+      <div class="p-card-body text-center">
+        <i class="pi pi-calendar text-4xl text-green-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Asignaciones</h3>
+        <p class="text-gray-600">
+          Crea y gestiona asignaciones con fechas límite y calificaciones
+        </p>
+      </div>
+    </div>
+    
+    <div class="p-card">
+      <div class="p-card-body text-center">
+        <i class="pi pi-chart-bar text-4xl text-orange-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Seguimiento</h3>
+        <p class="text-gray-600">
+          Monitorea el progreso y estado de las asignaciones de los estudiantes
+        </p>
+      </div>
+    </div>
+  </div>
 
-        <!-- Título -->
-        <ng-template #title>
-          <div class="text-xl font-bold">{{ recipe.title }}</div>
-        </ng-template>
-
-        <!-- Subtítulo -->
-        <ng-template #subtitle>
-          <div class="text-secondary text-sm">{{ recipe.description }}</div>
-        </ng-template>
-
-        <!-- Contenido -->
-        <div
-          class="flex align-items-center justify-content-between mt-2 text-sm text-600 gap-10"
-        >
-          <div class="flex align-items-center">
-            <i class="pi pi-clock mr-1"></i> {{ recipe.preparationTime }}
-          </div>
-
-          <div class="flex align-items-center">
-            <i class="pi pi-chart-line mr-1"></i> {{ recipe.difficulty }}
-          </div>
+  <!-- Estadísticas -->
+  <div class="p-card">
+    <div class="p-card-body">
+      <h2 class="text-2xl font-bold mb-4 text-center">Estadísticas del Sistema</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-blue-500">150+</div>
+          <div class="text-gray-600">Estudiantes</div>
         </div>
-
-        <!-- Botón -->
-        <ng-template #footer>
-          <div class="flex justify-content-center mt-3">
-            <button
-              pButton
-              label="Ver Receta"
-              class="p-button-success p-button-rounded w-full"
-            ></button>
-          </div>
-        </ng-template>
-      </p-card>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-green-500">25+</div>
+          <div class="text-gray-600">Cursos</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-orange-500">500+</div>
+          <div class="text-gray-600">Asignaciones</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-purple-500">95%</div>
+          <div class="text-gray-600">Tasa de Éxito</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

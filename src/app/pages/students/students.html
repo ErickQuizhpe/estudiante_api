@@ -1,0 +1,138 @@
+<div class="students-container">
+  <h1 class="text-3xl font-bold mb-6">Gestión de Estudiantes</h1>
+
+  <ng-container *ngIf="selectedStudent; else listadoEstudiantes">
+    <div class="flex justify-content-center mb-4">
+      <button pButton pRipple type="button" class="p-button-outlined p-button-lg p-button-secondary" (click)="cerrarDetalle()">
+        <i class="pi pi-arrow-left mr-2"></i> Volver al listado
+      </button>
+    </div>
+    <div class="p-card p-4 mb-6" style="border-radius: 12px;">
+      <div class="p-card-header flex align-items-center justify-content-between mb-3">
+        <span class="text-2xl font-bold">{{ selectedStudent.nombreCompleto }}</span>
+        <p-tag [severity]="getStatusSeverity(selectedStudent.activo)" [value]="getStatusLabel(selectedStudent.activo)"></p-tag>
+      </div>
+      <div class="p-card-body">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <p-card>
+              <ng-template pTemplate="header">
+                <span class="font-bold text-lg flex align-items-center"><i class="pi pi-user text-blue-500 mr-2"></i> Información Personal</span>
+              </ng-template>
+              <div class="space-y-2">
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Nombre:</span>
+                  <span>{{ selectedStudent.nombreCompleto }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Matrícula:</span>
+                  <span>{{ selectedStudent.matricula }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Email:</span>
+                  <span>{{ selectedStudent.email }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Teléfono:</span>
+                  <span>{{ selectedStudent.telefono }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Edad:</span>
+                  <span>{{ calcularEdad(selectedStudent.fechaNacimiento) }} años</span>
+                </div>
+              </div>
+            </p-card>
+          </div>
+          <div>
+            <p-card>
+              <ng-template pTemplate="header">
+                <span class="font-bold text-lg flex align-items-center"><i class="pi pi-graduation-cap text-green-500 mr-2"></i> Información Académica</span>
+              </ng-template>
+              <div class="space-y-2">
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Carrera:</span>
+                  <span>{{ selectedStudent.carrera }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Semestre:</span>
+                  <span>{{ selectedStudent.semestre }}°</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Fecha de Ingreso:</span>
+                  <span>{{ formatDate(selectedStudent.fechaIngreso) }}</span>
+                </div>
+                <div class="flex justify-content-between">
+                  <span class="font-semibold">Estado:</span>
+                  <p-tag [severity]="getStatusSeverity(selectedStudent.activo)" [value]="getStatusLabel(selectedStudent.activo)"></p-tag>
+                </div>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #listadoEstudiantes>
+    <div class="flex flex-wrap gap-4 mb-6">
+      <div>
+        <label class="block mb-1">Estado</label>
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="p-inputtext p-component w-full">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1">Resultados por página</label>
+        <select [(ngModel)]="resultsPerPage" (change)="applyFilters()" class="p-inputtext p-component">
+          <option *ngFor="let n of [5,10,15,20]" [value]="n">{{ n }}</option>
+        </select>
+      </div>
+      <div class="flex-1 flex items-end justify-end">
+        <input [(ngModel)]="search" (input)="applyFilters()" type="text" placeholder="Buscar estudiantes..." class="p-inputtext p-component w-full" style="max-width: 400px;" />
+        <button class="p-button p-button-success ml-2" (click)="applyFilters()"><i class="pi pi-search"></i></button>
+      </div>
+    </div>
+    
+    <div class="p-grid">
+      <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let student of paginatedStudents">
+        <p-card [header]="student.nombreCompleto" [subheader]="student.carrera">
+          <div class="flex flex-column gap-3">
+            <div class="flex align-items-center justify-content-between">
+              <span class="font-semibold">Matrícula:</span>
+              <span>{{ student.matricula }}</span>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+              <span class="font-semibold">Email:</span>
+              <span>{{ student.email }}</span>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+              <span class="font-semibold">Estado:</span>
+              <p-tag [severity]="getStatusSeverity(student.activo)" [value]="getStatusLabel(student.activo)"></p-tag>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+              <span class="font-semibold">Semestre:</span>
+              <span>{{ student.semestre }}°</span>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+              <span class="font-semibold">Teléfono:</span>
+              <span>{{ student.telefono }}</span>
+            </div>
+          </div>
+          <div style="margin-top: 1rem; text-align: center;">
+            <p-button label="Ver Detalles" (onClick)="verEstudiante(student)"></p-button>
+          </div>
+        </p-card>
+      </div>
+    </div>
+    
+    <div class="flex justify-content-center items-center mt-6" *ngIf="totalPages > 1">
+      <button class="p-button p-button-rounded p-button-secondary mr-2" [disabled]="currentPage === 1" (click)="goToPage(currentPage-1)">
+        <i class="pi pi-angle-left"></i>
+      </button>
+      <span class="font-bold">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button class="p-button p-button-rounded p-button-success ml-2" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage+1)">
+        <i class="pi pi-angle-right"></i>
+      </button>
+    </div>
+  </ng-template>
+</div> 

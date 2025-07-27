@@ -42,13 +42,23 @@ export class NavbarComponent {
       routerLink: '/',
     },
     {
-      label: 'Recetas',
+      label: 'Estudiantes',
+      icon: 'pi pi-users',
+      routerLink: '/estudiantes',
+    },
+    {
+      label: 'Materias',
       icon: 'pi pi-book',
-      routerLink: '/recetas',
+      routerLink: '/materias',
+    },
+    {
+      label: 'Financiero',
+      icon: 'pi pi-credit-card',
+      routerLink: '/financiero',
     },
     {
       label: 'Sobre nosotros',
-      icon: 'pi pi-users',
+      icon: 'pi pi-info-circle',
       routerLink: '/nosotros',
     },
     {

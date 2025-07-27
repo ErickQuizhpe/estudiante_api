@@ -7,6 +7,7 @@ export interface Company {
   email: string;
   address: string;
   city: string;
+  footerText: string;
   mission: string;
   vision: string;
   socialMedia: SocialMedia[];

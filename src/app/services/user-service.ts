@@ -31,9 +31,9 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
 
-  rateRecipe(recipeId: string, rating: number): Observable<string> {
-    // Convertir recipeId a número si es necesario
-    const id = parseInt(recipeId);
+  rateAssignment(assignmentId: string, rating: number): Observable<string> {
+    // Convertir assignmentId a número si es necesario
+    const id = parseInt(assignmentId);
     
     // Asegurar que rating sea un entero (backend espera Integer score)
     const score = Math.round(rating);
@@ -48,9 +48,9 @@ export class UserService {
     const body = score.toString();
     
     console.log('Enviando calificación al backend:', {
-      url: `${this.apiUrl}/recipes/${id}/rate`,
+      url: `${this.apiUrl}/api/assignments/${id}/grade`,
       body: body,
-      originalRecipeId: recipeId,
+      originalAssignmentId: assignmentId,
       parsedId: id,
       originalRating: rating,
       roundedScore: score,
@@ -59,17 +59,17 @@ export class UserService {
     });
     
     // Especificar responseType: 'text' porque el backend devuelve texto plano
-    return this.http.post(`${this.apiUrl}/recipes/${id}/rate`, body, { 
+    return this.http.put(`${this.apiUrl}/api/assignments/${id}/grade`, { score }, { 
       headers,
       responseType: 'text'
     });
   }
 
-  addFavoriteRecipe(userId: string, recipeId: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/users/${userId}/favorite-recipes`, { recipeId });
+  addFavoriteAssignment(userId: string, assignmentId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users/${userId}/favorite-assignments`, { assignmentId });
   }
 
-  getFavoriteRecipes(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/users/favorite-recipes`);
+  getFavoriteAssignments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/favorite-assignments`);
   }
 }

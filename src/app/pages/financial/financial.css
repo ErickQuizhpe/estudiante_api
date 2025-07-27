@@ -1,0 +1,215 @@
+.financial-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.error-message {
+  text-align: center;
+  color: var(--red-600);
+}
+
+.error-message i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.financial-content {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+/* Status Card */
+.status-card .status-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.status-badge .large-tag {
+  font-size: 1.1rem;
+  padding: 8px 16px;
+}
+
+.amount-display {
+  text-align: right;
+}
+
+.amount-display h2 {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.amount-display p {
+  margin: 0;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+/* Progress Card */
+.progress-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.percentage {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.custom-progress {
+  height: 12px;
+}
+
+/* Details Card */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px;
+  border: 1px solid var(--surface-border);
+  border-radius: 6px;
+  background: var(--surface-ground);
+}
+
+.detail-item label {
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item .value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.detail-item .value.success {
+  color: var(--green-600);
+}
+
+.date-with-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.small-tag {
+  font-size: 0.75rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .financial-container {
+    padding: 15px;
+  }
+
+  .status-card .status-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .amount-display {
+    text-align: center;
+  }
+
+  .amount-display h2 {
+    font-size: 2rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons p-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .financial-container {
+    padding: 10px;
+  }
+
+  .amount-display h2 {
+    font-size: 1.8rem;
+  }
+
+  .detail-item {
+    padding: 10px;
+  }
+
+  .progress-info {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+}
+
+/* Dark mode adjustments */
+:host-context(.dark-mode) .detail-item {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+}
+
+:host-context(.dark-mode) .amount-display h2 {
+  color: var(--primary-color);
+}
+
+/* Animation for loading and transitions */
+.financial-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -26,16 +26,4 @@
     </p-card>
   </div>
 
-  <p-divider align="center" class="my-8"><span class="text-xl font-bold">Nuestro Equipo</span></p-divider>
-
-  <div class="grid md:grid-cols-3 gap-6">
-    <p-card *ngFor="let miembro of equipo" class="text-center">
-      <div class="flex flex-col items-center">
-        <p-avatar [image]="miembro.image" shape="circle" size="xlarge" class="mb-3"></p-avatar>
-        <div class="font-bold text-lg">{{ miembro.name }}</div>
-        <div class="text-primary mb-2">{{ miembro.role }}</div>
-        <div class="text-sm text-gray-600">{{ miembro.description }}</div>
-      </div>
-    </p-card>
-  </div>
 </div>

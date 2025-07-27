@@ -1,0 +1,250 @@
+<div class="materias-container">
+  <!-- Header -->
+  <p-card header="Catálogo de Materias" class="header-card">
+    <div class="filters-container">
+      <!-- Search -->
+      <div class="search-field">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            type="text" 
+            placeholder="Buscar materias..." 
+            [(ngModel)]="searchTerm"
+            (input)="applyFilters()"
+            class="search-input">
+        </span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-fields">
+        <div class="filter-field">
+          <label>Carrera:</label>
+          <select 
+            [(ngModel)]="selectedCarrera" 
+            (change)="applyFilters()"
+            class="filter-select">
+            <option value="">Todas las carreras</option>
+            <option *ngFor="let carrera of carreras" [value]="carrera">{{ carrera }}</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label>Semestre:</label>
+          <select 
+            [(ngModel)]="selectedSemestre" 
+            (change)="applyFilters()"
+            class="filter-select">
+            <option [value]="null">Todos los semestres</option>
+            <option *ngFor="let semestre of semestres" [value]="semestre">{{ semestre }}º Semestre</option>
+          </select>
+        </div>
+
+        <p-button 
+          label="Limpiar Filtros" 
+          icon="pi pi-filter-slash" 
+          (click)="clearFilters()"
+          severity="secondary"
+          [outlined]="true"
+          size="small">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-card>
+      <div class="loading-content">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+        <p>Cargando materias...</p>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Results Info -->
+  <div *ngIf="!loading" class="results-info">
+    <p>{{ filteredMaterias.length }} materias encontradas</p>
+  </div>
+
+  <!-- Materias by Carrera -->
+  <div *ngIf="!loading && filteredMaterias.length > 0" class="materias-content">
+    <div *ngFor="let carrera of getCarrerasKeys()" class="carrera-section">
+      <h3 class="carrera-title">
+        <i class="pi pi-graduation-cap"></i>
+        {{ carrera }}
+        <span class="materias-count">({{ getMateriasByCarrera()[carrera].length }} materias)</span>
+      </h3>
+      
+      <div class="materias-grid">
+        <p-card 
+          *ngFor="let materia of getMateriasByCarrera()[carrera]" 
+          class="materia-card"
+          [header]="materia.nombre">
+          
+          <div class="materia-content">
+            <!-- Header Info -->
+            <div class="materia-header">
+              <div class="codigo-badge">{{ materia.codigo }}</div>
+              <div class="materia-meta">
+                <span class="semestre">{{ materia.semestre }}º Sem</span>
+                <span class="creditos">{{ materia.creditos }} Créd.</span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p class="materia-description" *ngIf="materia.descripcion">
+              {{ materia.descripcion }}
+            </p>
+
+            <!-- Tags -->
+            <div class="materia-tags">
+              <p-tag 
+                *ngIf="materia.tipoMateria"
+                [value]="materia.tipoMateria" 
+                [style]="{'background-color': getTipoColor(materia.tipoMateria)}"
+                styleClass="tipo-tag">
+              </p-tag>
+
+              <div class="modalidad-tag" *ngIf="materia.modalidad">
+                <i [class]="getModalidadIcon(materia.modalidad)"></i>
+                <span>{{ materia.modalidad }}</span>
+              </div>
+
+              <p-tag 
+                [value]="materia.estado || 'ACTIVA'"
+                [severity]="getEstadoSeverity(materia.estado)"
+                styleClass="estado-tag">
+              </p-tag>
+            </div>
+
+            <!-- Actions -->
+            <div class="materia-actions">
+              <p-button 
+                label="Ver Detalles" 
+                icon="pi pi-eye" 
+                (click)="viewDetails(materia)"
+                severity="info"
+                size="small"
+                [outlined]="true">
+              </p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!loading && filteredMaterias.length === 0" class="no-results">
+    <p-card>
+      <div class="no-results-content">
+        <i class="pi pi-search" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+        <h3>No se encontraron materias</h3>
+        <p>Intenta ajustar los filtros de búsqueda</p>
+        <p-button 
+          label="Limpiar Filtros" 
+          icon="pi pi-filter-slash" 
+          (click)="clearFilters()"
+          severity="secondary">
+        </p-button>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<!-- Details Dialog -->
+<p-dialog 
+  [(visible)]="showDetails" 
+  [header]="selectedMateria?.nombre || 'Detalles de Materia'"
+  [modal]="true" 
+  [style]="{width:'50vw'}"
+  [maximizable]="true">
+  
+  <div *ngIf="selectedMateria" class="materia-details">
+    <!-- Basic Info -->
+    <div class="details-section">
+      <h4>Información General</h4>
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Código:</label>
+          <span class="value">{{ selectedMateria.codigo }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Nombre:</label>
+          <span class="value">{{ selectedMateria.nombre }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Carrera:</label>
+          <span class="value">{{ selectedMateria.carrera }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Semestre:</label>
+          <span class="value">{{ selectedMateria.semestre }}º</span>
+        </div>
+        <div class="detail-item">
+          <label>Créditos:</label>
+          <span class="value">{{ selectedMateria.creditos }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Estado:</label>
+          <p-tag 
+            [value]="selectedMateria.estado || 'ACTIVA'"
+            [severity]="getEstadoSeverity(selectedMateria.estado)">
+          </p-tag>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="details-section" *ngIf="selectedMateria.tipoMateria || selectedMateria.modalidad">
+      <h4>Características</h4>
+      <div class="details-grid">
+        <div class="detail-item" *ngIf="selectedMateria.tipoMateria">
+          <label>Tipo de Materia:</label>
+          <p-tag 
+            [value]="selectedMateria.tipoMateria" 
+            [style]="{'background-color': getTipoColor(selectedMateria.tipoMateria)}">
+          </p-tag>
+        </div>
+        <div class="detail-item" *ngIf="selectedMateria.modalidad">
+          <label>Modalidad:</label>
+          <div class="modalidad-info">
+            <i [class]="getModalidadIcon(selectedMateria.modalidad)"></i>
+            <span>{{ selectedMateria.modalidad }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="details-section" *ngIf="selectedMateria.descripcion">
+      <h4>Descripción</h4>
+      <p class="description-text">{{ selectedMateria.descripcion }}</p>
+    </div>
+
+    <!-- Dates -->
+    <div class="details-section" *ngIf="selectedMateria.fechaCreacion || selectedMateria.fechaActualizacion">
+      <h4>Información de Sistema</h4>
+      <div class="details-grid">
+        <div class="detail-item" *ngIf="selectedMateria.fechaCreacion">
+          <label>Fecha de Creación:</label>
+        
+        </div>
+        <div class="detail-item" *ngIf="selectedMateria.fechaActualizacion">
+          <label>Última Actualización:</label>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cerrar" 
+      icon="pi pi-times" 
+      (click)="closeDetails()"
+      severity="secondary">
+    </p-button>
+  </ng-template>
+</p-dialog>

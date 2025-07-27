@@ -1,0 +1,294 @@
+<div class="admin-materias-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header -->
+  <p-card header="Gestión de Materias" class="header-card">
+    <div class="card-actions">
+      <div class="search-container">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            type="text" 
+            placeholder="Buscar materias..." 
+            (input)="onGlobalFilter($event)"
+            class="search-input">
+        </span>
+      </div>
+      <p-button 
+        label="Nueva Materia" 
+        icon="pi pi-plus" 
+        (click)="openNew()"
+        severity="success">
+      </p-button>
+    </div>
+  </p-card>
+
+  <!-- Materias Table -->
+  <p-card class="table-card">
+    <p-table 
+      [value]="materias" 
+      [loading]="loading"
+      [globalFilterFields]="['nombre', 'codigo', 'carrera', 'descripcion']"
+      dataKey="id"
+      styleClass="p-datatable-gridlines">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Carrera</th>
+          <th>Semestre</th>
+          <th>Créditos</th>
+          <th>Estado</th>
+          <th>Modalidad</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-materia>
+        <tr>
+          <td>{{ materia.codigo }}</td>
+          <td>
+            <div class="materia-name">
+              <strong>{{ materia.nombre }}</strong>
+              <small *ngIf="materia.descripcion">{{ materia.descripcion }}</small>
+            </div>
+          </td>
+          <td>{{ materia.carrera }}</td>
+          <td>{{ materia.semestre }}</td>
+          <td>{{ materia.creditos }}</td>
+          <td>
+            <p-tag 
+              [value]="materia.estado || (materia.activa ? 'ACTIVA' : 'INACTIVA')" 
+              [severity]="getEstadoSeverity(materia.estado || (materia.activa ? 'ACTIVA' : 'INACTIVA'))">
+            </p-tag>
+          </td>
+          <td>
+            <span class="modalidad-info">
+              <i [class]="getModalidadIcon(materia.modalidad || 'PRESENCIAL')"></i>
+              {{ materia.modalidad || 'PRESENCIAL' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <p-button 
+                icon="pi pi-pencil" 
+                (click)="editMateria(materia)"
+                severity="info"
+                [text]="true"
+                pTooltip="Editar">
+              </p-button>
+              <p-button 
+                icon="pi pi-users" 
+                (click)="openAsignacion(materia)"
+                severity="secondary"
+                [text]="true"
+                pTooltip="Asignar Estudiante">
+              </p-button>
+              <p-button 
+                icon="pi pi-trash" 
+                (click)="deleteMateria(materia)"
+                severity="danger"
+                [text]="true"
+                pTooltip="Eliminar">
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8">No se encontraron materias.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Materia Dialog -->
+  <p-dialog 
+    [(visible)]="materiaDialog" 
+    [header]="materiaForm.id ? 'Editar Materia' : 'Nueva Materia'"
+    [modal]="true" 
+    class="p-fluid" 
+    [style]="{width:'50vw'}"
+    [maximizable]="true">
+    
+    <div class="form-grid">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="codigo">Código *</label>
+          <input 
+            pInputText 
+            id="codigo" 
+            [(ngModel)]="materiaForm.codigo" 
+            required 
+            placeholder="Ej: MAT001">
+        </div>
+        <div class="form-field">
+          <label for="nombre">Nombre *</label>
+          <input 
+            pInputText 
+            id="nombre" 
+            [(ngModel)]="materiaForm.nombre" 
+            required 
+            placeholder="Nombre de la materia">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="carrera">Carrera</label>
+          <input 
+            pInputText 
+            id="carrera" 
+            [(ngModel)]="materiaForm.carrera" 
+            placeholder="Nombre de la carrera">
+        </div>
+        <div class="form-field">
+          <label for="semestre">Semestre</label>
+          <p-inputNumber 
+            [(ngModel)]="materiaForm.semestre" 
+            [min]="1" 
+            [max]="12"
+            placeholder="Semestre">
+          </p-inputNumber>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="creditos">Créditos</label>
+          <p-inputNumber 
+            [(ngModel)]="materiaForm.creditos" 
+            [min]="1" 
+            [max]="10"
+            placeholder="Número de créditos">
+          </p-inputNumber>
+        </div>
+        <div class="form-field">
+          <label for="estado">Estado</label>
+          <select [(ngModel)]="materiaForm.estado" (change)="updateActivoFromEstado()" class="form-select">
+            <option value="ACTIVA">Activa</option>
+            <option value="INACTIVA">Inactiva</option>
+            <option value="EN_PROCESO">En Proceso</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="materiaForm.activa"
+              (change)="updateEstadoFromActivo()"
+              class="form-checkbox">
+            <span>Materia Activa</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modalidad">Modalidad</label>
+          <select [(ngModel)]="materiaForm.modalidad" class="form-select">
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+            <option value="MIXTA">Mixta</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="tipoMateria">Tipo</label>
+          <select [(ngModel)]="materiaForm.tipoMateria" class="form-select">
+            <option value="OBLIGATORIA">Obligatoria</option>
+            <option value="OPTATIVA">Optativa</option>
+            <option value="PRACTICA">Práctica</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field full-width">
+        <label for="descripcion">Descripción</label>
+        <textarea 
+          [(ngModel)]="materiaForm.descripcion" 
+          rows="3" 
+          class="form-textarea"
+          placeholder="Descripción de la materia">
+        </textarea>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        (click)="materiaDialog = false"
+        [text]="true">
+      </p-button>
+      <p-button 
+        label="Guardar" 
+        icon="pi pi-check" 
+        (click)="saveMateria()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Asignación Dialog -->
+  <p-dialog 
+    [(visible)]="asignacionDialog" 
+    header="Asignar Materia a Estudiante"
+    [modal]="true" 
+    class="p-fluid" 
+    [style]="{width:'40vw'}">
+    
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Materia</label>
+        <input 
+          pInputText 
+          [value]="selectedMateria?.nombre" 
+          readonly 
+          class="readonly-input">
+      </div>
+
+      <div class="form-field">
+        <label for="estudiante">Estudiante *</label>
+        <select [(ngModel)]="asignacionForm.estudianteId" class="form-select" required>
+          <option value="">Seleccionar estudiante</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="fechaInicio">Fecha Inicio *</label>
+          <input 
+            type="date" 
+            [(ngModel)]="asignacionForm.fechaInicio" 
+            class="form-input"
+            required>
+        </div>
+        <div class="form-field">
+          <label for="fechaFin">Fecha Fin</label>
+          <input 
+            type="date" 
+            [(ngModel)]="asignacionForm.fechaFin" 
+            class="form-input">
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        (click)="asignacionDialog = false"
+        [text]="true">
+      </p-button>
+      <p-button 
+        label="Asignar" 
+        icon="pi pi-check" 
+        (click)="saveAsignacion()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

@@ -1,0 +1,276 @@
+.admin-materias-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Card */
+.header-card {
+  margin-bottom: 20px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+}
+
+/* Table Card */
+.table-card {
+  overflow: hidden;
+}
+
+.materia-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.materia-name small {
+  color: var(--text-color-secondary);
+  font-size: 0.85rem;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.modalidad-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalidad-info i {
+  color: var(--primary-color);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+/* Form Styles */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.form-select,
+.form-input,
+.form-textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--surface-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  background: var(--surface-ground);
+  color: var(--text-color);
+}
+
+.form-select:focus,
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.readonly-input {
+  background-color: var(--surface-100);
+  color: var(--text-color-secondary);
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .admin-materias-container {
+    padding: 15px;
+  }
+
+  .p-dialog {
+    width: 90vw !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-materias-container {
+    padding: 10px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-container {
+    max-width: none;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .materia-name small {
+    max-width: none;
+  }
+
+  .p-dialog {
+    width: 95vw !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons p-button {
+    width: 100%;
+  }
+
+  .table-card :host ::ng-deep .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+
+  .table-card :host ::ng-deep .p-datatable table {
+    min-width: 800px;
+  }
+}
+
+/* Dark mode adjustments */
+:host-context(.dark-mode) .form-select,
+:host-context(.dark-mode) .form-input,
+:host-context(.dark-mode) .form-textarea {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+  color: var(--text-color);
+}
+
+:host-context(.dark-mode) .readonly-input {
+  background-color: var(--surface-200);
+}
+
+/* Table responsive improvements */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 12px 8px;
+  vertical-align: top;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  padding: 12px 8px;
+  font-weight: 600;
+  background: var(--surface-100);
+}
+
+/* Loading state */
+:host ::ng-deep .p-datatable .p-datatable-loading-overlay {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+:host-context(.dark-mode) ::ng-deep .p-datatable .p-datatable-loading-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Dialog improvements */
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: var(--surface-100);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding: 24px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding: 16px 24px;
+  background: var(--surface-50);
+  border-top: 1px solid var(--surface-border);
+  gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Animation */
+.admin-materias-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Checkbox styles */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.5rem 0;
+}
+
+.form-checkbox {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: #007ad9;
+  cursor: pointer;
+}
+
+.checkbox-label:hover {
+  color: #007ad9;
+}
+
+.checkbox-label span {
+  user-select: none;
+}

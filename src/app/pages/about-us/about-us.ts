@@ -25,27 +25,8 @@ export class AboutUs implements OnInit {
   loading = true;
   error = '';
 
-  // Datos de ejemplo para la estructura visual
-  equipo: TeamMember[] = [
-    {
-      name: 'Juan Pablo',
-      role: 'Chef Principal',
-      description: 'Con más de 15 años de experiencia en cocina internacional. Misión: llevar el sabor casero a cualquier cocina.',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
-    },
-    {
-      name: 'Carlos Rodríguez',
-      role: 'Editor de Contenido',
-      description: 'Periodista gastronómico con pasión por la escritura y la fotografía culinaria.',
-      image: 'https://randomuser.me/api/portraits/men/44.jpg'
-    },
-    {
-      name: 'Ana Martínez',
-      role: 'Desarrolladora de Recetas',
-      description: 'Especialista en adaptar recetas internacionales a ingredientes locales y distintos niveles de habilidad.',
-      image: 'https://randomuser.me/api/portraits/women/65.jpg'
-    }
-  ];
+  
+  
 
   constructor(private companyService: CompanyService) {}
 

@@ -37,33 +37,46 @@ export class SideBar {
         routerLink: '/admin',
         command: () => this.navigateTo('/admin'),
       },
+
       {
-        label: 'Recetas',
-        icon: 'pi pi-book',
+        label: 'Estudiantes',
+        icon: 'pi pi-users',
         items: [
           {
-            label: 'Gestionar Recetas',
-            icon: 'pi pi-list',
-            routerLink: '/admin/recetas',
-            command: () => this.navigateTo('/admin/recetas'),
+            label: 'Gestionar Estudiantes',
+            icon: 'pi pi-user-edit',
+            routerLink: '/admin/estudiantes',
+            command: () => this.navigateTo('/admin/estudiantes'),
           },
         ],
       },
       {
-        label: 'Categorías',
-        icon: 'pi pi-tags',
+        label: 'Académico',
+        icon: 'pi pi-book',
         items: [
           {
-            label: 'Gestionar Categorías',
-            icon: 'pi pi-cog',
-            routerLink: '/admin/categorias',
-            command: () => this.navigateTo('/admin/categorias'),
+            label: 'Materias',
+            icon: 'pi pi-list',
+            routerLink: '/admin/materias',
+            command: () => this.navigateTo('/admin/materias'),
+          },
+        ],
+      },
+      {
+        label: 'Financiero',
+        icon: 'pi pi-credit-card',
+        items: [
+          {
+            label: 'Gestión Financiera',
+            icon: 'pi pi-money-bill',
+            routerLink: '/admin/financiero',
+            command: () => this.navigateTo('/admin/financiero'),
           },
         ],
       },
       {
         label: 'Usuarios',
-        icon: 'pi pi-users',
+        icon: 'pi pi-shield',
         items: [
           {
             label: 'Gestionar Usuarios',

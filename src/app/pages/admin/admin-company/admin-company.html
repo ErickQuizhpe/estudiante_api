@@ -1,51 +1,410 @@
-<div class="p-card p-4 p-fluid" style="max-width: 600px; margin: 2rem auto;">
-  <h2 class="mb-4">Administrar Empresa</h2>
-  <form [formGroup]="companyForm" (ngSubmit)="saveCompany()">
-    <div class="form-vertical">
-      <div class="w-full mb-3">
-        <label for="name" class="block mb-1 font-semibold">Nombre</label>
-        <input id="name" type="text" class="p-inputtext w-full" formControlName="name" [readonly]="!editMode" />
-      </div>
-      <div class="w-full mb-3">
-        <label for="description" class="block mb-1 font-semibold">Descripción</label>
-        <textarea id="description" class="p-inputtext w-full" formControlName="description" [readonly]="!editMode" rows="2"></textarea>
-      </div>
-      <div class="w-full mb-3">
-        <label for="logoUrl" class="block mb-1 font-semibold">Logo (URL)</label>
-        <input id="logoUrl" type="text" class="p-inputtext w-full" formControlName="logoUrl" [readonly]="!editMode" />
-        <div *ngIf="companyForm.get('logoUrl')?.value" class="mt-2 flex justify-content-center">
-          <img [src]="companyForm.get('logoUrl')?.value" alt="Logo de la empresa" style="max-width: 180px; max-height: 100px; border-radius: 8px; box-shadow: 0 2px 8px #0001;" />
+<div class="admin-company-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-card>
+      <p>Cargando información de la empresa...</p>
+    </p-card>
+  </div>
+
+  <!-- Company Information -->
+  <div *ngIf="!loading && company" class="company-content">
+    
+    <!-- General Information Section -->
+    <p-card header="Información General de la Empresa" class="info-card">
+      <div class="card-actions">
+        <p-button 
+          *ngIf="!editMode"
+          label="Editar" 
+          icon="pi pi-pencil" 
+          (click)="enableEdit()"
+          severity="info">
+        </p-button>
+        <div *ngIf="editMode" class="edit-buttons">
+          <p-button 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            (click)="cancelEdit()"
+            severity="secondary"
+            [outlined]="true">
+          </p-button>
+          <p-button 
+            label="Guardar" 
+            icon="pi pi-check" 
+            (click)="saveCompany()"
+            severity="success">
+          </p-button>
         </div>
       </div>
-      <div class="w-full mb-3">
-        <label for="phone" class="block mb-1 font-semibold">Teléfono</label>
-        <input id="phone" type="text" class="p-inputtext w-full" formControlName="phone" [readonly]="!editMode" />
+
+      <form [formGroup]="companyForm" class="company-form">
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="name">Nombre de la Empresa *</label>
+              <input 
+                pInputText 
+                id="name" 
+                formControlName="name" 
+                [disabled]="!editMode"
+                placeholder="Nombre de la empresa">
+            </div>
+            <div class="form-field">
+              <label for="logoUrl">URL del Logo</label>
+              <input 
+                pInputText 
+                id="logoUrl" 
+                formControlName="logoUrl" 
+                [disabled]="!editMode"
+                placeholder="https://ejemplo.com/logo.png">
+            </div>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="description">Descripción</label>
+            <textarea 
+              formControlName="description" 
+              [disabled]="!editMode"
+              rows="3" 
+              class="form-textarea"
+              placeholder="Descripción de la empresa">
+            </textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="phone">Teléfono</label>
+              <input 
+                pInputText 
+                id="phone" 
+                formControlName="phone" 
+                [disabled]="!editMode"
+                placeholder="+1 234 567 8900">
+            </div>
+            <div class="form-field">
+              <label for="email">Email *</label>
+              <input 
+                pInputText 
+                id="email" 
+                formControlName="email" 
+                [disabled]="!editMode"
+                placeholder="contacto@empresa.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="address">Dirección</label>
+              <input 
+                pInputText 
+                id="address" 
+                formControlName="address" 
+                [disabled]="!editMode"
+                placeholder="Dirección completa">
+            </div>
+            <div class="form-field">
+              <label for="city">Ciudad</label>
+              <input 
+                pInputText 
+                id="city" 
+                formControlName="city" 
+                [disabled]="!editMode"
+                placeholder="Ciudad">
+            </div>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="footerText">Texto del Footer</label>
+            <textarea 
+              formControlName="footerText" 
+              [disabled]="!editMode"
+              rows="2" 
+              class="form-textarea"
+              placeholder="Texto que aparecerá en el pie de página">
+            </textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="mission">Misión</label>
+              <textarea 
+                formControlName="mission" 
+                [disabled]="!editMode"
+                rows="3" 
+                class="form-textarea"
+                placeholder="Misión de la empresa">
+              </textarea>
+            </div>
+            <div class="form-field">
+              <label for="vision">Visión</label>
+              <textarea 
+                formControlName="vision" 
+                [disabled]="!editMode"
+                rows="3" 
+                class="form-textarea"
+                placeholder="Visión de la empresa">
+              </textarea>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- Social Media Section -->
+    <p-card header="Redes Sociales" class="social-media-card">
+      <div class="section-header">
+        <p>Gestiona las redes sociales de la empresa</p>
+        <p-button 
+          label="Agregar Red Social" 
+          icon="pi pi-plus" 
+          (click)="openSocialMediaDialog()"
+          severity="success">
+        </p-button>
       </div>
-      <div class="w-full mb-3">
-        <label for="email" class="block mb-1 font-semibold">Email</label>
-        <input id="email" type="email" class="p-inputtext w-full" formControlName="email" [readonly]="!editMode" />
+
+      <div *ngIf="company.socialMedia && company.socialMedia.length > 0; else noSocialMedia">
+        <p-table [value]="company.socialMedia" styleClass="p-datatable-gridlines">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Plataforma</th>
+              <th>URL</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-social>
+            <tr>
+              <td>
+                <div class="platform-info">
+                  <img *ngIf="social.iconUrl" [src]="social.iconUrl" alt="{{social.platform}}" class="platform-icon">
+                  <span>{{ social.platform }}</span>
+                </div>
+              </td>
+              <td>
+                <a [href]="social.url" target="_blank" class="social-link">{{ social.url }}</a>
+              </td>
+              <td>
+                <p-tag 
+                  [value]="social.active ? 'Activo' : 'Inactivo'" 
+                  [severity]="social.active ? 'success' : 'danger'">
+                </p-tag>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <p-button 
+                    icon="pi pi-pencil" 
+                    (click)="openSocialMediaDialog(social)"
+                    severity="info"
+                    [text]="true"
+                    pTooltip="Editar">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-trash" 
+                    (click)="deleteSocialMedia(social)"
+                    severity="danger"
+                    [text]="true"
+                    pTooltip="Eliminar">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
-      <div class="w-full mb-3">
-        <label for="address" class="block mb-1 font-semibold">Dirección</label>
-        <input id="address" type="text" class="p-inputtext w-full" formControlName="address" [readonly]="!editMode" />
+
+      <ng-template #noSocialMedia>
+        <div class="empty-state">
+          <i class="pi pi-share-alt empty-icon"></i>
+          <p>No hay redes sociales configuradas</p>
+          <p-button 
+            label="Agregar Primera Red Social" 
+            icon="pi pi-plus" 
+            (click)="openSocialMediaDialog()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-card>
+
+    <!-- Banners Section -->
+    <p-card header="Banners" class="banners-card">
+      <div class="section-header">
+        <p>Gestiona los banners de la empresa</p>
+        <p-button 
+          label="Agregar Banner" 
+          icon="pi pi-plus" 
+          (click)="openBannerDialog()"
+          severity="success">
+        </p-button>
       </div>
-      <div class="w-full mb-3">
-        <label for="city" class="block mb-1 font-semibold">Ciudad</label>
-        <input id="city" type="text" class="p-inputtext w-full" formControlName="city" [readonly]="!editMode" />
+
+      <div *ngIf="company.banners && company.banners.length > 0; else noBanners">
+        <div class="banners-grid">
+          <div *ngFor="let banner of company.banners" class="banner-item">
+            <div class="banner-preview">
+              <img [src]="banner.imageUrl" [alt]="banner.description" class="banner-image">
+              <div class="banner-overlay">
+                <p-button 
+                  icon="pi pi-pencil" 
+                  (click)="openBannerDialog(banner)"
+                  severity="info"
+                  [rounded]="true">
+                </p-button>
+                <p-button 
+                  icon="pi pi-trash" 
+                  (click)="deleteBanner(banner)"
+                  severity="danger"
+                  [rounded]="true">
+                </p-button>
+              </div>
+            </div>
+            <div class="banner-info">
+              <p class="banner-description">{{ banner.description || 'Sin descripción' }}</p>
+              <p-tag 
+                [value]="banner.active ? 'Activo' : 'Inactivo'" 
+                [severity]="banner.active ? 'success' : 'danger'">
+              </p-tag>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="w-full mb-3">
-        <label for="mission" class="block mb-1 font-semibold">Misión</label>
-        <textarea id="mission" class="p-inputtext w-full" formControlName="mission" [readonly]="!editMode" rows="2"></textarea>
+
+      <ng-template #noBanners>
+        <div class="empty-state">
+          <i class="pi pi-image empty-icon"></i>
+          <p>No hay banners configurados</p>
+          <p-button 
+            label="Agregar Primer Banner" 
+            icon="pi pi-plus" 
+            (click)="openBannerDialog()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <!-- Social Media Dialog -->
+  <p-dialog 
+    [(visible)]="socialMediaDialog" 
+    [header]="editingSocialMedia ? 'Editar Red Social' : 'Nueva Red Social'"
+    [modal]="true" 
+    class="p-fluid" 
+    [style]="{width:'40vw'}"
+    [maximizable]="true">
+    
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="platform">Plataforma *</label>
+        <input 
+          pInputText 
+          id="platform" 
+          [(ngModel)]="socialMediaForm.platform" 
+          placeholder="Facebook, Instagram, Twitter, etc.">
       </div>
-      <div class="w-full mb-3">
-        <label for="vision" class="block mb-1 font-semibold">Visión</label>
-        <textarea id="vision" class="p-inputtext w-full" formControlName="vision" [readonly]="!editMode" rows="2"></textarea>
+
+      <div class="form-field">
+        <label for="url">URL *</label>
+        <input 
+          pInputText 
+          id="url" 
+          [(ngModel)]="socialMediaForm.url" 
+          placeholder="https://facebook.com/empresa">
+      </div>
+
+      <div class="form-field">
+        <label for="iconUrl">URL del Icono</label>
+        <input 
+          pInputText 
+          id="iconUrl" 
+          [(ngModel)]="socialMediaForm.iconUrl" 
+          placeholder="https://ejemplo.com/icono.png">
+      </div>
+
+      <div class="form-field">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="socialMediaForm.active"
+            class="form-checkbox">
+          <span>Activo</span>
+        </label>
       </div>
     </div>
-    <div class="flex gap-2 mt-4 justify-content-end">
-      <button type="button" *ngIf="!editMode" (click)="enableEdit()" class="p-button p-button-primary">Editar</button>
-      <button type="submit" *ngIf="editMode" [disabled]="companyForm.invalid" class="p-button p-button-success">Guardar</button>
-      <button type="button" *ngIf="editMode" (click)="cancelEdit()" class="p-button p-button-secondary">Cancelar</button>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        (click)="socialMediaDialog = false"
+        [text]="true">
+      </p-button>
+      <p-button 
+        label="Guardar" 
+        icon="pi pi-check" 
+        (click)="saveSocialMedia()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Banner Dialog -->
+  <p-dialog 
+    [(visible)]="bannerDialog" 
+    [header]="editingBanner ? 'Editar Banner' : 'Nuevo Banner'"
+    [modal]="true" 
+    class="p-fluid" 
+    [style]="{width:'50vw'}"
+    [maximizable]="true">
+    
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="imageUrl">URL de la Imagen *</label>
+        <input 
+          pInputText 
+          id="imageUrl" 
+          [(ngModel)]="bannerForm.imageUrl" 
+          placeholder="https://ejemplo.com/banner.jpg">
+      </div>
+
+      <div class="form-field">
+        <label for="description">Descripción</label>
+        <textarea 
+          [(ngModel)]="bannerForm.description" 
+          rows="3" 
+          class="form-textarea"
+          placeholder="Descripción del banner">
+        </textarea>
+      </div>
+
+      <div class="form-field">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="bannerForm.active"
+            class="form-checkbox">
+          <span>Activo</span>
+        </label>
+      </div>
+
+      <!-- Preview -->
+      <div *ngIf="bannerForm.imageUrl" class="banner-preview-container">
+        <label>Vista Previa:</label>
+        <img [src]="bannerForm.imageUrl" alt="Preview" class="banner-preview-image">
+      </div>
     </div>
-  </form>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        (click)="bannerDialog = false"
+        [text]="true">
+      </p-button>
+      <p-button 
+        label="Guardar" 
+        icon="pi pi-check" 
+        (click)="saveBanner()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
 </div>

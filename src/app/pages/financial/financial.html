@@ -1,0 +1,129 @@
+<div class="financial-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-card>
+      <p>Cargando información financiera...</p>
+    </p-card>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <p-card>
+      <div class="error-message">
+        <i class="pi pi-exclamation-triangle"></i>
+        <p>{{ error }}</p>
+        <p-button 
+          label="Reintentar" 
+          icon="pi pi-refresh" 
+          (click)="loadFinancialInfo()"
+          severity="info">
+        </p-button>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Financial Information -->
+  <div *ngIf="financialInfo && !loading" class="financial-content">
+    <!-- Status Card -->
+    <p-card header="Estado Financiero" class="status-card">
+      <div class="status-content">
+        <div class="status-badge">
+          <p-tag 
+            [value]="getStatusLabel()" 
+            [severity]="getStatusSeverity()" 
+            styleClass="large-tag">
+          </p-tag>
+        </div>
+        <div class="amount-display">
+          <h2>{{ formatCurrency(financialInfo.montoPendiente) }}</h2>
+          <p>Monto Pendiente</p>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Payment Progress -->
+    <p-card header="Progreso de Pagos" class="progress-card">
+      <div class="progress-content">
+        <div class="progress-info">
+          <span>{{ formatCurrency(financialInfo.montoPagado || 0) }} de {{ formatCurrency(financialInfo.montoTotal || financialInfo.pensionMensual) }}</span>
+          <span class="percentage">{{ getPaymentProgress().toFixed(1) }}%</span>
+        </div>
+        <p-progressBar 
+          [value]="getPaymentProgress()"
+          [showValue]="false"
+          styleClass="custom-progress">
+        </p-progressBar>
+      </div>
+    </p-card>
+
+    <!-- Financial Details -->
+    <p-card header="Detalles Financieros" class="details-card">
+      <div class="details-grid">
+        <div class="detail-item">
+          <label>Pensión Mensual:</label>
+          <span class="value">{{ formatCurrency(financialInfo.pensionMensual) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Monto a Pagar:</label>
+          <span class="value">{{ formatCurrency(financialInfo.montoAPagar) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Monto Pendiente:</label>
+          <span class="value" [class.danger]="financialInfo.montoPendiente > 0">{{ formatCurrency(financialInfo.montoPendiente) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Descuento:</label>
+          <span class="value success">{{ formatCurrency(financialInfo.totalDescuento || 0) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Fecha de Vencimiento:</label>
+          <div class="date-with-tag">
+            <span class="value">{{ formatDate(financialInfo.fechaVencimiento) }}</span>
+            <p-tag 
+              *ngIf="getDaysUntilDue() !== 0"
+              [severity]="getDueDateSeverity()"
+              styleClass="small-tag">
+            </p-tag>
+          </div>
+        </div>
+        <div class="detail-item">
+          <label>Último Pago:</label>
+          <span class="value">{{ formatDate(financialInfo.ultimoPago || financialInfo.fechaUltimoPago || '') }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Observaciones:</label>
+          <span class="value">{{ financialInfo.observaciones || 'Sin observaciones' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Estado:</label>
+          <p-tag 
+            [value]="getStatusLabel()"
+            [severity]="getStatusSeverity()">
+          </p-tag>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <p-button 
+        label="Realizar Pago" 
+        icon="pi pi-credit-card" 
+        severity="success"
+        [disabled]="financialInfo.montoPendiente === 0">
+      </p-button>
+      <p-button 
+        label="Ver Historial" 
+        icon="pi pi-history" 
+        severity="info"
+        styleClass="p-button-outlined">
+      </p-button>
+      <p-button 
+        label="Descargar Estado" 
+        icon="pi pi-download" 
+        severity="secondary"
+        styleClass="p-button-outlined">
+      </p-button>
+    </div>
+  </div>
+</div>

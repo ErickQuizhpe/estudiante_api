@@ -1,0 +1,147 @@
+<div class="admin-students-container">
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h1 class="text-3xl font-bold">Administración de Estudiantes</h1>
+    <button pButton label="Nuevo Estudiante" icon="pi pi-plus" (click)="openModal()" class="p-button-success"></button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div>
+      <label class="block mb-1">Estado</label>
+      <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="p-inputtext p-component">
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">Resultados por página</label>
+      <select [(ngModel)]="resultsPerPage" (change)="applyFilters()" class="p-inputtext p-component">
+        <option *ngFor="let n of [5,10,15,20]" [value]="n">{{ n }}</option>
+      </select>
+    </div>
+    <div class="flex-1 flex items-end justify-end">
+      <input [(ngModel)]="search" (input)="applyFilters()" type="text" placeholder="Buscar estudiantes..." class="p-inputtext p-component w-full" style="max-width: 400px;" />
+      <button class="p-button p-button-success ml-2" (click)="applyFilters()"><i class="pi pi-search"></i></button>
+    </div>
+  </div>
+
+  <!-- Tabla de estudiantes -->
+  <div class="p-card">
+    <div class="p-card-body">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-bottom-1 border-gray-200">
+              <th class="text-left p-3">Nombre</th>
+              <th class="text-left p-3">Matrícula</th>
+              <th class="text-left p-3">Email</th>
+              <th class="text-left p-3">Carrera</th>
+              <th class="text-left p-3">Semestre</th>
+              <th class="text-left p-3">Estado</th>
+              <th class="text-left p-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of paginatedStudents" class="border-bottom-1 border-gray-100 hover:bg-gray-50">
+              <td class="p-3">{{ student.nombreCompleto }}</td>
+              <td class="p-3">{{ student.matricula }}</td>
+              <td class="p-3">{{ student.email }}</td>
+              <td class="p-3">{{ student.carrera }}</td>
+              <td class="p-3">{{ student.semestre }}°</td>
+              <td class="p-3">
+                <p-tag [severity]="getStatusSeverity(student.activo)" [value]="getStatusLabel(student.activo)"></p-tag>
+              </td>
+              <td class="p-3">
+                <div class="flex gap-2">
+                  <button pButton icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="openModal(student)" pTooltip="Editar"></button>
+                  <button pButton [icon]="student.activo ? 'pi pi-ban' : 'pi pi-check'" 
+                          [class]="student.activo ? 'p-button-sm p-button-warning' : 'p-button-sm p-button-success'" 
+                          (click)="toggleStudentStatus(student)" 
+                          [pTooltip]="student.activo ? 'Desactivar' : 'Activar'"></button>
+                  <button pButton icon="pi pi-trash" class="p-button-sm p-button-danger p-button-outlined" (click)="deleteStudent(student)" pTooltip="Eliminar"></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex justify-content-center items-center mt-6" *ngIf="totalPages > 1">
+    <button class="p-button p-button-rounded p-button-secondary mr-2" [disabled]="currentPage === 1" (click)="goToPage(currentPage-1)">
+      <i class="pi pi-angle-left"></i>
+    </button>
+    <span class="font-bold">Página {{ currentPage }} de {{ totalPages }}</span>
+    <button class="p-button p-button-rounded p-button-success ml-2" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage+1)">
+      <i class="pi pi-angle-right"></i>
+    </button>
+  </div>
+
+  <!-- Modal para crear/editar estudiante -->
+  <p-dialog 
+    [(visible)]="showModal" 
+    [header]="isEditing ? 'Editar Estudiante' : 'Nuevo Estudiante'"
+    [modal]="true"
+    [style]="{width: '50vw'}"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block mb-2">Nombre</label>
+        <input pInputText [(ngModel)]="formData.firstName" class="w-full" placeholder="Nombre" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Apellido</label>
+        <input pInputText [(ngModel)]="formData.lastName" class="w-full" placeholder="Apellido" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Matrícula</label>
+        <input pInputText [(ngModel)]="formData.matricula" class="w-full" placeholder="Número de matrícula" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Email</label>
+        <input type="email" [(ngModel)]="formData.email" class="p-inputtext p-component w-full" placeholder="correo@ejemplo.com" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Teléfono</label>
+        <input pInputText [(ngModel)]="formData.telefono" class="w-full" placeholder="Número de teléfono" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Usuario</label>
+        <input pInputText [(ngModel)]="formData.username" class="w-full" placeholder="Nombre de usuario" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Fecha de Nacimiento</label>
+        <input type="date" [(ngModel)]="formData.fechaNacimiento" class="p-inputtext p-component w-full" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Fecha de Ingreso</label>
+        <input type="date" [(ngModel)]="formData.fechaIngreso" class="p-inputtext p-component w-full" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Carrera</label>
+        <input pInputText [(ngModel)]="formData.carrera" class="w-full" placeholder="Carrera que estudia" />
+      </div>
+      
+      <div>
+        <label class="block mb-2">Semestre</label>
+        <input type="number" [(ngModel)]="formData.semestre" min="1" max="12" class="p-inputtext p-component w-full" />
+      </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+      <button pButton label="Cancelar" icon="pi pi-times" (click)="closeModal()" class="p-button-text"></button>
+      <button pButton [label]="isEditing ? 'Actualizar' : 'Crear'" icon="pi pi-check" (click)="saveStudent()" class="p-button-success"></button>
+    </ng-template>
+  </p-dialog>
+</div> 
