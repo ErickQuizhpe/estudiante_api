@@ -243,6 +243,17 @@
           required>
       </div>
 
+      <!-- Estado Activo -->
+      <div class="form-field checkbox-field">
+        <p-checkbox 
+          [(ngModel)]="selectedNota.activo"
+          name="activo"
+          label="Activa"
+          [binary]="true">
+        </p-checkbox>
+      </div>
+    </div>
+
     <!-- Observaciones -->
     <div class="form-field full-width">
       <label>Observaciones</label>
@@ -280,6 +291,7 @@
       [disabled]="!selectedNota.estudianteId || !selectedNota.materiaId || !selectedNota.tipoEvaluacion">
     </p-button>
   </ng-template>
+</p-dialog>
 
 <!-- Dialog de Confirmación de Eliminación -->
 <p-dialog 
