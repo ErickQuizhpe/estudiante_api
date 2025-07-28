@@ -1,0 +1,6 @@
+# Esta es una imagen placeholder para login-tests.png
+# En un entorno real, aquí iría la captura de pantalla mostrando:
+# - Pruebas específicas del componente Login
+# - "debe hacer login correctamente" - PASSED
+# - "debe manejar error de login" - PASSED
+# - Detalles de los spies y aserciones

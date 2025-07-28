@@ -36,6 +36,9 @@ import { LoginRequest, AuthResponse } from '../../models/User';
   styleUrls: ['./login.css'],
 })
 export class Login implements OnInit {
+  getFieldError(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
