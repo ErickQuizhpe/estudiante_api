@@ -2,6 +2,12 @@
 
 Un sistema completo de gestión académica desarrollado con Angular 18 que permite administrar estudiantes, materias, información financiera y empresas educativas.
 
+## 🎥 Demo en Video
+
+**[🎬 Ver Demo Completa del Sistema](https://www.awesomescreenshot.com/video/42526079?key=475404e145a5cfb78eb73f28bd18b6b8)**
+
+*Video demostrativo que muestra todas las funcionalidades del sistema, navegación entre módulos, gestión de datos y flujo completo de la aplicación.*
+
 ## 🚀 Características
 
 - **Gestión de Estudiantes**: CRUD completo con información académica y personal
@@ -57,22 +63,51 @@ npm start
 
 La aplicación estará disponible en `http://localhost:4200`
 
-## 🌐 Enlaces de Despliegue
+## 📱 Funcionalidades Principales
 
-### Frontend
-- **Producción**: [https://estudiantes-app.vercel.app](https://estudiantes-app.vercel.app)
-- **Desarrollo**: [https://dev-estudiantes.vercel.app](https://dev-estudiantes.vercel.app)
+### 👨‍🎓 Gestión de Estudiantes
+- Registro y edición de información personal y académica
+- Visualización de notas y calificaciones
+- Seguimiento del progreso académico
+- Gestión de estado de matrícula
 
-### Backend API
-- **Producción**: [https://api-estudiantes.herokuapp.com](https://api-estudiantes.herokuapp.com)
-- **Documentación API**: [https://api-estudiantes.herokuapp.com/swagger-ui](https://api-estudiantes.herokuapp.com/swagger-ui)
+### 📚 Administración de Materias
+- CRUD completo de materias y asignaturas
+- Asignación de docentes y horarios
+- Control de prerrequisitos
+- Gestión de períodos académicos
 
-### Monitoreo y Analytics
-- **Dashboard de Monitoreo**: [https://dashboard.vercel.app/estudiantes](https://dashboard.vercel.app/estudiantes)
-- **Analytics**: [https://analytics.google.com/web/#/realtime](https://analytics.google.com/web/#/realtime)
-- **Logs de Sistema**: [https://logs.heroku.com/apps/api-estudiantes](https://logs.heroku.com/apps/api-estudiantes)
+### 💰 Sistema Financiero
+- Control de pensiones y pagos
+- Gestión de becas y descuentos
+- Reportes financieros detallados
+- Estados de cuenta estudiantiles
 
-## 📸 Capturas de Pantalla
+### 🏢 Gestión Empresarial
+- Configuración institucional
+- Información de contacto y ubicación
+- Gestión de redes sociales
+- Personalización de marca
+
+### 🔐 Sistema de Autenticación
+- Login seguro con JWT
+- Roles diferenciados (Admin, Profesor, Estudiante)
+- Protección de rutas sensibles
+- Sesiones persistentes
+
+## 📸 Capturas de Pantalla y Demo
+
+### 🎥 Video Demostración Completa
+**[Ver Demo en Video](https://www.awesomescreenshot.com/video/42526079?key=475404e145a5cfb78eb73f28bd18b6b8)**
+
+El video muestra:
+- ✅ Navegación completa por todas las secciones
+- ✅ Gestión de estudiantes (crear, editar, eliminar)
+- ✅ Administración de materias y notas
+- ✅ Sistema financiero y pagos
+- ✅ Panel de administración
+- ✅ Autenticación y roles de usuario
+- ✅ Diseño responsivo y tema oscuro
 
 ### Dashboard Principal
 ![Dashboard](./docs/screenshots/dashboard.png)
@@ -96,9 +131,8 @@ npm run test             # Ejecutar pruebas unitarias
 npm run e2e              # Ejecutar pruebas end-to-end
 npm run lint             # Verificar código con ESLint
 
-# Despliegue
+# Producción
 npm run build:prod       # Construir optimizado para producción
-npm run deploy           # Desplegar a Vercel
 ```
 
 ## 📁 Estructura del Proyecto
@@ -152,24 +186,31 @@ export const environment = {
 };
 ```
 
-## 🚀 Despliegue
+## 🎯 Cómo Usar la Aplicación
 
-### Vercel (Recomendado)
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
+### Para Desarrolladores
 
-# Desplegar
-vercel --prod
-```
+1. **Clonar y Configurar**
+   ```bash
+   git clone https://github.com/ErickQuizhpe/estudiante_api.git
+   cd estudiante_api/front/estidiantes_front
+   npm install
+   npm start
+   ```
 
-### Netlify
-```bash
-# Construir
-npm run build
+2. **Ver Demo Completa**
+   - [🎬 **Video Tutorial Completo**](https://www.awesomescreenshot.com/video/42526079?key=475404e145a5cfb78eb73f28bd18b6b8)
+   - El video muestra paso a paso cómo usar todas las funcionalidades
 
-# Desplegar carpeta dist/
-```
+### Para Usuarios Finales
+
+1. **Estudiantes**: Consultar notas, información personal y estado financiero
+2. **Profesores**: Gestionar materias, asignar calificaciones
+3. **Administradores**: Control total del sistema, reportes y configuración
+
+## 🚀 Tecnologías y Arquitectura
+
+### Stack Tecnológico
 
 ## 🧪 Testing
 
@@ -366,15 +407,31 @@ jobs:
 
 ## 📊 Monitoreo y Performance
 
+### Stack Tecnológico
+
+- **Frontend**: Angular 18 + TypeScript
+- **UI Framework**: PrimeNG 18 + Tailwind CSS  
+- **Estado**: RxJS + Angular Signals
+- **Autenticación**: JWT + Guards
+- **Testing**: Jasmine + Karma
+- **Build**: Angular CLI + Webpack
+
+### Arquitectura del Sistema
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Frontend      │    │     Backend      │    │    Database     │
+│   Angular 18    │◄──►│   Spring Boot    │◄──►│   PostgreSQL    │
+│   PrimeNG UI    │    │   Java + Maven   │    │   JWT Auth      │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+## 📊 Monitoreo y Performance
+
 ### Métricas Clave
 - **Tiempo de Carga**: < 3 segundos
 - **Performance Score**: > 90
 - **Accesibilidad**: > 95
 - **SEO**: > 90
-
-### Herramientas de Monitoreo
-
-- Lighthouse CI
 
 
 ## 🤝 Contribución
@@ -410,24 +467,49 @@ jobs:
 
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
-## 🆘 Soporte
+## 🆘 Soporte y Documentación
 
-¿Necesitas ayuda? Contacta a través de:
+### 📹 Video Tutorial
+**[Ver Tutorial Completo](https://www.awesomescreenshot.com/video/42526079?key=475404e145a5cfb78eb73f28bd18b6b8)**
+- Guía paso a paso de todas las funcionalidades
+- Casos de uso reales
+- Mejores prácticas de navegación
+
+### ¿Necesitas ayuda?
 
 - **Issues**: [GitHub Issues](https://github.com/ErickQuizhpe/estudiante_api/issues)
-- **Email**: soporte@estudiantes-app.com
-- **Discord**: [Servidor de Soporte](https://discord.gg/estudiantes)
+- **Email**: erick.quizhpe@email.com
+- **Documentación**: Ver README.md del proyecto
 
-## ⭐ Roadmap
+### 📖 Recursos Adicionales
+- [Documentación de Angular](https://angular.dev)
+- [Guía de PrimeNG](https://primeng.org)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs)
 
-### v1.1.0 (Próximamente)
+## ⭐ Roadmap y Futuras Funcionalidades
+
+### 🎯 Funcionalidades Actuales (v1.0.0)
+- ✅ Sistema completo de gestión de estudiantes
+- ✅ Módulo financiero con gestión de pagos  
+- ✅ Panel de administración completo
+- ✅ Autenticación JWT con roles
+- ✅ Diseño responsivo y tema oscuro
+- ✅ Testing completo (19 pruebas exitosas)
+
+### 🚀 Próximas Mejoras (v1.1.0)
 - [ ] Sistema de notificaciones en tiempo real
 - [ ] Exportación de reportes PDF
 - [ ] Integración con sistemas de pago
-- [ ] API GraphQL
+- [ ] Dashboard con gráficos avanzados
 
-### v1.2.0 (Futuro)
+### 🔮 Visión Futura (v1.2.0+)
 - [ ] Aplicación móvil React Native
-- [ ] Dashboard avanzado con gráficos
+- [ ] API GraphQL optimizada
 - [ ] Sistema de backup automático
 - [ ] Integración con Google Classroom
+
+---
+
+## 🎬 **¡No olvides ver el [Video Demo Completo](https://www.awesomescreenshot.com/video/42526079?key=475404e145a5cfb78eb73f28bd18b6b8) para entender todas las funcionalidades!**
+
+*Desarrollado con ❤️ por **Erick Quizhpe** usando Angular 18 y las mejores prácticas de desarrollo.*
