@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth-service';
 import { UserService } from '../../services/user-service';
 import { User } from '../../models/User';
+import { Divider } from "primeng/divider";
 
 @Component({
   selector: 'app-profile',
@@ -25,8 +26,9 @@ import { User } from '../../models/User';
     PasswordModule,
     DialogModule,
     FileUploadModule,
-    ToastModule
-  ],
+    ToastModule,
+    Divider
+],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
   providers: [MessageService]

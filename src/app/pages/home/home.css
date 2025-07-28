@@ -1,27 +1,154 @@
-/* Fuerza a que las columnas de PrimeFlex sean flex-basis automáticas */
-.p-grid {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -1rem;
-    margin-right: -1rem;
+/* Estilos del carrusel de banners */
+.banner-carousel {
+  margin-bottom: 2rem;
+}
+
+.custom-carousel {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.banner-item {
+  padding: 0;
+}
+
+.banner-content {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.banner-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.banner-image:hover {
+  transform: scale(1.02);
+}
+
+.banner-overlay {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.banner-overlay h2 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem;
+}
+
+.banner-overlay p {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+/* Indicadores del carrusel */
+::ng-deep .p-carousel-indicators .p-carousel-indicator {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 2px solid white;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-carousel-indicators .p-carousel-indicator.p-highlight {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+/* Botones de navegación */
+::ng-deep .p-carousel .p-carousel-prev,
+::ng-deep .p-carousel .p-carousel-next {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-carousel .p-carousel-prev:hover,
+::ng-deep .p-carousel .p-carousel-next:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+/* Información de la empresa */
+.company-logo {
+  max-height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+
+.mission-vision-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mission-vision-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .banner-image {
+    height: 300px;
   }
   
-  .p-col-12, .p-md-6, .p-lg-4 {
-    padding: 1rem;
-    box-sizing: border-box;
+  .banner-overlay h2 {
+    font-size: 2rem;
   }
   
-  .p-col-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
+  .banner-overlay p {
+    font-size: 1rem;
   }
-  .p-md-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
+  
+  .flex {
+    flex-direction: column;
+    align-items: center;
   }
-  .p-lg-4 {
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
+  
+  .gap-4 > * {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-image {
+    height: 250px;
+  }
+  
+  .banner-overlay h2 {
+    font-size: 1.5rem;
+  }
+  
+  .banner-overlay p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Resto del CSS original */
+.p-lg-4 {
+  flex: 0 0 33.3333%;
+  max-width: 33.3333%;
   }
 
 .p-card {

@@ -4,10 +4,10 @@
   <div class="p-d-flex p-flex-column p-ai-center p-jc-center">
 
     <div class="p-text-center p-pt-3">
-      <p class="p-text-primary-200 p-text-sm p-m-0">
-        <i class="pi pi-copyright p-mr-1"></i>
-        © 2025 {{ company.name }}. Todos los derechos reservados.
+      <p *ngIf="company.footerText" class="p-text-primary-100 p-text-base p-mb-2">
+        {{ company.footerText }}
       </p>
+
     </div>
 
     <div class="p-mb-3" *ngIf="company.socialMedia && company.socialMedia.length > 0">

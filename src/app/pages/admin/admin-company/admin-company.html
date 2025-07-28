@@ -48,7 +48,6 @@
                 pInputText 
                 id="name" 
                 formControlName="name" 
-                [disabled]="!editMode"
                 placeholder="Nombre de la empresa">
             </div>
             <div class="form-field">
@@ -57,7 +56,6 @@
                 pInputText 
                 id="logoUrl" 
                 formControlName="logoUrl" 
-                [disabled]="!editMode"
                 placeholder="https://ejemplo.com/logo.png">
             </div>
           </div>
@@ -65,8 +63,9 @@
           <div class="form-field full-width">
             <label for="description">Descripción</label>
             <textarea 
+              pInputTextarea
+              id="description"
               formControlName="description" 
-              [disabled]="!editMode"
               rows="3" 
               class="form-textarea"
               placeholder="Descripción de la empresa">
@@ -80,7 +79,6 @@
                 pInputText 
                 id="phone" 
                 formControlName="phone" 
-                [disabled]="!editMode"
                 placeholder="+1 234 567 8900">
             </div>
             <div class="form-field">
@@ -89,7 +87,6 @@
                 pInputText 
                 id="email" 
                 formControlName="email" 
-                [disabled]="!editMode"
                 placeholder="contacto@empresa.com">
             </div>
           </div>
@@ -101,7 +98,6 @@
                 pInputText 
                 id="address" 
                 formControlName="address" 
-                [disabled]="!editMode"
                 placeholder="Dirección completa">
             </div>
             <div class="form-field">
@@ -110,7 +106,6 @@
                 pInputText 
                 id="city" 
                 formControlName="city" 
-                [disabled]="!editMode"
                 placeholder="Ciudad">
             </div>
           </div>
@@ -118,8 +113,9 @@
           <div class="form-field full-width">
             <label for="footerText">Texto del Footer</label>
             <textarea 
+              pInputTextarea
+              id="footerText"
               formControlName="footerText" 
-              [disabled]="!editMode"
               rows="2" 
               class="form-textarea"
               placeholder="Texto que aparecerá en el pie de página">
@@ -130,8 +126,9 @@
             <div class="form-field">
               <label for="mission">Misión</label>
               <textarea 
+                pInputTextarea
+                id="mission"
                 formControlName="mission" 
-                [disabled]="!editMode"
                 rows="3" 
                 class="form-textarea"
                 placeholder="Misión de la empresa">
@@ -140,8 +137,9 @@
             <div class="form-field">
               <label for="vision">Visión</label>
               <textarea 
+                pInputTextarea
+                id="vision"
                 formControlName="vision" 
-                [disabled]="!editMode"
                 rows="3" 
                 class="form-textarea"
                 placeholder="Visión de la empresa">

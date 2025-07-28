@@ -70,45 +70,74 @@ export class AdminCompany implements OnInit {
       mission: [''],
       vision: ['']
     });
+    
+    // Inicialmente deshabilitar el formulario
+    this.companyForm.disable();
+    
     this.loadCompany();
   }
 
   loadCompany() {
+    console.log('loadCompany() called');
     this.loading = true;
     this.companyService.getCompany().subscribe({
       next: (data) => {
+        console.log('Company data loaded:', data);
         this.company = data;
         this.companyForm.patchValue(data);
+        console.log('Form patched with data:', this.companyForm.value);
         this.loading = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error loading company:', error);
         this.loading = false;
       }
     });
   }
 
   enableEdit() {
+    console.log('enableEdit() called');
+    console.log('Current editMode:', this.editMode);
+    console.log('Form disabled status before:', this.companyForm.disabled);
+    
     this.editMode = true;
     this.companyForm.enable();
+    
+    console.log('New editMode:', this.editMode);
+    console.log('Form disabled status after:', this.companyForm.disabled);
+    console.log('Form value:', this.companyForm.value);
   }
 
   cancelEdit() {
+    console.log('cancelEdit() called');
+    console.log('Current editMode:', this.editMode);
+    
     this.editMode = false;
     if (this.company) {
       this.companyForm.patchValue(this.company);
+      console.log('Form patched with company data:', this.company);
     }
     this.companyForm.disable();
+    
+    console.log('New editMode:', this.editMode);
+    console.log('Form disabled status:', this.companyForm.disabled);
   }
 
   saveCompany() {
     if (this.company && this.company.id && this.companyForm.valid) {
+      console.log('Saving company with data:', this.companyForm.value);
+      console.log('Original company:', this.company);
+      
       const updatedCompany: Company = {
         ...this.company,
         ...this.companyForm.value
       };
       
+      console.log('Updated company to save:', updatedCompany);
+      
       this.companyService.saveCompleteCompany(updatedCompany).subscribe({
         next: (response) => {
+          console.log('Company saved successfully:', response);
           this.company = response;
           this.editMode = false;
           this.companyForm.disable();
@@ -118,13 +147,28 @@ export class AdminCompany implements OnInit {
             detail: 'Información de la empresa actualizada correctamente'
           });
         },
-        error: () => {
+        error: (error) => {
+          console.error('Error saving company:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'No se pudo actualizar la información de la empresa'
           });
         }
+      });
+    } else {
+      console.log('Form validation failed:', {
+        hasCompany: !!this.company,
+        hasId: !!this.company?.id,
+        isValid: this.companyForm.valid,
+        formErrors: this.companyForm.errors,
+        formValue: this.companyForm.value
+      });
+      
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'Por favor, complete todos los campos requeridos'
       });
     }
   }

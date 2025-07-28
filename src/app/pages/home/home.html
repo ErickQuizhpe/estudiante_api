@@ -1,88 +1,64 @@
 <div>
-  <!-- Banner principal -->
-  <div class="p-card mb-6">
-    <div class="p-card-body text-center">
-      <h1 class="text-4xl font-bold mb-4">Sistema Académico Estudiantil</h1>
-      <p class="text-xl text-gray-600 mb-6">
-        Plataforma integral para la gestión de estudiantes, materias y calificaciones
-      </p>
-      <div class="flex justify-content-center gap-4">
-        <button
-          pButton
-          label="Ver Estudiantes"
-          icon="pi pi-users"
-          routerLink="/students"
-          class="p-button-primary p-button-lg"
-        ></button>
-        <button
-          pButton
-          label="Ver Materias"
-          icon="pi pi-book"
-          routerLink="/materias"
-          class="p-button-secondary p-button-lg"
-        ></button>
-        <button
-          pButton
-          label="Gestión de Notas"
-          icon="pi pi-chart-line"
-          routerLink="/notas"
-          class="p-button-success p-button-lg"
-        ></button>
-        <button
-          pButton
-          label="Administración"
-          icon="pi pi-cog"
-          routerLink="/admin"
-          class="p-button-outlined p-button-lg"
-        ></button>
+  <!-- Carrusel de Banners -->
+  <div class="banner-carousel mb-6">
+    @if (banners().length > 0) {
+      <p-carousel 
+        [value]="banners()" 
+        [numVisible]="1" 
+        [numScroll]="1" 
+        [circular]="true"
+        [autoplayInterval]="5000"
+        [responsiveOptions]="responsiveOptions"
+        styleClass="custom-carousel">
+        
+        <ng-template pTemplate="item" let-banner>
+          <div class="banner-item">
+            <div class="banner-content relative">
+              <img 
+                [src]="banner.imageUrl" 
+                [alt]="banner.description"
+                class="banner-image w-full h-96 object-cover rounded-lg shadow-lg">
+              
+              <div class="banner-overlay absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center">
+                <div class="text-center text-white px-6">
+                  <h2 class="text-4xl font-bold mb-4">{{ company()?.name || 'Sistema Académico Estudiantil' }}</h2>
+                  <p class="text-xl mb-6">{{ banner.description }}</p>
+                  <div class="flex justify-center gap-4">
+                    <button
+                      pButton
+                      label="Conocer Más"
+                      icon="pi pi-arrow-right"
+                      class="p-button-primary p-button-lg">
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-carousel>
+    } @else {
+      <!-- Banner estático como fallback -->
+      <div class="p-card mb-6">
+        <div class="p-card-body text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">
+          <h1 class="text-4xl font-bold mb-4">{{ company()?.name || 'Sistema Académico Estudiantil' }}</h1>
+          <p class="text-xl mb-6">
+            Plataforma integral para la gestión de estudiantes, materias y calificaciones
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              pButton
+              label="Comenzar"
+              icon="pi pi-play"
+              class="p-button-lg bg-white text-blue-600">
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <p-divider></p-divider>
-
-  <!-- Características principales -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-    <div class="p-card">
-      <div class="p-card-body text-center">
-        <i class="pi pi-users text-4xl text-blue-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Gestión de Estudiantes</h3>
-        <p class="text-gray-600">
-          Administra información académica completa de estudiantes y sus datos personales
-        </p>
-      </div>
-    </div>
-    
-    <div class="p-card">
-      <div class="p-card-body text-center">
-        <i class="pi pi-book text-4xl text-green-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Catálogo de Materias</h3>
-        <p class="text-gray-600">
-          Gestiona materias por carrera, semestre y modalidad de estudio
-        </p>
-      </div>
-    </div>
-    
-    <div class="p-card">
-      <div class="p-card-body text-center">
-        <i class="pi pi-chart-line text-4xl text-orange-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Sistema de Notas</h3>
-        <p class="text-gray-600">
-          Registra calificaciones, evalúa por tipo y consulta promedios académicos
-        </p>
-      </div>
-    </div>
-    
-    <div class="p-card">
-      <div class="p-card-body text-center">
-        <i class="pi pi-building text-4xl text-purple-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Información Financiera</h3>
-        <p class="text-gray-600">
-          Gestiona información financiera y datos institucionales
-        </p>
-      </div>
-    </div>
-  </div>
 
   <!-- Estadísticas -->
   <div class="p-card">
@@ -123,27 +99,4 @@
     </div>
   </div>
 
-  <!-- Información adicional -->
-  <div class="p-card mt-6">
-    <div class="p-card-body">
-      <h2 class="text-2xl font-bold mb-4 text-center">Acceso Rápido</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <h4 class="font-bold mb-2 text-blue-600">Para Estudiantes</h4>
-          <p class="text-gray-600 mb-3">Consulta tu información académica, materias inscritas y calificaciones.</p>
-          <button pButton label="Ir a Estudiantes" icon="pi pi-users" routerLink="/students" class="w-full"></button>
-        </div>
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <h4 class="font-bold mb-2 text-green-600">Catálogo Académico</h4>
-          <p class="text-gray-600 mb-3">Explora el catálogo completo de materias disponibles por carrera.</p>
-          <button pButton label="Ver Materias" icon="pi pi-book" routerLink="/materias" class="w-full" severity="secondary"></button>
-        </div>
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <h4 class="font-bold mb-2 text-orange-600">Sistema de Calificaciones</h4>
-          <p class="text-gray-600 mb-3">Gestiona y consulta notas por estudiante, materia y tipo de evaluación.</p>
-          <button pButton label="Gestionar Notas" icon="pi pi-chart-line" routerLink="/notas" class="w-full" severity="success"></button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
