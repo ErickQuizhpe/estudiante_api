@@ -1,1 +1,225 @@
-<p>admin-home works!</p>
+<div class="admin-dashboard">
+  <!-- Header con bienvenida -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1>Bienvenido al Panel de Administración</h1>
+      <p>Gestiona el sistema educativo desde este panel central</p>
+    </div>
+    <div class="header-actions">
+      <p-button 
+        label="Nuevo Estudiante" 
+        icon="pi pi-user-plus" 
+        routerLink="/admin/estudiantes"
+        severity="success">
+      </p-button>
+      <p-button 
+        label="Nueva Materia" 
+        icon="pi pi-book" 
+        routerLink="/admin/materias"
+        severity="info">
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-content">
+      <i class="pi pi-spin pi-spinner" style="font-size: 3rem;"></i>
+      <p>Cargando datos del dashboard...</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="dashboard-content">
+    
+    <!-- Estadísticas principales -->
+    <div class="stats-section">
+      <h2>Resumen General</h2>
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalEstudiantes }}</div>
+            <div class="stat-label">Estudiantes</div>
+            <div class="stat-change positive" *ngIf="stats.nuevosEstudiantes > 0">
+              +{{ stats.nuevosEstudiantes }} este mes
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <i class="pi pi-book"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalMaterias }}</div>
+            <div class="stat-label">Materias</div>
+            <div class="stat-change">{{ stats.materiasActivas }} activas</div>
+          </div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <i class="pi pi-list"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalNotas }}</div>
+            <div class="stat-label">Notas Registradas</div>
+            <div class="stat-change">{{ stats.notasHoy }} hoy</div>
+          </div>
+        </div>
+
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <i class="pi pi-star"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.promedioGeneral | number:'1.1-1' }}</div>
+            <div class="stat-label">Promedio General</div>
+            <div class="stat-change" [class.positive]="stats.tendenciaPromedio > 0" [class.negative]="stats.tendenciaPromedio < 0">
+              {{ stats.tendenciaPromedio > 0 ? '+' : '' }}{{ stats.tendenciaPromedio | number:'1.1-1' }}%
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card danger">
+          <div class="stat-icon">
+            <i class="pi pi-exclamation-triangle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.estudiantesEnRiesgo }}</div>
+            <div class="stat-label">En Riesgo Académico</div>
+            <div class="stat-change">Promedio < 7.0</div>
+          </div>
+        </div>
+
+        <div class="stat-card secondary">
+          <div class="stat-icon">
+            <i class="pi pi-shield"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalUsuarios }}</div>
+            <div class="stat-label">Usuarios del Sistema</div>
+            <div class="stat-change">{{ stats.usuariosActivos }} activos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actividad reciente y alertas -->
+    <div class="activity-section">
+      <div class="activity-row">
+        <!-- Actividad reciente -->
+        <div class="activity-card">
+          <p-card header="Actividad Reciente">
+            <div class="activity-list">
+              <div class="activity-item" *ngFor="let activity of recentActivities">
+                <div class="activity-icon" [ngClass]="activity.type">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-text">{{ activity.message }}</div>
+                  <div class="activity-time">{{ activity.timestamp | date:'short' }}</div>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Alertas y notificaciones -->
+        <div class="alerts-card">
+          <p-card header="Alertas del Sistema">
+            <div class="alerts-list">
+              <div class="alert-item" *ngFor="let alert of systemAlerts" [ngClass]="alert.severity">
+                <div class="alert-icon">
+                  <i [class]="alert.icon"></i>
+                </div>
+                <div class="alert-content">
+                  <div class="alert-title">{{ alert.title }}</div>
+                  <div class="alert-message">{{ alert.message }}</div>
+                </div>
+                <div class="alert-actions">
+                  <p-button 
+                    icon="pi pi-times" 
+                    size="small"
+                    [text]="true"
+                    (click)="dismissAlert(alert)">
+                  </p-button>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="quick-actions-section">
+      <h3>Accesos Rápidos</h3>
+      <div class="quick-actions-grid">
+        <div class="quick-action-card" routerLink="/admin/estudiantes">
+          <div class="quick-action-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Gestión de Estudiantes</h4>
+            <p>Administrar estudiantes y su información académica</p>
+          </div>
+        </div>
+
+        <div class="quick-action-card" routerLink="/admin/materias">
+          <div class="quick-action-icon">
+            <i class="pi pi-book"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Materias y Currículo</h4>
+            <p>Configurar materias, horarios y planes de estudio</p>
+          </div>
+        </div>
+
+        <div class="quick-action-card" routerLink="/admin/notas">
+          <div class="quick-action-icon">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Sistema de Notas</h4>
+            <p>Registrar calificaciones y generar reportes</p>
+          </div>
+        </div>
+
+        <div class="quick-action-card" routerLink="/admin/financiero">
+          <div class="quick-action-icon">
+            <i class="pi pi-credit-card"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Gestión Financiera</h4>
+            <p>Pagos, becas y administración de cuotas</p>
+          </div>
+        </div>
+
+        <div class="quick-action-card" routerLink="/admin/usuarios">
+          <div class="quick-action-icon">
+            <i class="pi pi-shield"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Usuarios del Sistema</h4>
+            <p>Administrar cuentas y permisos de usuario</p>
+          </div>
+        </div>
+
+        <div class="quick-action-card" routerLink="/admin/empresa">
+          <div class="quick-action-icon">
+            <i class="pi pi-building"></i>
+          </div>
+          <div class="quick-action-content">
+            <h4>Configuración</h4>
+            <p>Datos de la institución y configuraciones</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+       
