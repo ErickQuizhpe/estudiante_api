@@ -12,7 +12,7 @@ import { RippleModule } from 'primeng/ripple';
 import { MenuModule } from 'primeng/menu';
 import { CompanyService } from '../../services/company-service';
 import { Company } from '../../models/Company';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { User } from '../../models/User';
 import { DarkModeSwitch } from '../dark-mode-switch/dark-mode-switch';
@@ -74,7 +74,8 @@ export class NavbarComponent {
 
   constructor(
     private readonly companyService: CompanyService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     this.companyService.getCompany().subscribe((company) => {
       this.company.set(company);
@@ -90,30 +91,53 @@ export class NavbarComponent {
     this.authService.logout();
   }
 
-  get userMenuItems() {
-    return [
+  isInAdminArea(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
+
+  exitAdminArea(): void {
+    this.router.navigate(['/']);
+  }
+
+  get userMenuItems(): any[] {
+    const baseItems: any[] = [
       {
         label: 'Mi Perfil',
         icon: 'pi pi-user',
         command: () => {
-          // Navegar al perfil del usuario
+          this.router.navigate(['/profile']);
         },
       },
-      {
-        label: 'Configuración',
+    ];
+
+    // Agregar opción específica según el área
+    if (this.isInAdminArea()) {
+      baseItems.push({
+        label: 'Salir de Admin',
+        icon: 'pi pi-arrow-left',
+        command: () => {
+          this.exitAdminArea();
+        },
+      });
+    } else if (this.authService.isAdmin()) {
+      baseItems.push({
+        label: 'Panel de Admin',
         icon: 'pi pi-cog',
         command: () => {
-          // Navegar a configuración
+          this.router.navigate(['/admin']);
         },
-      },
-      {
-        separator: true,
-      },
+      });
+    }
+
+    baseItems.push(
+      { separator: true },
       {
         label: 'Cerrar Sesión',
         icon: 'pi pi-sign-out',
         command: () => this.logout(),
-      },
-    ];
+      }
+    );
+
+    return baseItems;
   }
 }

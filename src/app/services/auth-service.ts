@@ -44,6 +44,7 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
+    // Redirigir al login en lugar del home
     this.router.navigate(['/login']);
   }
 

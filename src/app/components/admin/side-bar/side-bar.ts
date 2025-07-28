@@ -5,15 +5,17 @@ import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
+import { AuthService } from '../../../services/auth-service';
 
 @Component({
   selector: 'app-side-bar',
   imports: [
     CommonModule,
-    ButtonModule,
-    MenuModule,
     PanelMenuModule,
+    ButtonModule,
+    RouterModule,
     TooltipModule,
   ],
   templateUrl: './side-bar.html',
@@ -25,7 +27,7 @@ export class SideBar {
   visible: boolean = true;
   menuItems: MenuItem[] = [];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.initializeMenuItems();
   }
 
@@ -41,14 +43,8 @@ export class SideBar {
       {
         label: 'Estudiantes',
         icon: 'pi pi-users',
-        items: [
-          {
-            label: 'Gestionar Estudiantes',
-            icon: 'pi pi-user-edit',
-            routerLink: '/admin/estudiantes',
-            command: () => this.navigateTo('/admin/estudiantes'),
-          },
-        ],
+        routerLink: '/admin/estudiantes',
+        command: () => this.navigateTo('/admin/estudiantes'),
       },
       {
         label: 'Académico',
@@ -56,13 +52,13 @@ export class SideBar {
         items: [
           {
             label: 'Materias',
-            icon: 'pi pi-list',
+            icon: 'pi pi-bookmark',
             routerLink: '/admin/materias',
             command: () => this.navigateTo('/admin/materias'),
           },
           {
             label: 'Notas',
-            icon: 'pi pi-star',
+            icon: 'pi pi-list',
             routerLink: '/admin/notas',
             command: () => this.navigateTo('/admin/notas'),
           },
@@ -71,38 +67,29 @@ export class SideBar {
       {
         label: 'Financiero',
         icon: 'pi pi-credit-card',
-        items: [
-          {
-            label: 'Gestión Financiera',
-            icon: 'pi pi-money-bill',
-            routerLink: '/admin/financiero',
-            command: () => this.navigateTo('/admin/financiero'),
-          },
-        ],
+        routerLink: '/admin/financiero',
+        command: () => this.navigateTo('/admin/financiero'),
       },
       {
         label: 'Usuarios',
         icon: 'pi pi-shield',
-        items: [
-          {
-            label: 'Gestionar Usuarios',
-            icon: 'pi pi-user-edit',
-            routerLink: '/admin/usuarios',
-            command: () => this.navigateTo('/admin/usuarios'),
-          },
-        ],
+        routerLink: '/admin/usuarios',
+        command: () => this.navigateTo('/admin/usuarios'),
       },
       {
         label: 'Empresa',
         icon: 'pi pi-building',
-        items: [
-          {
-            label: 'Información de la Empresa',
-            icon: 'pi pi-info-circle',
-            routerLink: '/admin/empresa',
-            command: () => this.navigateTo('/admin/empresa'),
-          },
-        ],
+        routerLink: '/admin/empresa',
+        command: () => this.navigateTo('/admin/empresa'),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Volver al Sitio',
+        icon: 'pi pi-external-link',
+        routerLink: '/',
+        styleClass: 'text-secondary',
       },
     ];
   }
@@ -112,9 +99,9 @@ export class SideBar {
   }
 
   logout(): void {
-    // Implementar lógica de logout
-    console.log('Logout clicked');
-    this.router.navigate(['/login']);
+    // Usar el AuthService para cerrar sesión correctamente
+    this.authService.logout();
+    // No necesitas navegar manualmente, el AuthService se encarga de eso
   }
 
   toggleSidebar(): void {

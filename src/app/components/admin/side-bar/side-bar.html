@@ -36,8 +36,9 @@
   </div>
 
   <!-- Footer -->
-  <div class="p-4 border-t border-gray-200 bg-gray-50" *ngIf="!collapsed">
-    <div class="flex items-center gap-3">
+  <div class="p-4 border-t border-gray-200 bg-gray-50">
+    <!-- User Info -->
+    <div class="flex items-center gap-3 mb-3" *ngIf="!collapsed">
       <div
         class="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0"
       >
@@ -49,6 +50,59 @@
         >
         <span class="text-xs text-gray-600">Admin</span>
       </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col gap-2">
+      <!-- Exit Admin Button -->
+      <p-button
+        *ngIf="!collapsed"
+        label="Salir de Admin"
+        icon="pi pi-arrow-left"
+        routerLink="/"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        styleClass="w-full"
+        pTooltip="Volver al sitio principal">
+      </p-button>
+      
+      <p-button
+        *ngIf="collapsed"
+        icon="pi pi-arrow-left"
+        routerLink="/"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        styleClass="w-full"
+        pTooltip="Salir de Admin"
+        tooltipPosition="right">
+      </p-button>
+
+      <!-- Logout Button -->
+      <p-button
+        *ngIf="!collapsed"
+        label="Cerrar Sesión"
+        icon="pi pi-sign-out"
+        (click)="logout()"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        styleClass="w-full"
+        pTooltip="Cerrar sesión">
+      </p-button>
+      
+      <p-button
+        *ngIf="collapsed"
+        icon="pi pi-sign-out"
+        (click)="logout()"
+        severity="danger"
+        [outlined]="true"
+        size="small"
+        styleClass="w-full"
+        pTooltip="Cerrar Sesión"
+        tooltipPosition="right">
+      </p-button>
     </div>
   </div>
 </div>
