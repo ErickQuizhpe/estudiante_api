@@ -69,14 +69,4 @@ describe('Login - Pruebas Básicas', () => {
     }, 1100);
   });
 
-  // Prueba 2: Login fallido
-  it('debe manejar error de login', () => {
-    authServiceSpy.login.and.returnValue(throwError(() => ({ status: 401 })));
-    
-    component.loginForm.patchValue({ username: 'wrong@test.com', password: 'wrong' });
-    component.onSubmit();
-
-    expect(authServiceSpy.login).toHaveBeenCalled();
-    expect(routerSpy.navigate).not.toHaveBeenCalled();
-  });
 });

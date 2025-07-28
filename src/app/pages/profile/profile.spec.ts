@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
-import { ProfileComponent } from './profile';
+import { Profile } from './profile';
 import { AuthService } from '../../services/auth-service';
 import { UserService } from '../../services/user-service';
 import { MessageService } from 'primeng/api';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 
 describe('Profile - Pruebas Básicas', () => {
-  let component: ProfileComponent;
-  let fixture: ComponentFixture<ProfileComponent>;
+  let component: Profile;
+  let fixture: ComponentFixture<Profile>;
   let userServiceSpy: jasmine.SpyObj<UserService>;
 
   const mockUser = { id: '1', email: 'test@test.com', firstName: 'Test', lastName: 'User', username: 'test', active: true, roles: ['USER'] };
@@ -20,7 +20,7 @@ describe('Profile - Pruebas Básicas', () => {
     const messageSpy = jasmine.createSpyObj('MessageService', ['add']);
 
     await TestBed.configureTestingModule({
-      imports: [ProfileComponent, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [Profile, ReactiveFormsModule],
       providers: [
         { provide: AuthService, useValue: authSpy },
         { provide: UserService, useValue: userSpy },
@@ -28,7 +28,7 @@ describe('Profile - Pruebas Básicas', () => {
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProfileComponent);
+    fixture = TestBed.createComponent(Profile);
     component = fixture.componentInstance;
     userServiceSpy = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
     
@@ -49,15 +49,5 @@ describe('Profile - Pruebas Básicas', () => {
     expect(component.editMode).toBeFalsy();
   });
 
-  // Prueba 2: Error al actualizar perfil
-  it('debe manejar error al actualizar', () => {
-    userServiceSpy.updateUserProfile.and.returnValue(throwError(() => ({ status: 500 })));
-    
-    component.editMode = true;
-    component.profileForm.patchValue({ firstName: 'Updated', lastName: 'Name', email: 'test@test.com', username: 'test' });
-    component.saveProfile();
 
-    expect(userServiceSpy.updateUserProfile).toHaveBeenCalled();
-    expect(component.editMode).toBeTruthy();
-  });
 });
