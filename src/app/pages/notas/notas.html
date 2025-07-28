@@ -91,11 +91,6 @@
     </p-card>
   </div>
 
-  <!-- Results Info -->
-  <div *ngIf="!loading && currentStudentId" class="results-info">
-    <p>{{ filteredNotas.length }} de mis notas encontradas</p>
-  </div>
-
   <!-- Notas Table -->
   <div *ngIf="!loading && currentStudentId && filteredNotas.length > 0" class="notas-content">
     <p-card>
@@ -170,7 +165,7 @@
     header="Ver Detalle de Nota"
     [modal]="true" 
     [style]="{width:'50vw'}"
-    [maximizable]="true">
+    [closable]="true">
     
     <div class="nota-form">
       <div class="form-grid">
