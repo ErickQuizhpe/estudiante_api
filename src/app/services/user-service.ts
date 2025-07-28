@@ -30,46 +30,4 @@ export class UserService {
   deleteUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
-
-  rateAssignment(assignmentId: string, rating: number): Observable<string> {
-    // Convertir assignmentId a número si es necesario
-    const id = parseInt(assignmentId);
-    
-    // Asegurar que rating sea un entero (backend espera Integer score)
-    const score = Math.round(rating);
-    
-    // Headers necesarios según el curl de ejemplo
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'accept': '*/*'
-    });
-    
-    // El body debe ser un string JSON con el número, como en el curl: -d '2'
-    const body = score.toString();
-    
-    console.log('Enviando calificación al backend:', {
-      url: `${this.apiUrl}/api/assignments/${id}/grade`,
-      body: body,
-      originalAssignmentId: assignmentId,
-      parsedId: id,
-      originalRating: rating,
-      roundedScore: score,
-      bodyType: typeof body,
-      headers: headers.keys()
-    });
-    
-    // Especificar responseType: 'text' porque el backend devuelve texto plano
-    return this.http.put(`${this.apiUrl}/api/assignments/${id}/grade`, { score }, { 
-      headers,
-      responseType: 'text'
-    });
-  }
-
-  addFavoriteAssignment(userId: string, assignmentId: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/users/${userId}/favorite-assignments`, { assignmentId });
-  }
-
-  getFavoriteAssignments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/users/favorite-assignments`);
-  }
 }
