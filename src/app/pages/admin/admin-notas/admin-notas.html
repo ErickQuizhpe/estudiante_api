@@ -132,7 +132,7 @@
                 <p-tag [value]="nota.tipoEvaluacion" styleClass="tipo-evaluacion-tag"></p-tag>
               </td>
               <td class="calificacion-cell">
-                <span class="calificacion-valor">{{ nota.valor }}</span>
+                <span class="calificacion-valor">{{ nota.calificacion || nota.valor }}</span>
               </td>
               <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
               <td>

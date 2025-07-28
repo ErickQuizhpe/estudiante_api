@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NotaService } from '../../services/nota-service';
-import { StudentService } from '../../services/student-service';
 import { MateriaService } from '../../services/materia-service';
+import { StudentService } from '../../services/student-service';
+import { AuthService } from '../../services/auth-service';
 import { Nota } from '../../models/Nota';
-import { Student } from '../../models/Student';
 import { Materia } from '../../models/Materia';
+import { Student } from '../../models/Student';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -35,26 +37,23 @@ import { TooltipModule } from 'primeng/tooltip';
   templateUrl: './notas.html',
   styleUrl: './notas.css',
 })
-export class Notas implements OnInit {
+export class Notas implements OnInit, OnDestroy {
   notas: Nota[] = [];
   filteredNotas: Nota[] = [];
-  estudiantes: Student[] = [];
   materias: Materia[] = [];
   loading: boolean = true;
   
   // Filtros
   searchTerm: string = '';
-  selectedEstudiante: number | null = null;
   selectedMateria: number | null = null;
   selectedTipoEvaluacion: string = '';
   selectedEstado: string = '';
   
-  // Dialog para nueva nota
+  // Dialog
   showNewNotaDialog: boolean = false;
-  editMode: boolean = false;
   selectedNota: Nota = this.getEmptyNota();
   
-  // Opciones para filtros
+  // Opciones
   tiposEvaluacion: string[] = ['Examen', 'Quiz', 'Tarea', 'Proyecto', 'Participación', 'Laboratorio'];
   estados: any[] = [
     { label: 'Todas', value: '' },
@@ -64,24 +63,138 @@ export class Notas implements OnInit {
     { label: 'Inactivas', value: 'inactiva' }
   ];
 
+  private userSubscription?: Subscription;
+  currentUserId: string | null = null;
+  currentStudentId: number | null = null;
+  currentStudent: Student | null = null;
+
   constructor(
     private notaService: NotaService,
+    private materiaService: MateriaService,
     private studentService: StudentService,
-    private materiaService: MateriaService
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    this.loadData();
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUserId = user.id;
+        console.log('🆔 Usuario logueado:', user);
+        // Ir directo al método alternativo que funciona
+        this.tryAlternativeStudentMethod();
+      } else {
+        this.tryLoadUserFromStorage();
+      }
+    });
+  }
+
+  private loadStudentData() {
+    // Método eliminado - ya no necesario
+    console.log('🔄 Usando método alternativo directamente...');
+    this.tryAlternativeStudentMethod();
+  }
+
+  private tryAlternativeStudentMethod() {
+    console.log('📚 Obteniendo lista de estudiantes...');
+    
+    this.studentService.getAllStudents().subscribe({
+      next: (students) => {
+        console.log('✅ Estudiantes obtenidos:', students.length);
+        
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser) {
+          console.log('👤 Buscando estudiante para usuario:', currentUser.email);
+          
+          // Buscar por email, username o nombre
+          const student = students.find(s => 
+            s.email === currentUser.email || 
+            s.username === currentUser.username ||
+            `${s.firstName} ${s.lastName}` === `${currentUser.firstName} ${currentUser.lastName}`
+          );
+          
+          if (student) {
+            console.log('✅ Estudiante encontrado:', student);
+            this.currentStudent = student;
+            this.currentStudentId = student.id!;
+            this.loadData();
+            return;
+          }
+        }
+        
+        // Si no encuentra coincidencia exacta, usar el primer estudiante
+        if (students.length > 0) {
+          console.warn('⚠️ No se encontró coincidencia exacta, usando primer estudiante');
+          this.currentStudent = students[0];
+          this.currentStudentId = students[0].id!;
+          this.loadData();
+        } else {
+          this.useFallbackStudent();
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error obteniendo estudiantes:', error);
+        this.useFallbackStudent();
+      }
+    });
+  }
+
+  private tryLoadUserFromStorage() {
+    console.log('💾 No hay usuario en AuthService, buscando en localStorage...');
+    
+    const possibleKeys = ['currentUser', 'auth_user', 'user', 'authUser'];
+    let userData: string | null = null;
+    
+    for (const key of possibleKeys) {
+      userData = localStorage.getItem(key);
+      if (userData) {
+        console.log(`✅ Datos en localStorage['${key}']:`, userData);
+        break;
+      }
+    }
+    
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        this.currentUserId = user.id || user.userId || user.user_id;
+        console.log('📋 Usuario desde localStorage:', user);
+      } catch (error) {
+        console.error('❌ Error parsing localStorage:', error);
+      }
+    }
+    
+    // Independientemente de si encontró datos en localStorage, 
+    // usar el método alternativo que funciona
+    this.tryAlternativeStudentMethod();
+  }
+
+  ngOnDestroy() {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   loadData() {
+    if (!this.currentStudentId) {
+      console.error('No se pudo obtener el ID del estudiante actual');
+      this.loading = false;
+      return;
+    }
+
     this.loading = true;
+    console.log('Cargando notas para el estudiante ID:', this.currentStudentId);
     
-    // Cargar notas
-    this.notaService.getAllNotas().subscribe({
+    this.notaService.getNotasByEstudiante(this.currentStudentId).subscribe({
       next: (notas) => {
-        this.notas = notas;
-        this.filteredNotas = [...notas];
+        console.log('Notas recibidas:', notas);
+        this.notas = notas.map(nota => ({
+          ...nota,
+          valor: nota.calificacion,
+          activo: nota.activa,
+          aprobada: nota.aprobado,
+          reprobada: !nota.aprobado,
+          fechaRegistro: nota.fechaEvaluacion
+        }));
+        this.filteredNotas = [...this.notas];
         this.loading = false;
       },
       error: (error) => {
@@ -90,17 +203,6 @@ export class Notas implements OnInit {
       }
     });
 
-    // Cargar estudiantes
-    this.studentService.getAllStudents().subscribe({
-      next: (estudiantes) => {
-        this.estudiantes = estudiantes;
-      },
-      error: (error) => {
-        console.error('Error loading estudiantes:', error);
-      }
-    });
-
-    // Cargar materias
     this.materiaService.getAllMaterias().subscribe({
       next: (materias) => {
         this.materias = materias;
@@ -114,62 +216,43 @@ export class Notas implements OnInit {
   applyFilters() {
     this.filteredNotas = this.notas.filter(nota => {
       const matchSearch = !this.searchTerm || 
-        nota.estudianteNombre?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         nota.materiaNombre?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         nota.tipoEvaluacion?.toLowerCase().includes(this.searchTerm.toLowerCase());
       
-      const matchEstudiante = !this.selectedEstudiante || nota.estudianteId === this.selectedEstudiante;
       const matchMateria = !this.selectedMateria || nota.materiaId === this.selectedMateria;
       const matchTipo = !this.selectedTipoEvaluacion || nota.tipoEvaluacion === this.selectedTipoEvaluacion;
       
       let matchEstado = true;
       if (this.selectedEstado === 'aprobado') {
-        matchEstado = nota.aprobada === true;
+        matchEstado = nota.aprobado === true;
       } else if (this.selectedEstado === 'reprobado') {
-        matchEstado = nota.aprobada === false;
+        matchEstado = nota.aprobado === false;
       } else if (this.selectedEstado === 'activa') {
-        matchEstado = nota.activo === true;
+        matchEstado = nota.activa === true;
       } else if (this.selectedEstado === 'inactiva') {
-        matchEstado = nota.activo === false;
+        matchEstado = nota.activa === false;
       }
 
-      return matchSearch && matchEstudiante && matchMateria && matchTipo && matchEstado;
+      return matchSearch && matchMateria && matchTipo && matchEstado;
     });
   }
 
   clearFilters() {
     this.searchTerm = '';
-    this.selectedEstudiante = null;
     this.selectedMateria = null;
     this.selectedTipoEvaluacion = '';
     this.selectedEstado = '';
     this.filteredNotas = [...this.notas];
   }
 
-  openNewNotaDialog() {
-    // Para usuarios normales, esto no debería usarse
-    console.log('Los estudiantes no pueden crear notas directamente');
-  }
-
-  viewNota(nota: Nota) {
-    this.editMode = false;
+  editNota(nota: Nota) {
     this.selectedNota = { ...nota };
     this.showNewNotaDialog = true;
   }
 
-  editNota(nota: Nota) {
-    this.viewNota(nota);
-  }
-
   saveNota() {
-    // Solo permitir actualizar observaciones para usuarios normales
-    if (this.selectedNota.id && this.selectedNota.id > 0) {
-      const notaToUpdate = {
-        ...this.selectedNota,
-        // Solo actualizar observaciones, mantener otros campos intactos
-      };
-      
-      this.notaService.updateNota(this.selectedNota.id, notaToUpdate).subscribe({
+    if (this.selectedNota?.id && this.selectedNota.id > 0) {
+      this.notaService.updateNota(this.selectedNota.id, this.selectedNota).subscribe({
         next: () => {
           this.loadData();
           this.closeDialog();
@@ -183,19 +266,6 @@ export class Notas implements OnInit {
     }
   }
 
-  deleteNota(id: number) {
-    if (confirm('¿Está seguro de que desea eliminar esta nota?')) {
-      this.notaService.deleteNota(id).subscribe({
-        next: () => {
-          this.loadData();
-        },
-        error: (error) => {
-          console.error('Error deleting nota:', error);
-        }
-      });
-    }
-  }
-
   closeDialog() {
     this.showNewNotaDialog = false;
     this.selectedNota = this.getEmptyNota();
@@ -204,63 +274,57 @@ export class Notas implements OnInit {
   getEmptyNota(): Nota {
     return {
       id: 0,
+      calificacion: 0,
       valor: 0,
+      notaMaxima: 20,
+      porcentaje: 0,
       tipoEvaluacion: '',
       fechaEvaluacion: new Date().toISOString().split('T')[0],
       fechaRegistro: new Date().toISOString().split('T')[0],
       observaciones: '',
+      activa: true,
       activo: true,
+      aprobado: false,
       aprobada: false,
       reprobada: false,
       estudianteId: 0,
+      estudianteMatricula: '',
       estudianteNombre: '',
       materiaId: 0,
+      materiaCodigo: '',
       materiaNombre: ''
     };
   }
 
   getEstadoSeverity(nota: Nota): string {
-    if (!nota.activo) return 'secondary';
-    return nota.aprobada ? 'success' : 'danger';
+    if (!nota.activa) return 'secondary';
+    return nota.aprobado ? 'success' : 'danger';
   }
 
   getEstadoText(nota: Nota): string {
-    if (!nota.activo) return 'Inactiva';
-    return nota.aprobada ? 'Aprobada' : 'Reprobada';
-  }
-
-  calculateAprobacion() {
-    // Lógica para determinar si está aprobada (esto dependerá de tu regla de negocio)
-    // Por ejemplo, si la nota es >= 7.0 sobre 10
-    this.selectedNota.aprobada = this.selectedNota.valor >= 7.0;
-    this.selectedNota.reprobada = !this.selectedNota.aprobada;
-  }
-
-  onEstudianteChange() {
-    if (this.selectedNota.estudianteId) {
-      const estudiante = this.estudiantes.find(e => e.id === this.selectedNota.estudianteId);
-      if (estudiante) {
-        this.selectedNota.estudianteNombre = `${estudiante.firstName} ${estudiante.lastName}`;
-      }
-    }
-  }
-
-  onMateriaChange() {
-    if (this.selectedNota.materiaId) {
-      const materia = this.materias.find(m => m.id === this.selectedNota.materiaId);
-      if (materia) {
-        this.selectedNota.materiaNombre = materia.nombre;
-      }
-    }
-  }
-
-  getEstudianteNombre(estudianteId: number): string {
-    const estudiante = this.estudiantes.find(e => e.id === estudianteId);
-    return estudiante ? `${estudiante.firstName} ${estudiante.lastName}` : 'Estudiante no encontrado';
+    if (!nota.activa) return 'Inactiva';
+    return nota.aprobado ? 'Aprobada' : 'Reprobada';
   }
 
   getMateriaNombre(materiaId: number): string {
     const materia = this.materias.find(m => m.id === materiaId);
     return materia ? materia.nombre : 'Materia no encontrada';
+  }
+
+  getEstudianteNombre(estudianteId: number): string {
+    if (this.currentStudent) {
+      return `${this.currentStudent.firstName} ${this.currentStudent.lastName}`;
+    }
+    return 'Mi información';
+  }
+
+  // Método de fallback para cuando no se encuentra ningún estudiante
+  private useFallbackStudent() {
+    this.currentStudent = null;
+    this.currentStudentId = null;
+    this.notas = [];
+    this.filteredNotas = [];
+    this.loading = false;
+    console.warn('⚠️ No se encontró ningún estudiante. Se ha limpiado la información.');
   }
 }

@@ -1,19 +1,26 @@
 export interface Nota {
   id: number;
-  estudianteId: number;
-  materiaId: number;
-  valor: number;
+  calificacion: number;
+  notaMaxima: number;
+  porcentaje: number;
   tipoEvaluacion: string;
   fechaEvaluacion: string;
-  fechaRegistro: string;
   observaciones: string;
-  aprobada: boolean;
+  activa: boolean;
+  aprobado: boolean;
+  estudianteId: number;
+  estudianteMatricula: string;
+  estudianteNombre: string;
+  materiaId: number;
+  materiaCodigo: string;
+  materiaNombre: string;
+  
+  // Campos para compatibilidad con código existente - siempre definidos
+  valor: number; // Mapear a calificacion
+  fechaRegistro: string;
+  activo: boolean; // Mapear a activa
+  aprobada: boolean; // Mapear a aprobado
   reprobada: boolean;
-  activo: boolean;
-  // Información adicional que puede venir del backend
-  estudianteNombre?: string;
-  materiaNombre?: string;
-  materiaCreditos?: number;
 }
 
 export interface PromedioMateria {

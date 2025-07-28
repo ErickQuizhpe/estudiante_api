@@ -147,10 +147,12 @@ export class AdminNotas implements OnInit {
 
   calculateStatistics() {
     this.estadisticas.totalNotas = this.notas.length;
-    this.estadisticas.notasAprobadas = this.notas.filter(n => n.aprobada).length;
-    this.estadisticas.notasReprobadas = this.notas.filter(n => !n.aprobada).length;
+    // Usar el campo correcto para aprobación
+    this.estadisticas.notasAprobadas = this.notas.filter(n => n.aprobado || n.aprobada).length;
+    this.estadisticas.notasReprobadas = this.notas.filter(n => !(n.aprobado || n.aprobada)).length;
     
-    const sumaNotas = this.notas.reduce((sum, nota) => sum + nota.valor, 0);
+    // Usar el campo correcto para el valor
+    const sumaNotas = this.notas.reduce((sum, nota) => sum + (nota.calificacion || nota.valor || 0), 0);
     this.estadisticas.promedioGeneral = this.notas.length > 0 ? sumaNotas / this.notas.length : 0;
     
     const estudiantesUnicos = new Set(this.notas.map(n => n.estudianteId));
@@ -278,7 +280,7 @@ export class AdminNotas implements OnInit {
     const notasEstudiante = this.notas.filter(n => n.estudianteId === estudianteId);
     if (notasEstudiante.length === 0) return 0;
     
-    const suma = notasEstudiante.reduce((sum, nota) => sum + nota.valor, 0);
+    const suma = notasEstudiante.reduce((sum, nota) => sum + (nota.calificacion || nota.valor || 0), 0);
     return suma / notasEstudiante.length;
   }
 
@@ -286,7 +288,7 @@ export class AdminNotas implements OnInit {
     const notasMateria = this.notas.filter(n => n.materiaId === materiaId);
     if (notasMateria.length === 0) return 0;
     
-    const suma = notasMateria.reduce((sum, nota) => sum + nota.valor, 0);
+    const suma = notasMateria.reduce((sum, nota) => sum + (nota.calificacion || nota.valor || 0), 0);
     return suma / notasMateria.length;
   }
 
@@ -331,17 +333,24 @@ export class AdminNotas implements OnInit {
   getEmptyNota(): Nota {
     return {
       id: 0,
+      calificacion: 0,
       valor: 0,
+      notaMaxima: 20,
+      porcentaje: 0,
       tipoEvaluacion: '',
       fechaEvaluacion: new Date().toISOString().split('T')[0],
       fechaRegistro: new Date().toISOString().split('T')[0],
       observaciones: '',
+      activa: true,
       activo: true,
+      aprobado: false,
       aprobada: false,
       reprobada: false,
       estudianteId: 0,
+      estudianteMatricula: '',
       estudianteNombre: '',
       materiaId: 0,
+      materiaCodigo: '',
       materiaNombre: ''
     };
   }
@@ -359,9 +368,12 @@ export class AdminNotas implements OnInit {
   }
 
   saveNota() {
-    // Calcular aprobación automáticamente
-    this.selectedNota.aprobada = this.selectedNota.valor >= 7.0;
-    this.selectedNota.reprobada = !this.selectedNota.aprobada;
+    // Calcular aprobación automáticamente y sincronizar campos
+    this.selectedNota.aprobado = this.selectedNota.valor >= 7.0;
+    this.selectedNota.aprobada = this.selectedNota.aprobado;
+    this.selectedNota.reprobada = !this.selectedNota.aprobado;
+    this.selectedNota.calificacion = this.selectedNota.valor;
+    this.selectedNota.activa = this.selectedNota.activo;
 
     // Obtener nombres de estudiante y materia
     const estudiante = this.estudiantes.find(e => e.id === this.selectedNota.estudianteId);
@@ -461,7 +473,9 @@ export class AdminNotas implements OnInit {
   }
 
   calculateAprobacion() {
-    this.selectedNota.aprobada = this.selectedNota.valor >= 7.0;
-    this.selectedNota.reprobada = !this.selectedNota.aprobada;
+    this.selectedNota.aprobado = this.selectedNota.valor >= 7.0;
+    this.selectedNota.aprobada = this.selectedNota.aprobado;
+    this.selectedNota.reprobada = !this.selectedNota.aprobado;
+    this.selectedNota.calificacion = this.selectedNota.valor; // Sincronizar valores
   }
 }

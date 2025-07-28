@@ -1,6 +1,6 @@
 <div class="notas-container">
   <!-- Header -->
-  <p-card header="Gestión de Notas" class="header-card">
+  <p-card header="Mis Notas" class="header-card">
     <div class="filters-container">
       <!-- Search -->
       <div class="search-field">
@@ -9,7 +9,7 @@
           <input 
             pInputText 
             type="text" 
-            placeholder="Buscar por estudiante, materia o tipo..." 
+            placeholder="Buscar por materia o tipo..." 
             [(ngModel)]="searchTerm"
             (input)="applyFilters()"
             name="searchTerm"
@@ -19,20 +19,6 @@
 
       <!-- Filters -->
       <div class="filter-fields">
-        <div class="filter-field">
-          <label>Estudiante:</label>
-          <select 
-            [(ngModel)]="selectedEstudiante" 
-            (change)="applyFilters()"
-            name="selectedEstudiante"
-            class="filter-select">
-            <option [value]="null">Todos los estudiantes</option>
-            <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
-              {{ estudiante.firstName }} {{ estudiante.lastName }}
-            </option>
-          </select>
-        </div>
-
         <div class="filter-field">
           <label>Materia:</label>
           <select 
@@ -89,18 +75,29 @@
     <p-card>
       <div class="loading-content">
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
-        <p>Cargando notas...</p>
+        <p>Cargando mis notas...</p>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- No User State -->
+  <div *ngIf="!loading && !currentStudentId" class="no-user">
+    <p-card>
+      <div class="no-user-content">
+        <i class="pi pi-user" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+        <h3>Cargando perfil de estudiante...</h3>
+        <p>Buscando datos del estudiante asociado al usuario actual</p>
       </div>
     </p-card>
   </div>
 
   <!-- Results Info -->
-  <div *ngIf="!loading" class="results-info">
-    <p>{{ filteredNotas.length }} notas encontradas</p>
+  <div *ngIf="!loading && currentStudentId" class="results-info">
+    <p>{{ filteredNotas.length }} de mis notas encontradas</p>
   </div>
 
   <!-- Notas Table -->
-  <div *ngIf="!loading && filteredNotas.length > 0" class="notas-content">
+  <div *ngIf="!loading && currentStudentId && filteredNotas.length > 0" class="notas-content">
     <p-card>
       <p-table 
         [value]="filteredNotas" 
@@ -113,24 +110,23 @@
         
         <ng-template pTemplate="header">
           <tr>
-            <th>Estudiante</th>
             <th>Materia</th>
             <th>Tipo Evaluación</th>
             <th>Calificación</th>
             <th>Fecha</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </ng-template>
         
         <ng-template pTemplate="body" let-nota>
           <tr>
-            <td>{{ nota.estudianteNombre }}</td>
             <td>{{ nota.materiaNombre }}</td>
             <td>
               <p-tag [value]="nota.tipoEvaluacion" styleClass="tipo-evaluacion-tag"></p-tag>
             </td>
             <td class="calificacion-cell">
-              <span class="calificacion-valor">{{ nota.valor }}</span>
+              <span class="calificacion-valor">{{ nota.calificacion }}</span>
             </td>
             <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
             <td>
@@ -158,113 +154,113 @@
   </div>
 
   <!-- No Results -->
-  <div *ngIf="!loading && filteredNotas.length === 0" class="no-results">
+  <div *ngIf="!loading && currentStudentId && filteredNotas.length === 0" class="no-results">
     <p-card>
       <div class="no-results-content">
         <i class="pi pi-search" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
-        <h3>No se encontraron notas</h3>
-        <p>No hay notas registradas que coincidan con los filtros seleccionados</p>
+        <h3>No tienes notas registradas</h3>
+        <p>No hay notas que coincidan con los filtros seleccionados</p>
       </div>
     </p-card>
   </div>
+
+  <!-- Dialog para Ver/Solicitar Revisión de Nota -->
+  <p-dialog 
+    [(visible)]="showNewNotaDialog" 
+    header="Ver Detalle de Nota"
+    [modal]="true" 
+    [style]="{width:'50vw'}"
+    [maximizable]="true">
+    
+    <div class="nota-form">
+      <div class="form-grid">
+        <!-- Estudiante (Solo lectura) -->
+        <div class="form-field">
+          <label>Estudiante</label>
+          <input 
+            type="text"
+            [value]="getEstudianteNombre(selectedNota.estudianteId)"
+            class="form-input"
+            readonly>
+        </div>
+
+        <!-- Materia (Solo lectura) -->
+        <div class="form-field">
+          <label>Materia</label>
+          <input 
+            type="text"
+            [value]="getMateriaNombre(selectedNota.materiaId)"
+            class="form-input"
+            readonly>
+        </div>
+
+        <!-- Tipo de Evaluación (Solo lectura) -->
+        <div class="form-field">
+          <label>Tipo de Evaluación</label>
+          <input 
+            type="text"
+            [value]="selectedNota.tipoEvaluacion"
+            class="form-input"
+            readonly>
+        </div>
+
+        <!-- Calificación (Solo lectura) -->
+        <div class="form-field">
+          <label>Calificación</label>
+          <input 
+            type="text"
+            [value]="selectedNota.calificacion"
+            class="form-input"
+            readonly>
+        </div>
+
+        <!-- Fecha de Evaluación (Solo lectura) -->
+        <div class="form-field">
+          <label>Fecha de Evaluación</label>
+          <input 
+            type="date"
+            [value]="selectedNota.fechaEvaluacion"
+            class="form-input"
+            readonly>
+        </div>
+      </div>
+
+      <!-- Observaciones (Editable para comentarios del estudiante) -->
+      <div class="form-field full-width">
+        <label>Observaciones / Solicitud de Revisión</label>
+        <textarea
+          [(ngModel)]="selectedNota.observaciones"
+          name="observaciones"
+          rows="3"
+          placeholder="Puedes agregar comentarios o solicitar revisión de esta nota..."
+          class="w-full form-input">
+        </textarea>
+      </div>
+
+      <!-- Estado de Aprobación (Read-only) -->
+      <div class="form-field full-width" *ngIf="selectedNota.calificacion > 0">
+        <div class="approval-status">
+          <p-tag 
+            [value]="selectedNota.aprobado ? 'Aprobada' : 'Reprobada'"
+            [severity]="selectedNota.aprobado ? 'success' : 'danger'">
+          </p-tag>
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Cerrar" 
+        icon="pi pi-times" 
+        (click)="closeDialog()"
+        severity="secondary">
+      </p-button>
+      <p-button 
+        label="Guardar Comentario" 
+        icon="pi pi-check" 
+        (click)="saveNota()"
+        *ngIf="selectedNota.observaciones && selectedNota.observaciones.trim() !== ''">
+      </p-button>
+    </ng-template>
+  </p-dialog>
 </div>
-
-<!-- Dialog para Ver/Solicitar Revisión de Nota -->
-<p-dialog 
-  [(visible)]="showNewNotaDialog" 
-  header="Ver Detalle de Nota"
-  [modal]="true" 
-  [style]="{width:'50vw'}"
-  [maximizable]="true">
-  
-  <div class="nota-form">
-    <div class="form-grid">
-      <!-- Estudiante (Solo lectura) -->
-      <div class="form-field">
-        <label>Estudiante</label>
-        <input 
-          type="text"
-          [value]="getEstudianteNombre(selectedNota.estudianteId)"
-          class="form-input"
-          readonly>
-      </div>
-
-      <!-- Materia (Solo lectura) -->
-      <div class="form-field">
-        <label>Materia</label>
-        <input 
-          type="text"
-          [value]="getMateriaNombre(selectedNota.materiaId)"
-          class="form-input"
-          readonly>
-      </div>
-
-      <!-- Tipo de Evaluación (Solo lectura) -->
-      <div class="form-field">
-        <label>Tipo de Evaluación</label>
-        <input 
-          type="text"
-          [value]="selectedNota.tipoEvaluacion"
-          class="form-input"
-          readonly>
-      </div>
-
-      <!-- Calificación (Solo lectura) -->
-      <div class="form-field">
-        <label>Calificación</label>
-        <input 
-          type="text"
-          [value]="selectedNota.valor"
-          class="form-input"
-          readonly>
-      </div>
-
-      <!-- Fecha de Evaluación (Solo lectura) -->
-      <div class="form-field">
-        <label>Fecha de Evaluación</label>
-        <input 
-          type="date"
-          [value]="selectedNota.fechaEvaluacion"
-          class="form-input"
-          readonly>
-      </div>
-    </div>
-
-    <!-- Observaciones (Editable para comentarios del estudiante) -->
-    <div class="form-field full-width">
-      <label>Observaciones / Solicitud de Revisión</label>
-      <textarea
-        [(ngModel)]="selectedNota.observaciones"
-        name="observaciones"
-        rows="3"
-        placeholder="Puedes agregar comentarios o solicitar revisión de esta nota..."
-        class="w-full form-input">
-      </textarea>
-    </div>
-
-    <!-- Estado de Aprobación (Read-only) -->
-    <div class="form-field full-width" *ngIf="selectedNota.valor > 0">
-      <div class="approval-status">
-        <p-tag 
-          [value]="selectedNota.aprobada ? 'Aprobada' : 'Reprobada'"
-          [severity]="selectedNota.aprobada ? 'success' : 'danger'">
-        </p-tag>
-      </div>
-    </div>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <p-button 
-      label="Cerrar" 
-      icon="pi pi-times" 
-      (click)="closeDialog()"
-      severity="secondary">
-    </p-button>
-    <p-button 
-      label="Guardar Comentario" 
-      icon="pi pi-check" 
-      (click)="saveNota()"
-      *ngIf="selectedNota.observaciones && selectedNota.observaciones.trim() !== ''">
-    </p-button>
-  </ng-template>
-</p-dialog>

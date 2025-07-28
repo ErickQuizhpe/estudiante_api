@@ -47,4 +47,8 @@ export class StudentService {
   deactivateStudent(id: number): Observable<Student> {
     return this.http.put<Student>(`${this.apiUrl}/estudiantes/${id}/desactivar`, {});
   }
-} 
+
+  getStudentByUserIdAlt(userId: string): Observable<Student> {
+    return this.http.get<Student>(`${this.apiUrl}/estudiantes?userId=${userId}`);
+  }
+}

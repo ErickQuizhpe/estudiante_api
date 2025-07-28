@@ -30,4 +30,22 @@ export class UserService {
   deleteUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
+
+  getUserProfile(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/${userId}`);
+  }
+
+  updateUserProfile(userId: string, userData: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/${userId}`, userData);
+  }
+
+  changePassword(userId: string, passwordData: { currentPassword: string, newPassword: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}/password`, passwordData);
+  }
+
+  uploadProfileImage(userId: string, imageFile: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    return this.http.post(`${this.apiUrl}/users/${userId}/avatar`, formData);
+  }
 }

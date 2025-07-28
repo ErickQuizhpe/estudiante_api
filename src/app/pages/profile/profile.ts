@@ -1,31 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth-service';
-import { UserService } from '../../services/user-service';
-import { User } from '../../models/User';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
-import { AvatarModule } from 'primeng/avatar';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { DividerModule } from 'primeng/divider';
+import { AuthService } from '../../services/auth-service';
+import { UserService } from '../../services/user-service';
+import { User } from '../../models/User';
 
 @Component({
   selector: 'app-profile',
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
+    PasswordModule,
+    DialogModule,
     FileUploadModule,
-    AvatarModule,
-    ToastModule,
-    DividerModule
+    ToastModule
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
@@ -33,30 +33,31 @@ import { DividerModule } from 'primeng/divider';
 })
 export class ProfileComponent implements OnInit {
   currentUser: User | null = null;
-  editedUser: User = {
-    id: '',
-    username: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    roles: [],
-    active: true
-  };
-  
-  profileImage: string | null = null;
-  isEditing: boolean = false;
+  profileForm: FormGroup;
+  passwordForm: FormGroup;
   loading: boolean = false;
-  uploadedFile: File | null = null;
-
-  // Validación
-  errors: any = {};
+  editMode: boolean = false;
+  showPasswordDialog: boolean = false;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private messageService: MessageService,
-    private router: Router
-  ) {}
+    private formBuilder: FormBuilder,
+    private messageService: MessageService
+  ) {
+    this.profileForm = this.formBuilder.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required, Validators.minLength(3)]]
+    });
+
+    this.passwordForm = this.formBuilder.group({
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+  }
 
   ngOnInit() {
     this.loadUserProfile();
@@ -65,161 +66,159 @@ export class ProfileComponent implements OnInit {
   loadUserProfile() {
     this.currentUser = this.authService.getCurrentUser();
     if (this.currentUser) {
-      this.editedUser = { ...this.currentUser };
-      this.loadProfileImage();
-    } else {
-      this.router.navigate(['/login']);
-    }
-  }
-
-  loadProfileImage() {
-    // Simular carga de imagen de perfil
-    this.profileImage = `https://ui-avatars.com/api/?name=${this.currentUser?.firstName}+${this.currentUser?.lastName}&size=200&background=random`;
-  }
-
-  enableEdit() {
-    this.isEditing = true;
-    this.errors = {};
-  }
-
-  cancelEdit() {
-    this.isEditing = false;
-    this.editedUser = { ...this.currentUser! };
-    this.errors = {};
-    this.uploadedFile = null;
-  }
-
-  validateForm(): boolean {
-    this.errors = {};
-    let isValid = true;
-
-    if (!this.editedUser.firstName.trim()) {
-      this.errors.firstName = 'El nombre es requerido';
-      isValid = false;
-    }
-
-    if (!this.editedUser.lastName.trim()) {
-      this.errors.lastName = 'El apellido es requerido';
-      isValid = false;
-    }
-
-    if (!this.editedUser.email.trim()) {
-      this.errors.email = 'El email es requerido';
-      isValid = false;
-    } else if (!this.isValidEmail(this.editedUser.email)) {
-      this.errors.email = 'El email no es válido';
-      isValid = false;
-    }
-
-    if (!this.editedUser.username.trim()) {
-      this.errors.username = 'El nombre de usuario es requerido';
-      isValid = false;
-    }
-
-    return isValid;
-  }
-
-  isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  async saveProfile() {
-    if (!this.validateForm()) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Por favor corrige los errores en el formulario'
+      this.profileForm.patchValue({
+        firstName: this.currentUser.firstName,
+        lastName: this.currentUser.lastName,
+        email: this.currentUser.email,
+        username: this.currentUser.username
       });
-      return;
     }
+  }
 
-    this.loading = true;
+  toggleEditMode() {
+    this.editMode = !this.editMode;
+    if (!this.editMode) {
+      // Cancelar edición - restaurar valores originales
+      this.loadUserProfile();
+    }
+  }
 
-    try {
-      // Simular actualización del usuario
-      const updatedUser = await this.userService.updateUser(this.editedUser.id, this.editedUser).toPromise();
-      
-      if (updatedUser) {
-        // Actualizar el usuario en el servicio de autenticación
-        localStorage.setItem('auth_user', JSON.stringify(updatedUser));
-        
-        this.currentUser = updatedUser;
-        this.isEditing = false;
-        
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Perfil actualizado correctamente'
-        });
+  saveProfile() {
+    if (this.profileForm.valid && this.currentUser) {
+      this.loading = true;
+      const formData = this.profileForm.value;
 
-        // Si hay una imagen nueva, subirla
-        if (this.uploadedFile) {
-          await this.uploadProfileImage();
+      this.userService.updateUserProfile(this.currentUser.id, formData).subscribe({
+        next: (updatedUser) => {
+          // Actualizar el usuario en el AuthService
+          this.authService.setCurrentUser(updatedUser);
+          this.currentUser = updatedUser;
+          this.editMode = false;
+          this.loading = false;
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Perfil actualizado correctamente'
+          });
+        },
+        error: (error) => {
+          console.error('Error updating profile:', error);
+          this.loading = false;
+          
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar el perfil'
+          });
         }
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al actualizar el perfil'
       });
-    } finally {
-      this.loading = false;
+    } else {
+      this.markFormGroupTouched(this.profileForm);
     }
   }
 
-  onFileSelect(event: any) {
-    const file = event.files[0];
-    if (file) {
-      this.uploadedFile = file;
-      
-      // Previsualizar imagen
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profileImage = e.target.result;
+  openPasswordDialog() {
+    this.passwordForm.reset();
+    this.showPasswordDialog = true;
+  }
+
+  closePasswordDialog() {
+    this.showPasswordDialog = false;
+    this.passwordForm.reset();
+  }
+
+  changePassword() {
+    if (this.passwordForm.valid && this.currentUser) {
+      this.loading = true;
+      const passwordData = {
+        currentPassword: this.passwordForm.value.currentPassword,
+        newPassword: this.passwordForm.value.newPassword
       };
-      reader.readAsDataURL(file);
+
+      this.userService.changePassword(this.currentUser.id, passwordData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.closePasswordDialog();
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Contraseña cambiada correctamente'
+          });
+        },
+        error: (error) => {
+          console.error('Error changing password:', error);
+          this.loading = false;
+          
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cambiar la contraseña'
+          });
+        }
+      });
+    } else {
+      this.markFormGroupTouched(this.passwordForm);
     }
   }
 
-  async uploadProfileImage() {
-    if (!this.uploadedFile) return;
-
-    try {
-      // Simular subida de imagen
-      const formData = new FormData();
-      formData.append('image', this.uploadedFile);
-      
-      // Aquí iría la llamada real al servicio
-      // await this.userService.uploadProfileImage(this.currentUser!.id, formData).toPromise();
-      
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'Imagen de perfil actualizada'
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al subir la imagen'
+  onImageUpload(event: any) {
+    const file = event.files[0];
+    if (file && this.currentUser) {
+      this.userService.uploadProfileImage(this.currentUser.id, file).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Imagen de perfil actualizada'
+          });
+          // Actualizar la imagen en el usuario actual si la respuesta incluye la URL
+          if (response.imageUrl) {
+            // @ts-expect-error: imageUrl may not exist on User type
+            this.currentUser!.imageUrl = response.imageUrl;
+          }
+        },
+        error: (error) => {
+          console.error('Error uploading image:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al subir la imagen'
+          });
+        }
       });
     }
   }
 
-  removeImage() {
-    this.profileImage = `https://ui-avatars.com/api/?name=${this.currentUser?.firstName}+${this.currentUser?.lastName}&size=200&background=random`;
-    this.uploadedFile = null;
+  passwordMatchValidator(formGroup: FormGroup) {
+    const newPassword = formGroup.get('newPassword');
+    const confirmPassword = formGroup.get('confirmPassword');
+    
+    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    return null;
   }
 
-  getInitials(): string {
-    if (!this.currentUser) return 'U';
-    const first = this.currentUser.firstName?.charAt(0) || '';
-    const last = this.currentUser.lastName?.charAt(0) || '';
-    return `${first}${last}`.toUpperCase();
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+    });
+  }
+
+  getFieldError(fieldName: string, formGroup: FormGroup = this.profileForm): string {
+    const field = formGroup.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) return `${fieldName} es requerido`;
+      if (field.errors['email']) return 'Email inválido';
+      if (field.errors['minlength']) return `Mínimo ${field.errors['minlength'].requiredLength} caracteres`;
+      if (field.errors['passwordMismatch']) return 'Las contraseñas no coinciden';
+    }
+    return '';
   }
 
   getRoleLabels(): string[] {

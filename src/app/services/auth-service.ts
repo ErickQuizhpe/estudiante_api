@@ -6,6 +6,9 @@ import { Router } from '@angular/router';
 import { User, LoginRequest, AuthResponse, JwtPayload } from '../models/User';
 import { environment } from '../environment';
 
+// CurrentUser es igual a User, sin propiedades adicionales
+export type CurrentUser = User;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +17,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
@@ -27,6 +30,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           this.storeAuth(response);
+          // response.user ya es de tipo User, compatible con CurrentUser
           this.currentUserSubject.next(response.user);
         }),
         catchError((error) => {
@@ -50,7 +54,12 @@ export class AuthService {
     return !this.isTokenExpired(token);
   }
 
-  getCurrentUser(): User | null {
+  getCurrentUserId(): string | null {
+    const user = this.currentUserSubject.value;
+    return user ? user.id : null;
+  }
+
+  getCurrentUser(): CurrentUser | null {
     return this.currentUserSubject.value;
   }
 
@@ -61,17 +70,22 @@ export class AuthService {
   hasRole(role: string): boolean {
     const user = this.getCurrentUser();
     if (!user) return false;
-    console.log(user.roles);
 
+    // User tiene roles como string[]
     return user.roles.includes(role);
   }
 
   isAdmin(): boolean {
-    return this.hasRole('ADMIN');
+    return this.hasRole('ADMIN') || this.hasRole('admin');
   }
 
   isUser(): boolean {
-    return this.hasRole('USER');
+    return (
+      this.hasRole('USER') ||
+      this.hasRole('user') ||
+      this.hasRole('STUDENT') ||
+      this.hasRole('student')
+    );
   }
 
   private storeAuth(response: AuthResponse): void {
@@ -85,7 +99,17 @@ export class AuthService {
 
     if (token && userStr && !this.isTokenExpired(token)) {
       try {
-        const user = JSON.parse(userStr);
+        const storedUser = JSON.parse(userStr);
+        // Asegurar que el usuario almacenado tenga todas las propiedades de User
+        const user: CurrentUser = {
+          id: storedUser.id,
+          email: storedUser.email,
+          firstName: storedUser.firstName,
+          lastName: storedUser.lastName,
+          username: storedUser.username || storedUser.email,
+          active: storedUser.active !== undefined ? storedUser.active : true,
+          roles: storedUser.roles || []
+        };
         this.currentUserSubject.next(user);
       } catch (error) {
         console.error('Error parsing stored user:', error);
@@ -149,5 +173,10 @@ export class AuthService {
       this.logout();
       return false;
     }
+  }
+
+  setCurrentUser(user: CurrentUser) {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 }
