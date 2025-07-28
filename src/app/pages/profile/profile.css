@@ -1,0 +1,314 @@
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header del Perfil */
+.profile-header-card {
+  background: linear-gradient(135deg, var(--primary-color, #007bff), var(--primary-700, #0056b3));
+  color: white;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.profile-image-section {
+  position: relative;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar {
+  width: 120px !important;
+  height: 120px !important;
+  font-size: 2.5rem !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.image-actions {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.upload-btn,
+.remove-btn {
+  border-radius: 50% !important;
+  width: 35px !important;
+  height: 35px !important;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.username {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0 0 0.25rem 0;
+}
+
+.email {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin: 0 0 1rem 0;
+}
+
+.roles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.role-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+
+/* Formulario de Edición */
+.edit-form-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-form {
+  margin-top: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  font-weight: 600;
+  color: var(--text-color, #333);
+  font-size: 0.9rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 2px solid var(--border-color, #e1e5e9);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-input.error {
+  border-color: var(--red-500, #dc3545);
+  background: var(--red-50, #fff5f5);
+}
+
+.error-message {
+  color: var(--red-500, #dc3545);
+  font-size: 0.825rem;
+  margin-top: 0.25rem;
+}
+
+/* Información de la Cuenta */
+.account-info-card {
+  border: 1px solid var(--border-color, #e1e5e9);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: var(--text-color-secondary, #666);
+  font-size: 0.9rem;
+}
+
+.info-item span {
+  font-size: 1rem;
+  color: var(--text-color, #333);
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--red-100, #fee);
+  color: var(--red-700, #c53030);
+  width: fit-content;
+}
+
+.status-badge.active {
+  background: var(--green-100, #f0fff4);
+  color: var(--green-700, #2d7738);
+}
+
+.roles-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.role-tag {
+  background: var(--primary-100, #e3f2fd);
+  color: var(--primary-700, #1976d2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.825rem;
+  font-weight: 500;
+}
+
+/* Configuraciones */
+.settings-card {
+  border: 1px solid var(--border-color, #e1e5e9);
+}
+
+.settings-section {
+  margin-top: 1rem;
+}
+
+.settings-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--text-color, #333);
+  font-size: 1.1rem;
+}
+
+.settings-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.setting-btn {
+  min-width: 200px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .profile-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-options {
+    flex-direction: column;
+  }
+
+  .setting-btn {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-image,
+  .profile-avatar {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .profile-avatar {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* Dark mode support */
+[data-theme="dark"] .form-input {
+  background: var(--surface-card);
+  border-color: var(--surface-border);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .form-input:focus {
+  border-color: var(--primary-color);
+}
+
+[data-theme="dark"] .profile-header-card {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+}

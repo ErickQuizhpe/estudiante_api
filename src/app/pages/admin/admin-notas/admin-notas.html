@@ -1,0 +1,565 @@
+<div class="admin-notas-container">
+  <!-- Header -->
+  <p-card header="Administración de Notas" class="header-card">
+    <div class="admin-header">
+      <div class="header-info">
+        <p>Panel de control para la gestión avanzada de notas y reportes académicos</p>
+      </div>
+      <div class="header-actions">
+        <p-button 
+          label="Nueva Nota" 
+          icon="pi pi-plus" 
+          (click)="openNewNotaDialog()"
+          severity="success">
+        </p-button>
+
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-card>
+      <div class="loading-content">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+        <p>Cargando datos...</p>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="dashboard-content">
+    
+    <!-- Estadísticas Generales -->
+    <div class="statistics-section">
+      <h3>Estadísticas Generales</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.totalNotas }}</div>
+            <div class="stat-label">Total de Notas</div>
+          </div>
+        </div>
+        
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.notasAprobadas }}</div>
+            <div class="stat-label">Notas Aprobadas</div>
+          </div>
+        </div>
+        
+        <div class="stat-card danger">
+          <div class="stat-icon">
+            <i class="pi pi-times-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.notasReprobadas }}</div>
+            <div class="stat-label">Notas Reprobadas</div>
+          </div>
+        </div>
+        
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.estudiantesConNotas }}</div>
+            <div class="stat-label">Estudiantes</div>
+          </div>
+        </div>
+        
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <i class="pi pi-book"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.materiasConNotas }}</div>
+            <div class="stat-label">Materias</div>
+          </div>
+        </div>
+        
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <i class="pi pi-star"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ estadisticas.promedioGeneral | number:'1.2-2' }}</div>
+            <div class="stat-label">Promedio General</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gestión de Notas -->
+    <div class="notes-management-section">
+      <h3>Gestión de Notas</h3>
+      
+      <p-card header="Todas las Notas" class="notes-card">
+        <p-table 
+          [value]="notas" 
+          [paginator]="true" 
+          [rows]="15"
+          [showCurrentPageReport]="true" 
+          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} notas"
+          [rowsPerPageOptions]="[15, 25, 50]"
+          styleClass="p-datatable-striped">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>ID</th>
+              <th>Estudiante</th>
+              <th>Materia</th>
+              <th>Tipo Evaluación</th>
+              <th>Calificación</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-nota>
+            <tr>
+              <td>{{ nota.id }}</td>
+              <td>{{ nota.estudianteNombre }}</td>
+              <td>{{ nota.materiaNombre }}</td>
+              <td>
+                <p-tag [value]="nota.tipoEvaluacion" styleClass="tipo-evaluacion-tag"></p-tag>
+              </td>
+              <td class="calificacion-cell">
+                <span class="calificacion-valor">{{ nota.valor }}</span>
+              </td>
+              <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <p-tag 
+                  [value]="getEstadoText(nota)"
+                  [severity]="getEstadoSeverity(nota)">
+                </p-tag>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <p-button 
+                    icon="pi pi-pencil" 
+                    (click)="editNota(nota)"
+                    severity="info"
+                    size="small"
+                    [outlined]="true"
+                    pTooltip="Editar">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-trash" 
+                    (click)="confirmDeleteNota(nota)"
+                    severity="danger"
+                    size="small"
+                    [outlined]="true"
+                    pTooltip="Eliminar">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+
+    <!-- Reportes -->
+    <div class="reports-section">
+      <h3>Reportes y Análisis</h3>
+      
+      <!-- Filtros de Reportes -->
+      <p-card header="Filtros de Reporte" class="filter-card">
+        <div class="report-filters">
+          <div class="filter-group">
+            <label>Estudiante:</label>
+            <select [(ngModel)]="selectedEstudianteReport" name="selectedEstudianteReport" class="filter-select">
+              <option [value]="null">Todos los estudiantes</option>
+              <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
+                {{ estudiante.firstName }} {{ estudiante.lastName }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Materia:</label>
+            <select [(ngModel)]="selectedMateriaReport" name="selectedMateriaReport" class="filter-select">
+              <option [value]="null">Todas las materias</option>
+              <option *ngFor="let materia of materias" [value]="materia.id">
+                {{ materia.nombre }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Fecha Inicio:</label>
+            <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" class="filter-input">
+          </div>
+          
+          <div class="filter-group">
+            <label>Fecha Fin:</label>
+            <input type="date" [(ngModel)]="fechaFin" name="fechaFin" class="filter-input">
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Promedios por Estudiante -->
+      <p-card header="Promedios por Estudiante" class="report-card">
+        <p-table 
+          [value]="estudiantes" 
+          [paginator]="true" 
+          [rows]="10"
+          styleClass="p-datatable-striped">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Estudiante</th>
+              <th>Matrícula</th>
+              <th>Carrera</th>
+              <th>Total Notas</th>
+              <th>Promedio</th>
+              <th>Estado</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-estudiante>
+            <tr>
+              <td>{{ estudiante.firstName }} {{ estudiante.lastName }}</td>
+              <td>{{ estudiante.matricula }}</td>
+              <td>{{ estudiante.carrera }}</td>
+              <td>{{ getNotasCountByEstudiante(estudiante.id) }}</td>
+              <td class="promedio-cell">
+                <span class="promedio-valor">{{ getPromedioByEstudiante(estudiante.id) | number:'1.2-2' }}</span>
+              </td>
+              <td>
+                <p-tag 
+                  [value]="getPromedioByEstudiante(estudiante.id) >= 7 ? 'Aprobado' : 'Reprobado'"
+                  [severity]="getPromedioByEstudiante(estudiante.id) >= 7 ? 'success' : 'danger'">
+                </p-tag>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+
+      <!-- Promedios por Materia -->
+      <p-card header="Promedios por Materia" class="report-card">
+        <p-table 
+          [value]="materias" 
+          [paginator]="true" 
+          [rows]="10"
+          styleClass="p-datatable-striped">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Materia</th>
+              <th>Código</th>
+              <th>Carrera</th>
+              <th>Total Notas</th>
+              <th>Promedio</th>
+              <th>Créditos</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-materia>
+            <tr>
+              <td>{{ materia.nombre }}</td>
+              <td>{{ materia.codigo }}</td>
+              <td>{{ materia.carrera }}</td>
+              <td>{{ getNotasCountByMateria(materia.id) }}</td>
+              <td class="promedio-cell">
+                <span class="promedio-valor">{{ getPromedioByMateria(materia.id) | number:'1.2-2' }}</span>
+              </td>
+              <td>{{ materia.creditos }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog para Nueva/Editar Nota -->
+<p-dialog 
+  [(visible)]="showNotaDialog" 
+  [header]="editMode ? 'Editar Nota' : 'Nueva Nota'"
+  [modal]="true" 
+  [style]="{width:'60vw'}"
+  [maximizable]="true">
+  
+  <div class="nota-form">
+    <div class="form-grid">
+      <!-- Estudiante -->
+      <div class="form-field">
+        <label>Estudiante *</label>
+        <select 
+          [(ngModel)]="selectedNota.estudianteId"
+          (change)="onEstudianteChange()"
+          name="selectedEstudiante"
+          class="form-select"
+          required>
+          <option [value]="0">Seleccionar estudiante</option>
+          <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
+            {{ estudiante.firstName }} {{ estudiante.lastName }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Materia -->
+      <div class="form-field">
+        <label>Materia *</label>
+        <select 
+          [(ngModel)]="selectedNota.materiaId"
+          (change)="onMateriaChange()"
+          name="selectedMateria"
+          class="form-select"
+          required>
+          <option [value]="0">Seleccionar materia</option>
+          <option *ngFor="let materia of materias" [value]="materia.id">
+            {{ materia.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Tipo de Evaluación -->
+      <div class="form-field">
+        <label>Tipo de Evaluación *</label>
+        <select 
+          [(ngModel)]="selectedNota.tipoEvaluacion"
+          name="tipoEvaluacion"
+          class="form-select"
+          required>
+          <option value="">Seleccionar tipo</option>
+          <option *ngFor="let tipo of tiposEvaluacion" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <!-- Calificación -->
+      <div class="form-field">
+        <label>Calificación *</label>
+        <p-inputNumber
+          [(ngModel)]="selectedNota.valor"
+          name="valor"
+          [min]="0"
+          [max]="20"
+          [step]="0.1"
+          [maxFractionDigits]="2"
+          (onInput)="calculateAprobacion()"
+          placeholder="0.0">
+        </p-inputNumber>
+      </div>
+
+      <!-- Fecha de Evaluación -->
+      <div class="form-field">
+        <label>Fecha de Evaluación *</label>
+        <input 
+          type="date"
+          [(ngModel)]="selectedNota.fechaEvaluacion"
+          name="fechaEvaluacion"
+          class="form-input"
+          required>
+      </div>
+
+      <!-- Estado Activo -->
+      <div class="form-field checkbox-field">
+        <p-checkbox 
+          [(ngModel)]="selectedNota.activo"
+          name="activo"
+          label="Activa"
+          [binary]="true">
+        </p-checkbox>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="form-field full-width">
+      <label>Observaciones</label>
+      <textarea
+        [(ngModel)]="selectedNota.observaciones"
+        name="observaciones"
+        rows="3"
+        placeholder="Observaciones sobre la evaluación..."
+        class="w-full form-input">
+      </textarea>
+    </div>
+
+    <!-- Estado de Aprobación (Read-only) -->
+    <div class="form-field full-width" *ngIf="selectedNota.valor > 0">
+      <div class="approval-status">
+        <p-tag 
+          [value]="selectedNota.aprobada ? 'Aprobada' : 'Reprobada'"
+          [severity]="selectedNota.aprobada ? 'success' : 'danger'">
+        </p-tag>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cancelar" 
+      icon="pi pi-times" 
+      (click)="closeNotaDialog()"
+      severity="secondary">
+    </p-button>
+    <p-button 
+      [label]="editMode ? 'Actualizar' : 'Guardar'" 
+      icon="pi pi-check" 
+      (click)="saveNota()"
+      [disabled]="!selectedNota.estudianteId || !selectedNota.materiaId || !selectedNota.tipoEvaluacion">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog de Confirmación de Eliminación -->
+<p-dialog 
+  [(visible)]="showDeleteDialog" 
+  header="Confirmar Eliminación"
+  [modal]="true" 
+  [style]="{width:'40vw'}">
+  
+  <div class="delete-confirmation">
+    <div class="confirmation-icon">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: var(--red-500);"></i>
+    </div>
+    <div class="confirmation-message">
+      <h4>¿Está seguro de eliminar esta nota?</h4>
+      <p *ngIf="notaToDelete">
+        <strong>Estudiante:</strong> {{ notaToDelete.estudianteNombre }}<br>
+        <strong>Materia:</strong> {{ notaToDelete.materiaNombre }}<br>
+        <strong>Calificación:</strong> {{ notaToDelete.valor }}<br>
+        <strong>Tipo:</strong> {{ notaToDelete.tipoEvaluacion }}
+      </p>
+      <p><em>Esta acción no se puede deshacer.</em></p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cancelar" 
+      icon="pi pi-times" 
+      (click)="closeDeleteDialog()"
+      severity="secondary">
+    </p-button>
+    <p-button 
+      label="Eliminar" 
+      icon="pi pi-trash" 
+      (click)="deleteNota()"
+      severity="danger">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog para Carga Masiva -->
+<p-dialog 
+  [(visible)]="showBulkDialog" 
+  header="Carga Masiva de Notas"
+  [modal]="true" 
+  [style]="{width:'80vw'}"
+  [maximizable]="true">
+  
+  <div class="bulk-content">
+    <div class="bulk-header">
+      <p>Agrega múltiples notas de forma simultánea</p>
+      <p-button 
+        label="Agregar Fila" 
+        icon="pi pi-plus" 
+        (click)="addBulkNota()"
+        size="small">
+      </p-button>
+    </div>
+
+    <div class="bulk-table" *ngIf="bulkNotas.length > 0">
+      <table class="bulk-notes-table">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Materia</th>
+            <th>Tipo</th>
+            <th>Calificación</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let nota of bulkNotas; let i = index">
+            <td>
+              <select [(ngModel)]="nota.estudianteId" [name]="'estudiante_' + i" class="bulk-select">
+                <option [value]="0">Seleccionar...</option>
+                <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
+                  {{ estudiante.firstName }} {{ estudiante.lastName }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="nota.materiaId" [name]="'materia_' + i" class="bulk-select">
+                <option [value]="0">Seleccionar...</option>
+                <option *ngFor="let materia of materias" [value]="materia.id">
+                  {{ materia.nombre }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select [(ngModel)]="nota.tipoEvaluacion" [name]="'tipo_' + i" class="bulk-select">
+                <option value="">Seleccionar...</option>
+                <option value="Examen">Examen</option>
+                <option value="Quiz">Quiz</option>
+                <option value="Tarea">Tarea</option>
+                <option value="Proyecto">Proyecto</option>
+                <option value="Participación">Participación</option>
+              </select>
+            </td>
+            <td>
+              <p-inputNumber
+                [(ngModel)]="nota.valor"
+                [name]="'valor_' + i"
+                [min]="0"
+                [max]="20"
+                [step]="0.1"
+                [maxFractionDigits]="2"
+                styleClass="bulk-input">
+              </p-inputNumber>
+            </td>
+            <td>
+              <input 
+                type="date"
+                [(ngModel)]="nota.fechaEvaluacion"
+                [name]="'fecha_' + i"
+                class="bulk-input">
+            </td>
+            <td>
+              <p-button 
+                icon="pi pi-trash" 
+                (click)="removeBulkNota(i)"
+                severity="danger"
+                size="small"
+                [outlined]="true">
+              </p-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bulk-empty" *ngIf="bulkNotas.length === 0">
+      <p>No hay notas para cargar. Haz clic en "Agregar Fila" para comenzar.</p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cancelar" 
+      icon="pi pi-times" 
+      (click)="closeBulkDialog()"
+      severity="secondary">
+    </p-button>
+    <p-button 
+      label="Guardar Todas" 
+      icon="pi pi-check" 
+      (click)="saveBulkNotas()"
+      [disabled]="bulkNotas.length === 0">
+    </p-button>
+  </ng-template>
+</p-dialog>

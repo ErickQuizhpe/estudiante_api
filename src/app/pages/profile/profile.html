@@ -1,0 +1,211 @@
+<div class="profile-container">
+  <p-toast></p-toast>
+  
+  <!-- Header del Perfil -->
+  <p-card header="Mi Perfil" class="profile-header-card">
+    <div class="profile-header">
+      <div class="profile-image-section">
+        <div class="avatar-container">
+          <p-avatar 
+            *ngIf="!profileImage"
+            [label]="getInitials()"
+            size="xlarge"
+            shape="circle"
+            styleClass="profile-avatar">
+          </p-avatar>
+          <img 
+            *ngIf="profileImage"
+            [src]="profileImage"
+            alt="Foto de perfil"
+            class="profile-image">
+          
+          <div *ngIf="isEditing" class="image-actions">
+            <p-fileUpload
+              mode="basic"
+              accept="image/*"
+              [maxFileSize]="1000000"
+              (onSelect)="onFileSelect($event)"
+              chooseIcon="pi pi-camera"
+              chooseLabel=""
+              class="upload-btn">
+            </p-fileUpload>
+            <p-button
+              icon="pi pi-trash"
+              (click)="removeImage()"
+              severity="danger"
+              size="small"
+              [outlined]="true"
+              class="remove-btn">
+            </p-button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="profile-info">
+        <h2>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</h2>
+        <p class="username">{{ currentUser?.username }}</p>
+        <p class="email">{{ currentUser?.email }}</p>
+        <div class="roles">
+          <span *ngFor="let role of getRoleLabels()" class="role-badge">
+            {{ role }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="profile-actions">
+        <p-button
+          *ngIf="!isEditing"
+          label="Editar Perfil"
+          icon="pi pi-pencil"
+          (click)="enableEdit()"
+          severity="info">
+        </p-button>
+        <div *ngIf="isEditing" class="edit-actions">
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            (click)="cancelEdit()"
+            severity="secondary"
+            [outlined]="true">
+          </p-button>
+          <p-button
+            label="Guardar"
+            icon="pi pi-check"
+            (click)="saveProfile()"
+            [loading]="loading"
+            severity="success">
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Formulario de Edición -->
+  <p-card *ngIf="isEditing" header="Editar Información Personal" class="edit-form-card">
+    <form class="profile-form">
+      <div class="form-grid">
+        <!-- Nombre -->
+        <div class="form-field">
+          <label for="firstName">Nombre *</label>
+          <input
+            type="text"
+            id="firstName"
+            [(ngModel)]="editedUser.firstName"
+            name="firstName"
+            placeholder="Ingresa tu nombre"
+            class="form-input"
+            [class.error]="errors.firstName">
+          <small *ngIf="errors.firstName" class="error-message">
+            {{ errors.firstName }}
+          </small>
+        </div>
+
+        <!-- Apellido -->
+        <div class="form-field">
+          <label for="lastName">Apellido *</label>
+          <input
+            type="text"
+            id="lastName"
+            [(ngModel)]="editedUser.lastName"
+            name="lastName"
+            placeholder="Ingresa tu apellido"
+            class="form-input"
+            [class.error]="errors.lastName">
+          <small *ngIf="errors.lastName" class="error-message">
+            {{ errors.lastName }}
+          </small>
+        </div>
+
+        <!-- Usuario -->
+        <div class="form-field">
+          <label for="username">Nombre de Usuario *</label>
+          <input
+            type="text"
+            id="username"
+            [(ngModel)]="editedUser.username"
+            name="username"
+            placeholder="Nombre de usuario"
+            class="form-input"
+            [class.error]="errors.username">
+          <small *ngIf="errors.username" class="error-message">
+            {{ errors.username }}
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label for="email">Correo Electrónico *</label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="editedUser.email"
+            name="email"
+            placeholder="ejemplo@correo.com"
+            class="form-input"
+            [class.error]="errors.email">
+          <small *ngIf="errors.email" class="error-message">
+            {{ errors.email }}
+          </small>
+        </div>
+      </div>
+    </form>
+  </p-card>
+
+  <!-- Información de la Cuenta (Solo lectura) -->
+  <p-card *ngIf="!isEditing" header="Información de la Cuenta" class="account-info-card">
+    <div class="info-grid">
+      <div class="info-item">
+        <label>ID de Usuario:</label>
+        <span>{{ currentUser?.id }}</span>
+      </div>
+      
+      <div class="info-item">
+        <label>Estado de la Cuenta:</label>
+        <span class="status-badge" [class.active]="currentUser?.active">
+          {{ currentUser?.active ? 'Activa' : 'Inactiva' }}
+        </span>
+      </div>
+      
+      <div class="info-item">
+        <label>Roles Asignados:</label>
+        <div class="roles-list">
+          <span *ngFor="let role of getRoleLabels()" class="role-tag">
+            {{ role }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Configuraciones Adicionales -->
+  <p-card header="Configuraciones" class="settings-card">
+    <div class="settings-section">
+      <h4>Configuraciones de Cuenta</h4>
+      <div class="settings-options">
+        <p-button
+          label="Cambiar Contraseña"
+          icon="pi pi-key"
+          severity="danger"
+          [outlined]="true"
+          class="setting-btn">
+        </p-button>
+        
+        <p-button
+          label="Configurar Notificaciones"
+          icon="pi pi-bell"
+          severity="info"
+          [outlined]="true"
+          class="setting-btn">
+        </p-button>
+        
+        <p-button
+          label="Descargar Datos"
+          icon="pi pi-download"
+          severity="help"
+          [outlined]="true"
+          class="setting-btn">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+</div>

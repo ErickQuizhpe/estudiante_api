@@ -2,17 +2,31 @@
   <!-- Banner principal -->
   <div class="p-card mb-6">
     <div class="p-card-body text-center">
-      <h1 class="text-4xl font-bold mb-4">Sistema de Gestión de Estudiantes</h1>
+      <h1 class="text-4xl font-bold mb-4">Sistema Académico Estudiantil</h1>
       <p class="text-xl text-gray-600 mb-6">
-        Plataforma integral para la gestión de estudiantes y asignaciones académicas
+        Plataforma integral para la gestión de estudiantes, materias y calificaciones
       </p>
       <div class="flex justify-content-center gap-4">
         <button
           pButton
           label="Ver Estudiantes"
           icon="pi pi-users"
-          routerLink="/estudiantes"
+          routerLink="/students"
           class="p-button-primary p-button-lg"
+        ></button>
+        <button
+          pButton
+          label="Ver Materias"
+          icon="pi pi-book"
+          routerLink="/materias"
+          class="p-button-secondary p-button-lg"
+        ></button>
+        <button
+          pButton
+          label="Gestión de Notas"
+          icon="pi pi-chart-line"
+          routerLink="/notas"
+          class="p-button-success p-button-lg"
         ></button>
         <button
           pButton
@@ -28,33 +42,43 @@
   <p-divider></p-divider>
 
   <!-- Características principales -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
     <div class="p-card">
       <div class="p-card-body text-center">
         <i class="pi pi-users text-4xl text-blue-500 mb-3"></i>
         <h3 class="text-xl font-bold mb-2">Gestión de Estudiantes</h3>
         <p class="text-gray-600">
-          Administra información completa de estudiantes, cursos y asignaciones
+          Administra información académica completa de estudiantes y sus datos personales
         </p>
       </div>
     </div>
     
     <div class="p-card">
       <div class="p-card-body text-center">
-        <i class="pi pi-calendar text-4xl text-green-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Asignaciones</h3>
+        <i class="pi pi-book text-4xl text-green-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Catálogo de Materias</h3>
         <p class="text-gray-600">
-          Crea y gestiona asignaciones con fechas límite y calificaciones
+          Gestiona materias por carrera, semestre y modalidad de estudio
         </p>
       </div>
     </div>
     
     <div class="p-card">
       <div class="p-card-body text-center">
-        <i class="pi pi-chart-bar text-4xl text-orange-500 mb-3"></i>
-        <h3 class="text-xl font-bold mb-2">Seguimiento</h3>
+        <i class="pi pi-chart-line text-4xl text-orange-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Sistema de Notas</h3>
         <p class="text-gray-600">
-          Monitorea el progreso y estado de las asignaciones de los estudiantes
+          Registra calificaciones, evalúa por tipo y consulta promedios académicos
+        </p>
+      </div>
+    </div>
+    
+    <div class="p-card">
+      <div class="p-card-body text-center">
+        <i class="pi pi-building text-4xl text-purple-500 mb-3"></i>
+        <h3 class="text-xl font-bold mb-2">Información Financiera</h3>
+        <p class="text-gray-600">
+          Gestiona información financiera y datos institucionales
         </p>
       </div>
     </div>
@@ -63,23 +87,61 @@
   <!-- Estadísticas -->
   <div class="p-card">
     <div class="p-card-body">
-      <h2 class="text-2xl font-bold mb-4 text-center">Estadísticas del Sistema</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <h2 class="text-2xl font-bold mb-4 text-center">Funcionalidades del Sistema</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div class="text-center">
-          <div class="text-3xl font-bold text-blue-500">150+</div>
-          <div class="text-gray-600">Estudiantes</div>
+          <div class="text-3xl font-bold text-blue-500">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="text-gray-600 mt-2">Gestión de Estudiantes</div>
         </div>
         <div class="text-center">
-          <div class="text-3xl font-bold text-green-500">25+</div>
-          <div class="text-gray-600">Cursos</div>
+          <div class="text-3xl font-bold text-green-500">
+            <i class="pi pi-book"></i>
+          </div>
+          <div class="text-gray-600 mt-2">Catálogo de Materias</div>
         </div>
         <div class="text-center">
-          <div class="text-3xl font-bold text-orange-500">500+</div>
-          <div class="text-gray-600">Asignaciones</div>
+          <div class="text-3xl font-bold text-orange-500">
+            <i class="pi pi-chart-line"></i>
+          </div>
+          <div class="text-gray-600 mt-2">Sistema de Notas</div>
         </div>
         <div class="text-center">
-          <div class="text-3xl font-bold text-purple-500">95%</div>
-          <div class="text-gray-600">Tasa de Éxito</div>
+          <div class="text-3xl font-bold text-purple-500">
+            <i class="pi pi-building"></i>
+          </div>
+          <div class="text-gray-600 mt-2">Información Institucional</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-indigo-500">
+            <i class="pi pi-dollar"></i>
+          </div>
+          <div class="text-gray-600 mt-2">Gestión Financiera</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información adicional -->
+  <div class="p-card mt-6">
+    <div class="p-card-body">
+      <h2 class="text-2xl font-bold mb-4 text-center">Acceso Rápido</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <h4 class="font-bold mb-2 text-blue-600">Para Estudiantes</h4>
+          <p class="text-gray-600 mb-3">Consulta tu información académica, materias inscritas y calificaciones.</p>
+          <button pButton label="Ir a Estudiantes" icon="pi pi-users" routerLink="/students" class="w-full"></button>
+        </div>
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <h4 class="font-bold mb-2 text-green-600">Catálogo Académico</h4>
+          <p class="text-gray-600 mb-3">Explora el catálogo completo de materias disponibles por carrera.</p>
+          <button pButton label="Ver Materias" icon="pi pi-book" routerLink="/materias" class="w-full" severity="secondary"></button>
+        </div>
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <h4 class="font-bold mb-2 text-orange-600">Sistema de Calificaciones</h4>
+          <p class="text-gray-600 mb-3">Gestiona y consulta notas por estudiante, materia y tipo de evaluación.</p>
+          <button pButton label="Gestionar Notas" icon="pi pi-chart-line" routerLink="/notas" class="w-full" severity="success"></button>
         </div>
       </div>
     </div>

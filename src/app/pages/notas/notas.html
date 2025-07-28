@@ -1,0 +1,270 @@
+<div class="notas-container">
+  <!-- Header -->
+  <p-card header="Gestión de Notas" class="header-card">
+    <div class="filters-container">
+      <!-- Search -->
+      <div class="search-field">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            type="text" 
+            placeholder="Buscar por estudiante, materia o tipo..." 
+            [(ngModel)]="searchTerm"
+            (input)="applyFilters()"
+            name="searchTerm"
+            class="search-input">
+        </span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-fields">
+        <div class="filter-field">
+          <label>Estudiante:</label>
+          <select 
+            [(ngModel)]="selectedEstudiante" 
+            (change)="applyFilters()"
+            name="selectedEstudiante"
+            class="filter-select">
+            <option [value]="null">Todos los estudiantes</option>
+            <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
+              {{ estudiante.firstName }} {{ estudiante.lastName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label>Materia:</label>
+          <select 
+            [(ngModel)]="selectedMateria" 
+            (change)="applyFilters()"
+            name="selectedMateria"
+            class="filter-select">
+            <option [value]="null">Todas las materias</option>
+            <option *ngFor="let materia of materias" [value]="materia.id">
+              {{ materia.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label>Tipo de Evaluación:</label>
+          <select 
+            [(ngModel)]="selectedTipoEvaluacion" 
+            (change)="applyFilters()"
+            name="selectedTipoEvaluacion"
+            class="filter-select">
+            <option value="">Todos los tipos</option>
+            <option *ngFor="let tipo of tiposEvaluacion" [value]="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label>Estado:</label>
+          <select 
+            [(ngModel)]="selectedEstado" 
+            (change)="applyFilters()"
+            name="selectedEstado"
+            class="filter-select">
+            <option *ngFor="let estado of estados" [value]="estado.value">{{ estado.label }}</option>
+          </select>
+        </div>
+
+        <div class="action-buttons">
+          <p-button 
+            label="Limpiar Filtros" 
+            icon="pi pi-filter-slash" 
+            (click)="clearFilters()"
+            severity="secondary"
+            [outlined]="true"
+            size="small">
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p-card>
+      <div class="loading-content">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+        <p>Cargando notas...</p>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Results Info -->
+  <div *ngIf="!loading" class="results-info">
+    <p>{{ filteredNotas.length }} notas encontradas</p>
+  </div>
+
+  <!-- Notas Table -->
+  <div *ngIf="!loading && filteredNotas.length > 0" class="notas-content">
+    <p-card>
+      <p-table 
+        [value]="filteredNotas" 
+        [paginator]="true" 
+        [rows]="10"
+        [showCurrentPageReport]="true" 
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} notas"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-striped">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Estudiante</th>
+            <th>Materia</th>
+            <th>Tipo Evaluación</th>
+            <th>Calificación</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-nota>
+          <tr>
+            <td>{{ nota.estudianteNombre }}</td>
+            <td>{{ nota.materiaNombre }}</td>
+            <td>
+              <p-tag [value]="nota.tipoEvaluacion" styleClass="tipo-evaluacion-tag"></p-tag>
+            </td>
+            <td class="calificacion-cell">
+              <span class="calificacion-valor">{{ nota.valor }}</span>
+            </td>
+            <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <p-tag 
+                [value]="getEstadoText(nota)"
+                [severity]="getEstadoSeverity(nota)">
+              </p-tag>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <p-button 
+                  icon="pi pi-eye" 
+                  (click)="editNota(nota)"
+                  severity="info"
+                  size="small"
+                  [outlined]="true"
+                  pTooltip="Ver Detalle">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!loading && filteredNotas.length === 0" class="no-results">
+    <p-card>
+      <div class="no-results-content">
+        <i class="pi pi-search" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+        <h3>No se encontraron notas</h3>
+        <p>No hay notas registradas que coincidan con los filtros seleccionados</p>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<!-- Dialog para Ver/Solicitar Revisión de Nota -->
+<p-dialog 
+  [(visible)]="showNewNotaDialog" 
+  header="Ver Detalle de Nota"
+  [modal]="true" 
+  [style]="{width:'50vw'}"
+  [maximizable]="true">
+  
+  <div class="nota-form">
+    <div class="form-grid">
+      <!-- Estudiante (Solo lectura) -->
+      <div class="form-field">
+        <label>Estudiante</label>
+        <input 
+          type="text"
+          [value]="getEstudianteNombre(selectedNota.estudianteId)"
+          class="form-input"
+          readonly>
+      </div>
+
+      <!-- Materia (Solo lectura) -->
+      <div class="form-field">
+        <label>Materia</label>
+        <input 
+          type="text"
+          [value]="getMateriaNombre(selectedNota.materiaId)"
+          class="form-input"
+          readonly>
+      </div>
+
+      <!-- Tipo de Evaluación (Solo lectura) -->
+      <div class="form-field">
+        <label>Tipo de Evaluación</label>
+        <input 
+          type="text"
+          [value]="selectedNota.tipoEvaluacion"
+          class="form-input"
+          readonly>
+      </div>
+
+      <!-- Calificación (Solo lectura) -->
+      <div class="form-field">
+        <label>Calificación</label>
+        <input 
+          type="text"
+          [value]="selectedNota.valor"
+          class="form-input"
+          readonly>
+      </div>
+
+      <!-- Fecha de Evaluación (Solo lectura) -->
+      <div class="form-field">
+        <label>Fecha de Evaluación</label>
+        <input 
+          type="date"
+          [value]="selectedNota.fechaEvaluacion"
+          class="form-input"
+          readonly>
+      </div>
+    </div>
+
+    <!-- Observaciones (Editable para comentarios del estudiante) -->
+    <div class="form-field full-width">
+      <label>Observaciones / Solicitud de Revisión</label>
+      <textarea
+        [(ngModel)]="selectedNota.observaciones"
+        name="observaciones"
+        rows="3"
+        placeholder="Puedes agregar comentarios o solicitar revisión de esta nota..."
+        class="w-full form-input">
+      </textarea>
+    </div>
+
+    <!-- Estado de Aprobación (Read-only) -->
+    <div class="form-field full-width" *ngIf="selectedNota.valor > 0">
+      <div class="approval-status">
+        <p-tag 
+          [value]="selectedNota.aprobada ? 'Aprobada' : 'Reprobada'"
+          [severity]="selectedNota.aprobada ? 'success' : 'danger'">
+        </p-tag>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cerrar" 
+      icon="pi pi-times" 
+      (click)="closeDialog()"
+      severity="secondary">
+    </p-button>
+    <p-button 
+      label="Guardar Comentario" 
+      icon="pi pi-check" 
+      (click)="saveNota()"
+      *ngIf="selectedNota.observaciones && selectedNota.observaciones.trim() !== ''">
+    </p-button>
+  </ng-template>
+</p-dialog>

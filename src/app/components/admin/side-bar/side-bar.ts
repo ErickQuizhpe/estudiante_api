@@ -60,6 +60,12 @@ export class SideBar {
             routerLink: '/admin/materias',
             command: () => this.navigateTo('/admin/materias'),
           },
+          {
+            label: 'Notas',
+            icon: 'pi pi-star',
+            routerLink: '/admin/notas',
+            command: () => this.navigateTo('/admin/notas'),
+          },
         ],
       },
       {

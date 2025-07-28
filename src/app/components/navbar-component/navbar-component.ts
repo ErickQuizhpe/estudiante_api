@@ -42,14 +42,14 @@ export class NavbarComponent {
       routerLink: '/',
     },
     {
-      label: 'Estudiantes',
-      icon: 'pi pi-users',
-      routerLink: '/estudiantes',
-    },
-    {
       label: 'Materias',
       icon: 'pi pi-book',
       routerLink: '/materias',
+    },
+    {
+      label: 'Notas',
+      icon: 'pi pi-list',
+      routerLink: '/notas',
     },
     {
       label: 'Financiero',
