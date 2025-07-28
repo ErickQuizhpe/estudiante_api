@@ -118,7 +118,6 @@
               <th>Tipo Evaluación</th>
               <th>Calificación</th>
               <th>Fecha</th>
-              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </ng-template>
@@ -135,12 +134,6 @@
                 <span class="calificacion-valor">{{ nota.calificacion || nota.valor }}</span>
               </td>
               <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
-              <td>
-                <p-tag 
-                  [value]="getEstadoText(nota)"
-                  [severity]="getEstadoSeverity(nota)">
-                </p-tag>
-              </td>
               <td>
                 <div class="action-buttons">
                   <p-button 
@@ -161,119 +154,6 @@
                   </p-button>
                 </div>
               </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
-    </div>
-
-    <!-- Reportes -->
-    <div class="reports-section">
-      <h3>Reportes y Análisis</h3>
-      
-      <!-- Filtros de Reportes -->
-      <p-card header="Filtros de Reporte" class="filter-card">
-        <div class="report-filters">
-          <div class="filter-group">
-            <label>Estudiante:</label>
-            <select [(ngModel)]="selectedEstudianteReport" name="selectedEstudianteReport" class="filter-select">
-              <option [value]="null">Todos los estudiantes</option>
-              <option *ngFor="let estudiante of estudiantes" [value]="estudiante.id">
-                {{ estudiante.firstName }} {{ estudiante.lastName }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="filter-group">
-            <label>Materia:</label>
-            <select [(ngModel)]="selectedMateriaReport" name="selectedMateriaReport" class="filter-select">
-              <option [value]="null">Todas las materias</option>
-              <option *ngFor="let materia of materias" [value]="materia.id">
-                {{ materia.nombre }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="filter-group">
-            <label>Fecha Inicio:</label>
-            <input type="date" [(ngModel)]="fechaInicio" name="fechaInicio" class="filter-input">
-          </div>
-          
-          <div class="filter-group">
-            <label>Fecha Fin:</label>
-            <input type="date" [(ngModel)]="fechaFin" name="fechaFin" class="filter-input">
-          </div>
-        </div>
-      </p-card>
-
-      <!-- Promedios por Estudiante -->
-      <p-card header="Promedios por Estudiante" class="report-card">
-        <p-table 
-          [value]="estudiantes" 
-          [paginator]="true" 
-          [rows]="10"
-          styleClass="p-datatable-striped">
-          
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Estudiante</th>
-              <th>Matrícula</th>
-              <th>Carrera</th>
-              <th>Total Notas</th>
-              <th>Promedio</th>
-              <th>Estado</th>
-            </tr>
-          </ng-template>
-          
-          <ng-template pTemplate="body" let-estudiante>
-            <tr>
-              <td>{{ estudiante.firstName }} {{ estudiante.lastName }}</td>
-              <td>{{ estudiante.matricula }}</td>
-              <td>{{ estudiante.carrera }}</td>
-              <td>{{ getNotasCountByEstudiante(estudiante.id) }}</td>
-              <td class="promedio-cell">
-                <span class="promedio-valor">{{ getPromedioByEstudiante(estudiante.id) | number:'1.2-2' }}</span>
-              </td>
-              <td>
-                <p-tag 
-                  [value]="getPromedioByEstudiante(estudiante.id) >= 7 ? 'Aprobado' : 'Reprobado'"
-                  [severity]="getPromedioByEstudiante(estudiante.id) >= 7 ? 'success' : 'danger'">
-                </p-tag>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
-
-      <!-- Promedios por Materia -->
-      <p-card header="Promedios por Materia" class="report-card">
-        <p-table 
-          [value]="materias" 
-          [paginator]="true" 
-          [rows]="10"
-          styleClass="p-datatable-striped">
-          
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Materia</th>
-              <th>Código</th>
-              <th>Carrera</th>
-              <th>Total Notas</th>
-              <th>Promedio</th>
-              <th>Créditos</th>
-            </tr>
-          </ng-template>
-          
-          <ng-template pTemplate="body" let-materia>
-            <tr>
-              <td>{{ materia.nombre }}</td>
-              <td>{{ materia.codigo }}</td>
-              <td>{{ materia.carrera }}</td>
-              <td>{{ getNotasCountByMateria(materia.id) }}</td>
-              <td class="promedio-cell">
-                <span class="promedio-valor">{{ getPromedioByMateria(materia.id) | number:'1.2-2' }}</span>
-              </td>
-              <td>{{ materia.creditos }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -344,7 +224,7 @@
           [(ngModel)]="selectedNota.valor"
           name="valor"
           [min]="0"
-          [max]="20"
+          [max]="100"
           [step]="0.1"
           [maxFractionDigits]="2"
           (onInput)="calculateAprobacion()"
@@ -362,17 +242,6 @@
           class="form-input"
           required>
       </div>
-
-      <!-- Estado Activo -->
-      <div class="form-field checkbox-field">
-        <p-checkbox 
-          [(ngModel)]="selectedNota.activo"
-          name="activo"
-          label="Activa"
-          [binary]="true">
-        </p-checkbox>
-      </div>
-    </div>
 
     <!-- Observaciones -->
     <div class="form-field full-width">
@@ -411,7 +280,6 @@
       [disabled]="!selectedNota.estudianteId || !selectedNota.materiaId || !selectedNota.tipoEvaluacion">
     </p-button>
   </ng-template>
-</p-dialog>
 
 <!-- Dialog de Confirmación de Eliminación -->
 <p-dialog 
@@ -516,7 +384,7 @@
                 [(ngModel)]="nota.valor"
                 [name]="'valor_' + i"
                 [min]="0"
-                [max]="20"
+                [max]="100"
                 [step]="0.1"
                 [maxFractionDigits]="2"
                 styleClass="bulk-input">

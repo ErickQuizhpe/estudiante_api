@@ -335,7 +335,7 @@ export class AdminNotas implements OnInit {
       id: 0,
       calificacion: 0,
       valor: 0,
-      notaMaxima: 20,
+      notaMaxima: 100,
       porcentaje: 0,
       tipoEvaluacion: '',
       fechaEvaluacion: new Date().toISOString().split('T')[0],
@@ -369,7 +369,7 @@ export class AdminNotas implements OnInit {
 
   saveNota() {
     // Calcular aprobación automáticamente y sincronizar campos
-    this.selectedNota.aprobado = this.selectedNota.valor >= 7.0;
+    this.selectedNota.aprobado = this.selectedNota.valor >= 70.0;
     this.selectedNota.aprobada = this.selectedNota.aprobado;
     this.selectedNota.reprobada = !this.selectedNota.aprobado;
     this.selectedNota.calificacion = this.selectedNota.valor;
@@ -473,7 +473,7 @@ export class AdminNotas implements OnInit {
   }
 
   calculateAprobacion() {
-    this.selectedNota.aprobado = this.selectedNota.valor >= 7.0;
+    this.selectedNota.aprobado = this.selectedNota.valor >= 70.0;
     this.selectedNota.aprobada = this.selectedNota.aprobado;
     this.selectedNota.reprobada = !this.selectedNota.aprobado;
     this.selectedNota.calificacion = this.selectedNota.valor; // Sincronizar valores
