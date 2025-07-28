@@ -31,7 +31,7 @@ import { User } from '../../models/User';
   styleUrl: './profile.css',
   providers: [MessageService]
 })
-export class ProfileComponent implements OnInit {
+export class Profile implements OnInit {
   currentUser: User | null = null;
   profileForm: FormGroup;
   passwordForm: FormGroup;
@@ -173,11 +173,6 @@ export class ProfileComponent implements OnInit {
             summary: 'Éxito',
             detail: 'Imagen de perfil actualizada'
           });
-          // Actualizar la imagen en el usuario actual si la respuesta incluye la URL
-          if (response.imageUrl) {
-            // @ts-expect-error: imageUrl may not exist on User type
-            this.currentUser!.imageUrl = response.imageUrl;
-          }
         },
         error: (error) => {
           console.error('Error uploading image:', error);

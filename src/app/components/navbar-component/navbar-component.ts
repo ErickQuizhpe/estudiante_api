@@ -105,7 +105,7 @@ export class NavbarComponent {
         label: 'Mi Perfil',
         icon: 'pi pi-user',
         command: () => {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/perfil']);
         },
       },
     ];

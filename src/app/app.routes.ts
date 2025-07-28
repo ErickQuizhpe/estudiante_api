@@ -16,7 +16,7 @@ import { AdminStudents } from './pages/admin/admin-students/admin-students';
 import { AdminFinancial } from './pages/admin/admin-financial/admin-financial';
 import { AdminMaterias } from './pages/admin/admin-materias/admin-materias';
 import { AdminNotas } from './pages/admin/admin-notas/admin-notas';
-import { ProfileComponent } from './pages/profile/profile';
+import { Profile } from './pages/profile/profile';
 
 export const routes: Routes = [
   {
@@ -30,7 +30,7 @@ export const routes: Routes = [
       { path: 'nosotros', component: AboutUs },
       { path: 'contacto', component: Contact },
       { path: 'login', component: Login },
-      { path: 'perfil', component: ProfileComponent },
+      { path: 'perfil', component: Profile },
     ],
   },
   {
