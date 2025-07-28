@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FinancialService } from '../../services/financial-service';
+import { AuthService } from '../../services/auth-service';
+import { StudentService } from '../../services/student-service';
 import { FinancialInfo } from '../../models/FinancialInfo';
+import { Student } from '../../models/Student';
+import { Subscription } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
@@ -19,21 +23,109 @@ import { ProgressBarModule } from 'primeng/progressbar';
   templateUrl: './financial.html',
   styleUrl: './financial.css',
 })
-export class Financial implements OnInit {
+export class Financial implements OnInit, OnDestroy {
   financialInfo: FinancialInfo | null = null;
   loading: boolean = true;
   error: string = '';
 
-  // Mock student ID - en un app real vendría del servicio de autenticación
-  currentStudentId: number = 1;
+  private userSubscription?: Subscription;
+  currentUserId: string | null = null;
+  currentStudentId: number | null = null;
+  currentStudent: Student | null = null;
 
-  constructor(private financialService: FinancialService) {}
+  constructor(
+    private financialService: FinancialService,
+    private authService: AuthService,
+    private studentService: StudentService
+  ) {}
 
   ngOnInit() {
-    this.loadFinancialInfo();
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUserId = user.id;
+        console.log('🆔 Usuario logueado:', user);
+        this.tryAlternativeStudentMethod();
+      } else {
+        this.tryLoadUserFromStorage();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
+
+  private tryLoadUserFromStorage() {
+    console.log('🔄 Intentando cargar usuario desde localStorage...');
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUserId = currentUser.id;
+      console.log('✅ Usuario cargado desde storage:', currentUser);
+      this.tryAlternativeStudentMethod();
+    } else {
+      console.log('❌ No se encontró usuario en storage');
+      this.error = 'No se pudo identificar al usuario. Por favor, inicie sesión nuevamente.';
+      this.loading = false;
+    }
+  }
+
+  private tryAlternativeStudentMethod() {
+    console.log('📚 Obteniendo lista de estudiantes...');
+    
+    this.studentService.getAllStudents().subscribe({
+      next: (students) => {
+        console.log('✅ Estudiantes obtenidos:', students.length);
+        
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser) {
+          console.log('👤 Buscando estudiante para usuario:', currentUser.email);
+          
+          // Buscar por email, username o nombre
+          const student = students.find(s => 
+            s.email === currentUser.email || 
+            s.username === currentUser.username ||
+            `${s.firstName} ${s.lastName}` === `${currentUser.firstName} ${currentUser.lastName}`
+          );
+          
+          if (student) {
+            console.log('✅ Estudiante encontrado:', student);
+            this.currentStudent = student;
+            this.currentStudentId = student.id!;
+            this.loadFinancialInfo();
+            return;
+          }
+        }
+        
+        // Si no encuentra coincidencia exacta, usar el primer estudiante
+        if (students.length > 0) {
+          console.warn('⚠️ No se encontró coincidencia exacta, usando primer estudiante');
+          this.currentStudent = students[0];
+          this.currentStudentId = students[0].id!;
+          this.loadFinancialInfo();
+        } else {
+          console.log('❌ No hay estudiantes disponibles');
+          this.error = 'No se encontraron estudiantes en el sistema.';
+          this.loading = false;
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al obtener estudiantes:', error);
+        this.error = 'Error al cargar información de estudiantes.';
+        this.loading = false;
+      }
+    });
   }
 
   loadFinancialInfo() {
+    if (!this.currentStudentId) {
+      this.error = 'No se pudo identificar al estudiante.';
+      this.loading = false;
+      return;
+    }
+
+    console.log('💰 Cargando información financiera para estudiante ID:', this.currentStudentId);
     this.loading = true;
     this.financialService.getFinancialInfoByStudent(this.currentStudentId).subscribe({
       next: (data) => {
