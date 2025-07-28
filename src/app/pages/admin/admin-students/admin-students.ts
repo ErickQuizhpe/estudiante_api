@@ -31,11 +31,9 @@ export class AdminStudents {
   students: Student[] = [];
   filteredStudents: Student[] = [];
   search: string = '';
-  selectedStatus: string = 'Todos';
   resultsPerPage: number = 10;
   currentPage: number = 1;
   totalPages: number = 1;
-  statuses: string[] = ['Todos', 'Activo', 'Inactivo'];
   
   // Variables para el modal
   showModal: boolean = false;
@@ -71,11 +69,6 @@ export class AdminStudents {
 
   applyFilters() {
     let filtered = this.students;
-    
-    if (this.selectedStatus !== 'Todos') {
-      const isActive = this.selectedStatus === 'Activo';
-      filtered = filtered.filter(s => s.activo === isActive);
-    }
     
     if (this.search.trim()) {
       const searchTerm = this.search.toLowerCase();
@@ -237,14 +230,6 @@ export class AdminStudents {
         }
       });
     }
-  }
-
-  getStatusSeverity(activo: boolean): string {
-    return activo ? 'success' : 'danger';
-  }
-
-  getStatusLabel(activo: boolean): string {
-    return activo ? 'Activo' : 'Inactivo';
   }
 
   formatDate(dateString: string): string {

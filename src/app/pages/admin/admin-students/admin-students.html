@@ -7,12 +7,6 @@
   <!-- Filtros -->
   <div class="flex flex-wrap gap-4 mb-6">
     <div>
-      <label class="block mb-1">Estado</label>
-      <select [(ngModel)]="selectedStatus" (change)="applyFilters()" class="p-inputtext p-component">
-        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-      </select>
-    </div>
-    <div>
       <label class="block mb-1">Resultados por página</label>
       <select [(ngModel)]="resultsPerPage" (change)="applyFilters()" class="p-inputtext p-component">
         <option *ngFor="let n of [5,10,15,20]" [value]="n">{{ n }}</option>
@@ -36,7 +30,6 @@
               <th class="text-left p-3">Email</th>
               <th class="text-left p-3">Carrera</th>
               <th class="text-left p-3">Semestre</th>
-              <th class="text-left p-3">Estado</th>
               <th class="text-left p-3">Acciones</th>
             </tr>
           </thead>
@@ -47,9 +40,6 @@
               <td class="p-3">{{ student.email }}</td>
               <td class="p-3">{{ student.carrera }}</td>
               <td class="p-3">{{ student.semestre }}°</td>
-              <td class="p-3">
-                <p-tag [severity]="getStatusSeverity(student.activo)" [value]="getStatusLabel(student.activo)"></p-tag>
-              </td>
               <td class="p-3">
                 <div class="flex gap-2">
                   <button pButton icon="pi pi-pencil" class="p-button-sm p-button-outlined" (click)="openModal(student)" pTooltip="Editar"></button>

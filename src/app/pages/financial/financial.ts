@@ -129,6 +129,8 @@ export class Financial implements OnInit, OnDestroy {
     this.loading = true;
     this.financialService.getFinancialInfoByStudent(this.currentStudentId).subscribe({
       next: (data) => {
+        console.log('💰 Datos financieros recibidos del API:', data);
+        
         // Mapear los campos del API a los campos esperados por la UI
         this.financialInfo = {
           ...data,
@@ -142,6 +144,15 @@ export class Financial implements OnInit, OnDestroy {
           diasMora: data.diasVencimiento < 0 ? Math.abs(data.diasVencimiento) : 0,
           activo: true
         };
+        
+        console.log('💰 Información financiera procesada:', {
+          montoPendiente: this.financialInfo.montoPendiente,
+          diasVencimiento: this.financialInfo.diasVencimiento,
+          enMora: this.financialInfo.enMora,
+          status: this.getStatusLabel(),
+          severity: this.getStatusSeverity()
+        });
+        
         this.loading = false;
       },
       error: (error) => {
@@ -154,15 +165,41 @@ export class Financial implements OnInit, OnDestroy {
 
   getStatusSeverity(): string {
     if (!this.financialInfo) return 'secondary';
-    if (this.financialInfo.enMora || this.financialInfo.diasVencimiento < 0) return 'danger';
-    if (this.financialInfo.montoPendiente === 0) return 'success';
+    
+    console.log('🔍 Evaluando estado financiero:', {
+      montoPendiente: this.financialInfo.montoPendiente,
+      diasVencimiento: this.financialInfo.diasVencimiento,
+      enMora: this.financialInfo.enMora
+    });
+    
+    // Primero verificar si está en mora (días de vencimiento negativos)
+    if (this.financialInfo.enMora || (this.financialInfo.diasVencimiento && this.financialInfo.diasVencimiento < 0)) {
+      return 'danger';
+    }
+    
+    // Si no debe nada, está al día
+    if (this.financialInfo.montoPendiente === 0 || this.financialInfo.montoPendiente === null || this.financialInfo.montoPendiente === undefined) {
+      return 'success';
+    }
+    
+    // Si debe algo pero no está en mora, está pendiente
     return 'warning';
   }
 
   getStatusLabel(): string {
     if (!this.financialInfo) return 'Sin información';
-    if (this.financialInfo.enMora || this.financialInfo.diasVencimiento < 0) return 'En Mora';
-    if (this.financialInfo.montoPendiente === 0) return 'Al Día';
+    
+    // Primero verificar si está en mora
+    if (this.financialInfo.enMora || (this.financialInfo.diasVencimiento && this.financialInfo.diasVencimiento < 0)) {
+      return 'En Mora';
+    }
+    
+    // Si no debe nada, está al día
+    if (this.financialInfo.montoPendiente === 0 || this.financialInfo.montoPendiente === null || this.financialInfo.montoPendiente === undefined) {
+      return 'Al Día';
+    }
+    
+    // Si debe algo pero no está en mora, está pendiente
     return 'Pendiente de Pago';
   }
 

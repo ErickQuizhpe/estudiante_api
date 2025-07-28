@@ -47,7 +47,6 @@ export class Notas implements OnInit, OnDestroy {
   searchTerm: string = '';
   selectedMateria: number | null = null;
   selectedTipoEvaluacion: string = '';
-  selectedEstado: string = '';
   
   // Dialog
   showNewNotaDialog: boolean = false;
@@ -55,13 +54,6 @@ export class Notas implements OnInit, OnDestroy {
   
   // Opciones
   tiposEvaluacion: string[] = ['Examen', 'Quiz', 'Tarea', 'Proyecto', 'Participación', 'Laboratorio'];
-  estados: any[] = [
-    { label: 'Todas', value: '' },
-    { label: 'Aprobadas', value: 'aprobado' },
-    { label: 'Reprobadas', value: 'reprobado' },
-    { label: 'Activas', value: 'activa' },
-    { label: 'Inactivas', value: 'inactiva' }
-  ];
 
   private userSubscription?: Subscription;
   currentUserId: string | null = null;
@@ -221,19 +213,8 @@ export class Notas implements OnInit, OnDestroy {
       
       const matchMateria = !this.selectedMateria || nota.materiaId === this.selectedMateria;
       const matchTipo = !this.selectedTipoEvaluacion || nota.tipoEvaluacion === this.selectedTipoEvaluacion;
-      
-      let matchEstado = true;
-      if (this.selectedEstado === 'aprobado') {
-        matchEstado = nota.aprobado === true;
-      } else if (this.selectedEstado === 'reprobado') {
-        matchEstado = nota.aprobado === false;
-      } else if (this.selectedEstado === 'activa') {
-        matchEstado = nota.activa === true;
-      } else if (this.selectedEstado === 'inactiva') {
-        matchEstado = nota.activa === false;
-      }
 
-      return matchSearch && matchMateria && matchTipo && matchEstado;
+      return matchSearch && matchMateria && matchTipo;
     });
   }
 
@@ -241,7 +222,6 @@ export class Notas implements OnInit, OnDestroy {
     this.searchTerm = '';
     this.selectedMateria = null;
     this.selectedTipoEvaluacion = '';
-    this.selectedEstado = '';
     this.filteredNotas = [...this.notas];
   }
 
@@ -294,16 +274,6 @@ export class Notas implements OnInit, OnDestroy {
       materiaCodigo: '',
       materiaNombre: ''
     };
-  }
-
-  getEstadoSeverity(nota: Nota): string {
-    if (!nota.activa) return 'secondary';
-    return nota.aprobado ? 'success' : 'danger';
-  }
-
-  getEstadoText(nota: Nota): string {
-    if (!nota.activa) return 'Inactiva';
-    return nota.aprobado ? 'Aprobada' : 'Reprobada';
   }
 
   getMateriaNombre(materiaId: number): string {

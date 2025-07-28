@@ -45,17 +45,6 @@
           </select>
         </div>
 
-        <div class="filter-field">
-          <label>Estado:</label>
-          <select 
-            [(ngModel)]="selectedEstado" 
-            (change)="applyFilters()"
-            name="selectedEstado"
-            class="filter-select">
-            <option *ngFor="let estado of estados" [value]="estado.value">{{ estado.label }}</option>
-          </select>
-        </div>
-
         <div class="action-buttons">
           <p-button 
             label="Limpiar Filtros" 
@@ -109,7 +98,6 @@
             <th>Tipo Evaluación</th>
             <th>Calificación</th>
             <th>Fecha</th>
-            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </ng-template>
@@ -124,12 +112,6 @@
               <span class="calificacion-valor">{{ nota.calificacion }}</span>
             </td>
             <td>{{ nota.fechaEvaluacion | date:'dd/MM/yyyy' }}</td>
-            <td>
-              <p-tag 
-                [value]="getEstadoText(nota)"
-                [severity]="getEstadoSeverity(nota)">
-              </p-tag>
-            </td>
             <td>
               <div class="action-buttons">
                 <p-button 
